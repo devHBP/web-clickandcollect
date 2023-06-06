@@ -1,0 +1,115 @@
+import React, { useState, useEffect} from 'react'
+import TableauProduits from './TableauProduits'
+import axios from 'axios'
+import ModaleAdd from './ModaleAdd'
+import ReactTable from './ReactTable'
+
+const ProduitsPage = () => {
+
+    const [elements, setElements] = useState([]);
+    const [openModaleAdd, setOpenModaleAdd] = useState(false)
+
+
+  useEffect(() => {
+    // Fonction pour récupérer les données de la base de données
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8080/getAllProducts');
+        // console.log('element', elements)
+        // console.log("response", response)
+        setElements(response.data);
+      
+        // console.log(response.data)
+      } catch (error) {
+        console.error('Une erreur s\'est produite :', error);
+      }
+    };
+
+    fetchData(); // Appel de la fonction fetchData lors du montage du composant
+  }, []);
+
+  const handleDelete = async (id_produit) => {
+    // console.log('delete')
+    // console.log('id,', id_produit)
+      try {
+         //serveur nodeJS
+        const baseUrl = "http://127.0.0.1:8080"
+        const response = await axios.delete(`${baseUrl}/deleteProduct/${id_produit}`);
+
+        // Vérifiez le statut de la réponse
+        if (response.status !== 200) {
+          throw new Error('Network response was not ok');
+        }
+        // Actualisez votre état ici pour refléter la suppression du produit
+        const updatedProduits = elements.filter((produit) => produit.id_produit !== id_produit)
+        setElements(updatedProduits)
+
+      } catch (error) {
+        console.error('There has been a problem with your Axios request:', error);
+      }
+  }
+
+  const handleUpdateProduct = async (updatedData, id_produit) => {
+    try {
+      const baseUrl = 'http://127.0.0.1:8080';
+      console.log(updatedData)
+      console.log(id_produit)
+      const response = await axios.put(`${baseUrl}/updateProduct/${id_produit}`, updatedData);
+      
+
+      if (response.status !== 200) {
+        throw new Error('Network response was not ok');
+      }
+
+      const updatedElements = elements.map((element) => {
+        if (element.id_produit === id_produit) {
+          return { ...element, ...updatedData };
+        }
+        return element;
+      });
+
+      setElements(updatedElements);
+    } catch (error) {
+      console.error('There has been a problem with your Axios request:', error);
+    }
+  };
+  const updateProduits = (newProduits) => {
+    setElements(newProduits);
+  };
+
+  //ajout handleAddProduct
+  const handleAddProduct = async (formData) => {
+    try {
+      const baseUrl = 'http://127.0.0.1:8080';
+      await axios.post(`${baseUrl}/addProduct`, formData);
+
+      const response = await axios.get(`${baseUrl}/getAllProducts`);
+      const allProductsUpdated = response.data;
+      console.log('allProductsUpdated', allProductsUpdated)
+      updateProduits(allProductsUpdated);
+      setOpenModaleAdd(false);
+    } catch (error) {
+      console.error('There has been a problem with your Axios request:', error);
+    }
+  };
+
+  return (
+    <>
+    <div className='page_produits_container'>
+        <h3>Les produits</h3>
+        <button onClick={() => setOpenModaleAdd(true)}>Ajouter un produit</button>
+              <div className='Tableau'>
+              {/* <TableauProduits elements={elements} handleDelete={handleDelete} handleUpdateProduct={handleUpdateProduct}/> */}
+              <ReactTable elements={elements} handleDelete={handleDelete} handleUpdateProduct={handleUpdateProduct}/>
+              </div>
+    </div>
+    
+    {
+      openModaleAdd && 
+      (<ModaleAdd setOpenModaleAdd={setOpenModaleAdd} handleAddProduct={handleAddProduct}/>)
+    }
+    </>
+  )
+}
+
+export default ProduitsPage
