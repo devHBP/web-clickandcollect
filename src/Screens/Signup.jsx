@@ -23,7 +23,9 @@ export const Signup = () => {
       lastname,
       firstname, 
       email,
-      password
+      password,
+      //ajout
+       id_magasin:''
   }
   console.log(clientData)
   try{

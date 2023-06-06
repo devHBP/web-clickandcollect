@@ -23,7 +23,7 @@ export const Home = () => {
      
      <div className='profil'>
         {
-          user && <h2>Bienvenue {user}</h2>
+          user && <h2>Bienvenue {user.firstname}</h2>
         }
      </div>
       <div className='dashboard_container'>

@@ -30,8 +30,8 @@ export const Login = () => {
   try{
     //appel axios pour se loger
     const res = await axios.post('http://localhost:8080/login', clientData)
-    console.log('token', res.data.token)
-    console.log('login reussi')
+    // console.log('token', res.data.token)
+    // console.log('login reussi')
     const user = res.data.user
     console.log('user login', user)
     dispatch(loginUser(user))
