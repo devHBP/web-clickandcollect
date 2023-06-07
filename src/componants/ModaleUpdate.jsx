@@ -23,13 +23,14 @@ const ModaleUpdate = ({setOpenModaleUpdate, handleConfirmUpdate, id_produit  }) 
 
     
   return (
-    <div className='modale_container'>
-        
-        <div className='modale'>
+    
+        //modale_container
+        <div className='modale_container'>
+        {/* <div className='modale'>
             < AiFillCloseCircle className='button_close' onClick={() => setOpenModaleUpdate(false)}/>
             <div className='modale_content'>
                 <p>Quels champs souhaitez vous modifier</p>
-                {/* inserer les input à modifier  */}
+               
                 <div className='inputOptions'>
                     <label htmlFor="libelle">Libellé:</label>
                     <input
@@ -62,11 +63,12 @@ const ModaleUpdate = ({setOpenModaleUpdate, handleConfirmUpdate, id_produit  }) 
 
                 <button onClick={handleUpdate}>Valider</button>
                 
-            </div>
+            </div> 
+            </div>*/}
             </div>
             
 
-    </div>
+    
     
   )
 }

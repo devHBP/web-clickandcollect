@@ -1,13 +1,12 @@
 import React, {useState} from 'react';
 import DataTable from 'react-data-table-component';
 import { AiOutlineRest, AiOutlineReload} from "react-icons/ai";
-import axios from 'axios'
 import ModaleDelete from './ModaleDelete';
 import ModaleUpdate from './ModaleUpdate';
 
 const ReactTable = ({ elements, handleDelete, handleUpdateProduct }) => {
 
-    const [openModaleDelete, setOpenModaleDelete] = useState(false)
+  const [openModaleDelete, setOpenModaleDelete] = useState(false)
   const [openModaleUpdate, setOpenModaleUpdate] = useState(false)
   const [selectedProductId, setSelectedProductId] = useState(null);
 
@@ -20,7 +19,15 @@ const ReactTable = ({ elements, handleDelete, handleUpdateProduct }) => {
     setOpenModaleUpdate(false);
   };
   
+  
     const baseUrl = "http://127.0.0.1:8080"
+    // const customStyles = {
+    //   cells: {
+    //     style: {
+    //       // backgroundColor: 'blue',
+    //     },
+    //   }
+    // }
   const columns = [
     {
       name: 'Photo',
@@ -45,41 +52,43 @@ const ReactTable = ({ elements, handleDelete, handleUpdateProduct }) => {
     {
       name: 'Actions',
       cell: row => (
-        <div className="actions">
+        <div>
             
-          
-          {/* <button onClick={() => handleUpdateProduct(row.id_produit)}>Update</button> */}
-          {/* <button onClick={() => handleDelete(row.id_produit)}>Delete</button> */}
-
-          <AiOutlineReload className='icones_actions' onClick={() => {
-                //   setSelectedProductId(row.id_produit);
-                  //setOpenModaleUpdate(true)
-                console.log(row.id_produit)
-                }}/>
-            <AiOutlineRest className='icones_actions' onClick={() => {
+          <AiOutlineReload  onClick={() => {
+                  setSelectedProductId(row.id_produit);
+                  setOpenModaleUpdate(true)
+                // console.log(row.id_produit)
+            }}/>
+            <AiOutlineRest  onClick={() => {
                     // setSelectedProductId(row.id_produit)
                     // setOpenModaleDelete(true)
                     console.log(typeof row.id_produit)
-                }
-                    
-                    }/>
-         
-        </div>
+            }}/>
+            {/* modaleUpdate */}
+            { 
+            openModaleUpdate && (<ModaleUpdate setOpenModaleUpdate={setOpenModaleUpdate} handleConfirmUpdate={handleConfirmUpdate} id_produit={selectedProductId} />)
+            }
+            {/* modale delete */}
+            {
+            openModaleDelete && (<ModaleDelete setOpenModaleDelete={setOpenModaleDelete} handleDelete={handleDelete} id_produit={selectedProductId} />)
+            }
+      </div>
       ),
     },
+    
   ];
-  {
-    openModaleDelete && 
-    (<ModaleDelete setOpenModaleDelete={setOpenModaleDelete} handleDelete={handleDelete} id_produit={selectedProductId} />)
-  }
-  {
-    openModaleUpdate && 
-    (<ModaleUpdate setOpenModaleUpdate={setOpenModaleUpdate} handleConfirmUpdate={handleConfirmUpdate} id_produit={selectedProductId} />)
-  }
+  
+  
 
   const data = elements;
 
-  return <DataTable columns={columns} data={data} />;
+  return <DataTable 
+            columns={columns}
+            data={data} 
+            // customStyles={customStyles}
+            pagination
+            className='tablereact'
+          />;
 };
 
 export default ReactTable;

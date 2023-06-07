@@ -109,63 +109,76 @@
 
 /* custom table produits */
 .Tableau{
-    margin: 30px;
+    margin: 40px;
 }
-.table_produits{
+.rdt_Table{
+  border: 1px solid red;
+  position: relative;
+  padding: 20px;
+
+}
+/* .table_produits{
     width: 100%;
     border-collapse: collapse;
     border-radius: 10px;
-}
+} */
 
-  .table_produits th, .table_produits td {
+  /* .table_produits th, .table_produits td {
     padding: 10px;
     border: 1px solid lightgray;
   }
-  
-  .table_produits th {
+   */
+  /* .table_produits th {
     background-color: #f2f2f2;
     text-align: start;
-  }
+  } */
   /* photo */
-  .colomn_photo{
+  /* .colomn_photo{
     width: 50px;
-  }
-  .table_produits img {
+  } */
+  /* .table_produits img {
     width: 100%;
     max-height: 60px;
     object-fit: cover;
-  }
+  } */
   /* actions */
-  .colomn_actions{
-    width: 80px;
-  }
-  .actions{
+  /* .colomn_actions{
+    width: 50px;
+  } */
+  /* .actions{
     text-align: center;
-  }
-  .icones_actions{
+  } */
+  /* .icones_actions{
     font-size: 20px;
     margin: 0 5px;
-  }
+  } */
 
-  /* modale delete */
+  /* modale  */
+  
   .modale_container{
-    background-color: rgba(73, 73, 73, 0.5);
+    background-color: rgba(124, 184, 139, 0.5);
     position: absolute;
     top: 0;
     left: 0;
     right:0;
     bottom:0;
-   
+    z-index: 99;
   }
   .modale{
     position:absolute;
-    top:50%;
+    top: 0;
+    left: 0;
+    right:0;
+    bottom:0;
+     top:50%;
     left:50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); 
     width: 700px;
     height: 400px;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(167, 37, 37);
     border-radius: 25px;
+
+ 
   }
   .button_close{
     position: absolute;
@@ -174,12 +187,16 @@
     font-size: 30px;
   }
   .modale_content{
-    height: 100%;
+    /* height: 100%; */
     display:flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 20px;
+  }
+  .test_modale{
+    background-color: blue;
+    padding:20px;
   }
 
   .page_produits_container{
