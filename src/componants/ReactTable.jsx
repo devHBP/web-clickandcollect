@@ -55,26 +55,27 @@ const ReactTable = ({ elements, handleDelete, handleUpdateProduct }) => {
         <div>
             
           <AiOutlineReload  onClick={() => {
-                  setSelectedProductId(row.id_produit);
+                  // setSelectedProductId(row.id_produit);
                   setOpenModaleUpdate(true)
                 // console.log(row.id_produit)
             }}/>
-            <AiOutlineRest  onClick={() => {
+            {/* <AiOutlineRest  onClick={() => {
                     // setSelectedProductId(row.id_produit)
                     // setOpenModaleDelete(true)
                     console.log(typeof row.id_produit)
-            }}/>
+            }}/> */}
             {/* modaleUpdate */}
             { 
-            openModaleUpdate && (<ModaleUpdate setOpenModaleUpdate={setOpenModaleUpdate} handleConfirmUpdate={handleConfirmUpdate} id_produit={selectedProductId} />)
-            }
+              openModaleUpdate && (<ModaleUpdate setOpenModaleUpdate={setOpenModaleUpdate} handleConfirmUpdate={handleConfirmUpdate} id_produit={selectedProductId} />)
+              }
             {/* modale delete */}
-            {
+            {/* {
             openModaleDelete && (<ModaleDelete setOpenModaleDelete={setOpenModaleDelete} handleDelete={handleDelete} id_produit={selectedProductId} />)
-            }
+            } */}
       </div>
       ),
     },
+    
     
   ];
   
@@ -88,7 +89,9 @@ const ReactTable = ({ elements, handleDelete, handleUpdateProduct }) => {
             // customStyles={customStyles}
             pagination
             className='tablereact'
-          />;
+            
+          />
+          ;
 };
 
 export default ReactTable;
