@@ -163,7 +163,7 @@ const ProduitsPage = () => {
       onClick={() => Delete(record)} 
       />
       <Modal 
-          title="Edit Details" 
+          title="Modification du produit"
           open={visible}
           onCancel={() => setVisible(false)} 
           onOk={() => {
@@ -227,7 +227,7 @@ const ProduitsPage = () => {
                
               {/* <TableauProduits elements={elements} handleDelete={handleDelete} handleUpdateProduct={handleUpdateProduct}/> */}
               {/* <ReactTable elements={elements} handleDelete={handleDelete} handleUpdateProduct={handleUpdateProduct}/> */}
-              <Table dataSource={elements} columns={columns} />
+              <Table dataSource={elements} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} rowKey='id_produit' />
               
               </div>
     </div>

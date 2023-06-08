@@ -156,7 +156,7 @@
   /* modale  */
   
   .modale_container{
-    background-color: rgba(124, 184, 139, 0.5);
+    background-color: rgba(54, 54, 54, 0.872);
     position: absolute;
     top: 0;
     left: 0;
@@ -175,7 +175,7 @@
     transform: translate(-50%, -50%); 
     width: 700px;
     height: 400px;
-    background-color: rgb(167, 37, 37);
+    background-color: white;
     border-radius: 25px;
 
  
