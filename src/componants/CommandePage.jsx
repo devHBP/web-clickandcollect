@@ -3,6 +3,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { Table, Tag} from 'antd'
 import 'react-tabs/style/react-tabs.css';
 import {AiOutlineEye} from "react-icons/ai";
+import  Tasks  from './Tasks';
 
 const CommandePage = () => {
 
@@ -131,6 +132,9 @@ const CommandePage = () => {
         </Tabs>
 
         <p style={{textAlign:'center'}}>Autre test : Drag and drop</p>
+
+       <Tasks />
+       
               
     </div>
     
