@@ -194,15 +194,23 @@
     justify-content: center;
     gap: 20px;
   }
-  .test_modale{
-    background-color: blue;
-    padding:20px;
-  }
+ 
 
   .page_produits_container{
     display:flex;
     flex-direction: column;
     align-content:center ;
     width: 100%;
+  }
+
+  /* page commande */
+  .tableau_commandes{
+    display:flex;
+    flex-direction: column;
+    /* align-items: center;   */
+    border: 1px solid lightgray; 
+    margin: 0 30px;
+    padding:20px;
+    border-radius: 10px;
   }
   
