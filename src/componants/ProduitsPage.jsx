@@ -1,11 +1,9 @@
 import React, { useState, useEffect} from 'react'
-import TableauProduits from './TableauProduits'
 import axios from 'axios'
 import ModaleAdd from './ModaleAdd'
-//import ReactTable from './ReactTable'
-//import ModaleDelete from './ModaleDelete';
-import { Table, Modal } from 'antd'
+import { Table, Modal, Input } from 'antd'
 import { AiOutlineRest, AiOutlineReload} from "react-icons/ai";
+const { Search } = Input
 
 
 const ProduitsPage = () => {
@@ -18,6 +16,7 @@ const ProduitsPage = () => {
     const [prix, setPrix] = useState('')
     const [visible, setVisible] = useState(false); 
     const [selectedProductId, setSelectedProductId] = useState(null)
+    const [searchTerm, setSearchTerm] = useState('');
     const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Salades et Bowls', 'Boissons'];
    
 
@@ -27,13 +26,7 @@ const ProduitsPage = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://127.0.0.1:8080/getAllProducts');
-        // console.log('element', elements)
-        //  console.log("response", response)
-        //correction ici
-        // updateProduits(response.data)
         setElements(response.data);
-      
-        // console.log(response.data)
       } catch (error) {
         console.error('Une erreur s\'est produite :', error);
       }
@@ -43,8 +36,6 @@ const ProduitsPage = () => {
   }, []);
 
   const handleDelete = async (id_produit) => {
-    // console.log('delete')
-    // console.log('id,', id_produit)
       try {
          //serveur nodeJS
         const baseUrl = "http://127.0.0.1:8080"
@@ -118,11 +109,16 @@ const ProduitsPage = () => {
        console.log(record.id_produit)
        setVisible(true)
        setLibelle(record.libelle);
-      setCategorie(record.categorie);
-      setPrix(record.prix)
-      setSelectedProductId(record.id_produit)
+       setCategorie(record.categorie);
+       setPrix(record.prix)
+       setSelectedProductId(record.id_produit)
       
     }
+
+    const handleSearch =  (e) => {
+      // console.log('value:', e.target.value)
+      setSearchTerm(e.target.value);
+    };
       
 
   const columns = [
@@ -172,8 +168,8 @@ const ProduitsPage = () => {
               categorie: categorie,
               prix: prix
             };
-            console.log(updatedData)
-            console.log('select id', selectedProductId)
+            // console.log(updatedData)
+            // console.log('select id', selectedProductId)
             handleUpdateProduct(selectedProductId, updatedData)
             setVisible(false);
             
@@ -222,12 +218,20 @@ const ProduitsPage = () => {
     <>
     <div className='page_produits_container'>
         <h3>Les produits</h3>
-        <button onClick={() => setOpenModaleAdd(true)}>Ajouter un produit</button>
+        <div style={{display:'flex', justifyContent:'space-around'}}>
+          <button onClick={() => setOpenModaleAdd(true)}>Ajouter un produit</button>
+          <Search 
+            placeholder='Rechercher un produit' 
+            size="medium" 
+            style={{width: 200}}
+            onChange={handleSearch}/>
+        </div>
+        
               <div className='Tableau'>
-               
-              {/* <TableauProduits elements={elements} handleDelete={handleDelete} handleUpdateProduct={handleUpdateProduct}/> */}
-              {/* <ReactTable elements={elements} handleDelete={handleDelete} handleUpdateProduct={handleUpdateProduct}/> */}
-              <Table dataSource={elements} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} rowKey='id_produit' />
+            
+                <Table 
+                dataSource={elements.filter((product) =>product.libelle.toLowerCase().includes(searchTerm.toLowerCase()))} 
+                columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} rowKey='id_produit' />
               
               </div>
     </div>
