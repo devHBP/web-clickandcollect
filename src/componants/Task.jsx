@@ -1,17 +1,30 @@
-import React, { useState} from "react"
+import React, { useState, useEffect} from "react"
 import { Draggable } from "react-beautiful-dnd"
 import {AiFillCaretDown} from "react-icons/ai";
 AiFillCaretDown
 
-function Task({ task, index }) {
+function Task({ task, index}) {
 
   const [showDetails, setShowDetails] = useState(false)
+  const [isTaskReady, setIsTaskReady] = useState(task.order.status === "attente");
+
+  useEffect(() => {
+    setIsTaskReady(task.order.status === "pret");
+  }, [task.order.status]);
 
 
   const toggleDetails = () => {
     setShowDetails(!showDetails)
     console.log(task)
   }
+
+  const handleDelivery = () => {
+   console.log(task)
+  };
+  const handleCancel = () => {
+    console.log(task)
+  }
+
   return (
     <Draggable draggableId={task.id} index={index}>
       {provided => (
@@ -41,6 +54,10 @@ function Task({ task, index }) {
                  <p>Passée le: {task.order.date}</p>
                  <p>Magasin: {task.order.magasin}</p>
               </ul>
+              <div className="buttons">
+                <button className="button_delivery" disabled={!isTaskReady} onClick={handleDelivery}>Livrée</button>
+                <button className="button_cancel" disabled={!isTaskReady} onClick={handleCancel}>Annulée</button>
+              </div>
                 
                 </div>
           )}
