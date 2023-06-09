@@ -9,40 +9,89 @@ function Tasks() {
         id: "task-1",
         content: {
           numero_commande: "#1",
-          client: "Client 1",
+          client: "1",
+          prix_total:'12'
         },
-        color: "blue",
+        order: {
+          produits: [
+            {
+              id: "produit-1",
+              nom: "Salade César",
+              quantite: 1,
+              prix_unitaire: 5
+            },
+            {
+              id: "produit-2",
+              nom: "Brownie",
+              quantite: 1,
+              prix_unitaire: 8
+            },
+            {
+              id: "produit-3",
+              nom: "Coca Cola",
+              quantite: 1,
+              prix_unitaire: 1.50
+            }
+          ],
+          date:"06-06-2023",
+        }
       },
       "task-2": {
         id: "task-2",
         content: {
           numero_commande: "#2",
-          client: "Client 2",
+          client: "2",
+          prix_total:'12'
         },
-        color: "blue",
+        order: {
+          produits: [
+            {
+              id: "produit-1",
+              nom: "Article 1",
+              quantite: 2,
+              prix_unitaire: 5
+            },
+            {
+              id: "produit-2",
+              nom: "Article 2",
+              quantite: 3,
+              prix_unitaire: 8
+            },
+          ],
+          date:"06-06-2023",
+        }
       },
       "task-3": {
         id: "task-3",
         content: {
           numero_commande: "#3",
-          client: "Client 3",
+          client: "3",
+          prix_total:'12'
         },
-        color: "blue",
-      },
-      "task-4": {
-        id: "task-4",
-        content: {
-          numero_commande: "#4",
-          client: "Client 4",
+        order: {
+          produits: [
+            {
+              id: "produit-1",
+              nom: "Article 1",
+              quantite: 2,
+              prix_unitaire: 5
+            },
+            {
+              id: "produit-2",
+              nom: "Article 2",
+              quantite: 3,
+              prix_unitaire: 8
+            }, 
+          ],
+          date:"06-06-2023",
         },
-        color: "blue",
-      },
+      }
     },
     columns: {
       "column-1": {
         id: "column-1",
         title: "A traiter",
-        taskIds: ["task-1", "task-2", "task-3", "task-4"],
+        taskIds: ["task-1", "task-2", "task-3"],
       },
       "column-2": {
         id: "column-2",
@@ -64,12 +113,10 @@ function Tasks() {
   const onDragEnd = (result) => {
     const { destination, source, draggableId } = result;
 
-    // on check la possition si c'est pas en dehors du cadre - sinon on arrete l'execution de la fonction
     if (!destination) {
       return;
     }
 
-    // on check si la destination n'est pas la meme que la source
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
@@ -77,43 +124,62 @@ function Tasks() {
       return;
     }
 
-    // partie 2 multiples colonnes
-    // on check si la colonne source et la meme que la colonne de destination
+    const startColumn = datas.columns[source.droppableId];
+    const finishColumn = datas.columns[destination.droppableId];
 
-    const start = datas.columns[source.droppableId];
-    const finish = datas.columns[destination.droppableId];
+    if (startColumn === finishColumn) {
+      // Déplacement dans la même colonne
+      const newTaskIds = Array.from(startColumn.taskIds);
+      newTaskIds.splice(source.index, 1);
+      newTaskIds.splice(destination.index, 0, draggableId);
 
-    // Si on bouge les éléments dans une autre colonne
-    const startTaskIds = Array.from(start.taskIds);
-    const finishTaskIds = Array.from(finish.taskIds);
+      const newColumn = {
+        ...startColumn,
+        taskIds: newTaskIds
+      };
 
-    // Supprimer la tâche déplacée de la colonne source
-    const updatedStartTaskIds = startTaskIds.filter(
-      (taskId) => taskId !== draggableId
-    );
-    // Ajouter la tâche déplacée à la colonne de destination
-    const updatedFinishTaskIds = [...finishTaskIds, draggableId];
-
-    const newStart = {
-      ...start,
-      taskIds: updatedStartTaskIds,
-    };
-
-    const newFinish = {
-      ...finish,
-      taskIds: updatedFinishTaskIds,
-    };
-
-    const newState = {
-      ...datas,
-      columns: {
+      const newColumns = {
         ...datas.columns,
-        [newStart.id]: newStart,
-        [newFinish.id]: newFinish,
-      },
-    };
+        [newColumn.id]: newColumn
+      };
 
-    setDatas(newState);
+      const newState = {
+        ...datas,
+        columns: newColumns
+      };
+
+      setDatas(newState);
+    } else {
+      // Déplacement entre différentes colonnes
+      const startTaskIds = Array.from(startColumn.taskIds);
+      startTaskIds.splice(source.index, 1);
+
+      const finishTaskIds = Array.from(finishColumn.taskIds);
+      finishTaskIds.splice(destination.index, 0, draggableId);
+
+      const newStartColumn = {
+        ...startColumn,
+        taskIds: startTaskIds
+      };
+
+      const newFinishColumn = {
+        ...finishColumn,
+        taskIds: finishTaskIds
+      };
+
+      const newColumns = {
+        ...datas.columns,
+        [newStartColumn.id]: newStartColumn,
+        [newFinishColumn.id]: newFinishColumn
+      };
+
+      const newState = {
+        ...datas,
+        columns: newColumns
+      };
+
+      setDatas(newState);
+    }
   };
 
   return (

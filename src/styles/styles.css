@@ -244,10 +244,25 @@
   background-color: rgb(255, 255, 255);  
   padding: .5rem;
   margin: .3rem 0;
+  position:relative
 }
 .task_item:hover{
   cursor: pointer;
   background-color: #a0bfef;
+}
+/* details orders */
+.details_order{
+position: absolute;
+bottom: 0;
+right:0;
+padding: 10px;
+}
+.list_order{
+  list-style-type: none;
+  margin-left: 10px;;
+}
+.second_part_order{
+  margin: 10px 0;
 }
 
   

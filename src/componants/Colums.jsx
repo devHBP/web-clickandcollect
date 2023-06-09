@@ -17,6 +17,7 @@ function Colums({column, tasks}) {
           <Task key={task.id} task={task} index={index}/>
         ))
       }
+      {provider.placeholder}
           </div>
         )}
       
