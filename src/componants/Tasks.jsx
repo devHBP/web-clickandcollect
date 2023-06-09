@@ -34,6 +34,7 @@ function Tasks() {
             }
           ],
           date:"06-06-2023",
+          status:'attente'
         }
       },
       "task-2": {
@@ -59,6 +60,7 @@ function Tasks() {
             },
           ],
           date:"06-06-2023",
+          status:'attente'
         }
       },
       "task-3": {
@@ -84,6 +86,7 @@ function Tasks() {
             }, 
           ],
           date:"06-06-2023",
+          status:'attente'
         },
       }
     },
@@ -177,6 +180,15 @@ function Tasks() {
         ...datas,
         columns: newColumns
       };
+
+      //mise à jour du status de la commande au dnd dans une autre colonne
+      if (finishColumn.id === "column-2") {
+        newState.tasks[draggableId].order.status = "preparation";
+      } else if (finishColumn.id === "column-3") {
+        newState.tasks[draggableId].order.status = "pret";
+      } else if (finishColumn.id === "column-1") {
+        newState.tasks[draggableId].order.status = "attente";
+       }
 
       setDatas(newState);
     }

@@ -104,6 +104,8 @@ const CommandePage = () => {
     <div>
         <h3>Commandes</h3>
 
+        <Tasks />
+
         <Tabs className="tableau_commandes">
 
           <TabList>
@@ -131,9 +133,8 @@ const CommandePage = () => {
 
         </Tabs>
 
-        <p style={{textAlign:'center'}}>Autre test : Drag and drop</p>
-
-       <Tasks />
+        
+      
        
               
     </div>

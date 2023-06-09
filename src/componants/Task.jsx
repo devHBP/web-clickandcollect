@@ -9,7 +9,7 @@ function Task({ task, index }) {
 
   const toggleDetails = () => {
     setShowDetails(!showDetails)
-    // console.log(task.id)
+    console.log(task)
   }
   return (
     <Draggable draggableId={task.id} index={index}>
