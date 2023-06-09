@@ -7,7 +7,7 @@ function Colums({column, tasks}) {
   // console.log(tasks)
   return (
     <div className='tasks_column'>
-      <h2 className='column-title'>{column.title}</h2>
+      <h4 className='column-title'>{column.title}</h4>
       <Droppable droppableId={column.id}>
         { provider => (
           <div

@@ -7,6 +7,7 @@ function Task({ task, index }) {
 
   const [showDetails, setShowDetails] = useState(false)
 
+
   const toggleDetails = () => {
     setShowDetails(!showDetails)
     console.log(task)
@@ -38,7 +39,9 @@ function Task({ task, index }) {
                   </li>
                 ))}
                  <p>Passée le: {task.order.date}</p>
+                 <p>Magasin: {task.order.magasin}</p>
               </ul>
+                
                 </div>
           )}
               
