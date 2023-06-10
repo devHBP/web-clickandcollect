@@ -75,6 +75,8 @@ function Tasks({initialData, updateCommandeDataSource}) {
         columns: newColumns
       };
 
+      
+
       //mise à jour du status de la commande au dnd dans une autre colonne
       if (finishColumn.id === "column-2") {
         newState.tasks[draggableId].order.status = "preparation";
@@ -88,6 +90,8 @@ function Tasks({initialData, updateCommandeDataSource}) {
       updateCommandeDataSource(initialData);
     }
   };
+
+ 
 
   return (
     <div className="tasks">

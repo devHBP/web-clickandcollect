@@ -18,8 +18,16 @@ function Task({ task, index}) {
     console.log(task)
   }
 
-  const handleDelivery = () => {
-   console.log(task)
+  const handleDeliveryAction = () => {
+    const updatedTask = {
+      ...task,
+      order: {
+        ...task.order,
+        status: "livree"
+      }
+    };
+    console.log("Nouvel état de la tâche :", updatedTask);
+    
   };
   const handleCancel = () => {
     console.log(task)
@@ -55,7 +63,7 @@ function Task({ task, index}) {
                  <p>Magasin: {task.order.magasin}</p>
               </ul>
               <div className="buttons">
-                <button className="button_delivery" disabled={!isTaskReady} onClick={handleDelivery}>Livrée</button>
+                <button className="button_delivery" disabled={!isTaskReady} onClick={handleDeliveryAction}>Livrée</button>
                 <button className="button_cancel" disabled={!isTaskReady} onClick={handleCancel}>Annulée</button>
               </div>
                 

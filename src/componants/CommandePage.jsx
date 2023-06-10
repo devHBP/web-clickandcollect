@@ -77,6 +77,9 @@ function CommandePage() {
         if (text === 'pret') {
           color = 'green';
         }
+        if (text === 'livree') {
+          color = 'yellow';
+        }
         return <Tag color={color}>{text}</Tag>;
       }
     },
