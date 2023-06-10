@@ -3,7 +3,7 @@ import Column from "./Colums";
 import { DragDropContext } from "react-beautiful-dnd";
 // import {initialData} from '../datas/datas'
 
-function Tasks({initialData, updateCommandeDataSource}) {
+function Tasks({initialData, updateCommandeDataSource, updateCommandeStatus}) {
 
   const [datas, setDatas] = useState(initialData);
 
@@ -99,7 +99,7 @@ function Tasks({initialData, updateCommandeDataSource}) {
         {datas.columnOrder.map((columnId) => {
           const column = datas.columns[columnId];
           const tasks = column.taskIds.map((taskId) => datas.tasks[taskId]);
-          return <Column key={column.id} column={column} tasks={tasks} />;
+          return <Column key={column.id} column={column} tasks={tasks} updateCommandeStatus={updateCommandeStatus}/>;
         })}
       </DragDropContext>
     </div>

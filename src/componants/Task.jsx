@@ -3,10 +3,11 @@ import { Draggable } from "react-beautiful-dnd"
 import {AiFillCaretDown} from "react-icons/ai";
 AiFillCaretDown
 
-function Task({ task, index}) {
+function Task({ task, index, updateCommandeStatus}) {
 
   const [showDetails, setShowDetails] = useState(false)
   const [isTaskReady, setIsTaskReady] = useState(task.order.status === "attente");
+  const [orderDelivery, setOrderDelivery] = useState();
 
   useEffect(() => {
     setIsTaskReady(task.order.status === "pret");
@@ -18,16 +19,22 @@ function Task({ task, index}) {
     console.log(task)
   }
 
+  // const handleDeliveryAction = () => {
+  //   const updatedTask = {
+  //     ...task,
+  //     order: {
+  //       ...task.order,
+  //       status: "livree"
+  //     }
+  //   };
+  //   console.log("Nouvel état de la tâche :", updatedTask);
+
+  // };
+
   const handleDeliveryAction = () => {
-    const updatedTask = {
-      ...task,
-      order: {
-        ...task.order,
-        status: "livree"
-      }
-    };
-    console.log("Nouvel état de la tâche :", updatedTask);
-    
+    setOrderDelivery("livree");
+    updateCommandeStatus(task.id, "livree");
+    console.log("status", task.order.status);
   };
   const handleCancel = () => {
     console.log(task)

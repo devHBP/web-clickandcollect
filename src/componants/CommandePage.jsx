@@ -19,6 +19,17 @@ function CommandePage() {
     setCommandeDataSource(getCommandeDataSource(newData));
   };
   
+  const updateCommandeStatus = (commandeId, newStatus) => {
+    setCommandeDataSource(prevDataSource => {
+      const updatedDataSource = prevDataSource.map(commande => {
+        if (commande.key === commandeId) {
+          return { ...commande, status: newStatus };
+        }
+        return commande;
+      });
+      return updatedDataSource;
+    });
+  };
   const getCommandeDataSource = (data) => {
     return data.columns["column-1"].taskIds.map((taskId) => {
       const task = data.tasks[taskId];
@@ -34,6 +45,8 @@ function CommandePage() {
       };
     });
   };
+
+ 
 
   // Définir les colonnes du tableau
   const columns = [
@@ -106,7 +119,7 @@ function CommandePage() {
     <div>
       <h3>Commandes</h3>
       
-      <Tasks initialData={initialData} updateCommandeDataSource={updateCommandeDataSource}/>
+      <Tasks initialData={initialData} updateCommandeDataSource={updateCommandeDataSource} updateCommandeStatus={updateCommandeStatus}/>
 
       <Tabs className="tableau_commandes">
 
