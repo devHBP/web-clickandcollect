@@ -30,6 +30,9 @@ function CommandePage() {
       return updatedDataSource;
     });
   };
+
+  //affichage du Tableau
+  //toutes les commandes
   const getCommandeDataSource = (data) => {
     return data.columns["column-1"].taskIds.map((taskId) => {
       const task = data.tasks[taskId];
@@ -45,9 +48,7 @@ function CommandePage() {
       };
     });
   };
-
- 
-
+  
   // Définir les colonnes du tableau
   const columns = [
     {
@@ -93,6 +94,9 @@ function CommandePage() {
         if (text === 'livree') {
           color = 'yellow';
         }
+        if (text === 'annulee') {
+          color = 'red';
+        }
         return <Tag color={color}>{text}</Tag>;
       }
     },
@@ -125,12 +129,20 @@ function CommandePage() {
 
           <TabList>
              <Tab>Toutes les commandes</Tab>
-             
+             <Tab>Livrées</Tab>
+             <Tab>Annulées</Tab>
            </TabList>
 
-           <TabPanel>
+          <TabPanel>
                  <Table dataSource={commandeDataSource} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
           </TabPanel>
+          <TabPanel>
+                 <Table dataSource={commandeDataSource.filter(commande => commande.status === 'livree')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
+          </TabPanel>
+          <TabPanel>
+                 <Table dataSource={commandeDataSource.filter(commande => commande.status === 'annulee')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
+          </TabPanel>
+          
            
 
          </Tabs>
