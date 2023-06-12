@@ -25,9 +25,10 @@ export const Signup = () => {
       email,
       password,
       //ajout
-       id_magasin:''
+      //modif ici id_magasin:null au lieu de vide ('')
+       id_magasin:null
   }
-  console.log(clientData)
+  console.log('signup web', clientData)
   try{
     //appel axios pour se loger
     const res = await axios.post('http://localhost:8080/signup', clientData)
@@ -94,7 +95,7 @@ export const Signup = () => {
                   placeholder='Mot de passe'
                 />
               </div>
-              <button type="submit" >Se connecter</button>
+              <button type="submit" >S'inscrire</button>
             </form>
             <div>
               Vous êtes déja inscrit ?
