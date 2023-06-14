@@ -1,6 +1,6 @@
 import React, { useState} from 'react'
 import { AiFillCloseCircle} from "react-icons/ai";
-import axios from 'axios';
+
 
 const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
 
