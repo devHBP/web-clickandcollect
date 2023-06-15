@@ -56,8 +56,9 @@ function Task({ task, index, updateCommandeStatus}) {
                     {produit.quantite}x{produit.nom} 
                   </li>
                 ))}
-                 <p>Passée le: {task.order.date}</p>
-                 <p>Magasin: {task.order.magasin}</p>
+                 <p>Date: {task.content.date}</p>
+                 <p>Heure: {task.content.heure}</p>
+                 <p>Magasin: {task.content.magasin}</p>
               </ul>
               <div className="buttons">
                 <button className="button_delivery" disabled={!isTaskReady} onClick={handleDelivery}>Livrée</button>
