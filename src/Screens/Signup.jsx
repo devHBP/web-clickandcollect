@@ -26,7 +26,7 @@ export const Signup = () => {
       password,
       //ajout
       //modif ici id_magasin:null au lieu de vide ('')
-       id_magasin:null
+       storeId:null
   }
   console.log('signup web', clientData)
   try{
