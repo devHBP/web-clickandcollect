@@ -26,6 +26,7 @@ const ProduitsPage = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://127.0.0.1:8080/getAllProducts');
+        console.log(response.data)
         setElements(response.data);
       } catch (error) {
         console.error('Une erreur s\'est produite :', error);
@@ -35,18 +36,18 @@ const ProduitsPage = () => {
     fetchData(); // Appel de la fonction fetchData lors du montage du composant
   }, []);
 
-  const handleDelete = async (id_produit) => {
+  const handleDelete = async (productId) => {
       try {
          //serveur nodeJS
         const baseUrl = "http://127.0.0.1:8080"
-        const response = await axios.delete(`${baseUrl}/deleteProduct/${id_produit}`);
+        const response = await axios.delete(`${baseUrl}/deleteProduct/${productId}`);
 
         // Vérifiez le statut de la réponse
         if (response.status !== 200) {
           throw new Error('Network response was not ok');
         }
         // Actualisez votre état ici pour refléter la suppression du produit
-        const updatedProduits = elements.filter((produit) => produit.id_produit !== id_produit)
+        const updatedProduits = elements.filter((produit) => produit.productId !== productId)
         setElements(updatedProduits)
         console.log('produit supprimé')
 
@@ -55,18 +56,18 @@ const ProduitsPage = () => {
       }
   }
   
-  const handleUpdateProduct = async (id_produit, updatedData) => {
+  const handleUpdateProduct = async (productId, updatedData) => {
     console.log(updatedData)
     try {
       const baseUrl = 'http://127.0.0.1:8080';
-      const response = await axios.put(`${baseUrl}/updateProduct/${id_produit}`, updatedData);
+      const response = await axios.put(`${baseUrl}/updateProduct/${productId}`, updatedData);
   
       if (response.status !== 200) {
         throw new Error('Network response was not ok');
       }
   
       const updatedElements = elements.map((element) => {
-        if (element.id_produit === id_produit) {
+        if (element.productId === productId) {
           return { ...element, ...updatedData };
         }
         return element;
@@ -86,7 +87,6 @@ const ProduitsPage = () => {
     try {
       const baseUrl = 'http://127.0.0.1:8080';
       await axios.post(`${baseUrl}/addProduct`, formData);
-
       const response = await axios.get(`${baseUrl}/getAllProducts`);
       const allProductsUpdated = response.data;
       console.log('allProductsUpdated', allProductsUpdated)
@@ -101,17 +101,17 @@ const ProduitsPage = () => {
     Modal.confirm({
       title: `Etes vous sur de supprimer ce produit : ${record.libelle} ?`,
       onOk:  () => {
-        handleDelete(record.id_produit)
+        handleDelete(record.productId)
       }
     })
     }; 
     const Update = (record) => { 
-       console.log(record.id_produit)
+       console.log(record.productId)
        setVisible(true)
        setLibelle(record.libelle);
        setCategorie(record.categorie);
-       setPrix(record.prix)
-       setSelectedProductId(record.id_produit)
+       setPrix(record.prix_unitaire)
+       setSelectedProductId(record.productId)
       
     }
 
@@ -142,9 +142,9 @@ const ProduitsPage = () => {
     },
     {
       title: 'Prix',
-      dataIndex: 'prix',
-      key: 'prix',
-      sorter: (a, b) => a.prix - b.prix,
+      dataIndex: 'prix_unitaire',
+      key: 'prix_unitaire',
+      sorter: (a, b) => a.prix_unitaire - b.prix_unitaire,
     },
     { 
       key: "action", 
@@ -166,7 +166,7 @@ const ProduitsPage = () => {
             const updatedData = {
               libelle: libelle,
               categorie: categorie,
-              prix: prix
+              prix_unitaire: prix
             };
             // console.log(updatedData)
             // console.log('select id', selectedProductId)
@@ -201,7 +201,7 @@ const ProduitsPage = () => {
                     <label htmlFor="prix">Prix:</label>
                     <input
                     type="text"
-                    id="prix"
+                    id="prix_unitaire"
                     value={prix}
                     onChange={(e) => setPrix(e.target.value)}
                     />
@@ -231,7 +231,7 @@ const ProduitsPage = () => {
             
                 <Table 
                 dataSource={elements.filter((product) =>product.libelle.toLowerCase().includes(searchTerm.toLowerCase()))} 
-                columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} rowKey='id_produit' />
+                columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} rowKey='productId' />
               
               </div>
     </div>

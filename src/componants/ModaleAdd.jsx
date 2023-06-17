@@ -30,7 +30,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
         formData.append('image', image);
         formData.append('libelle', libelle);
         formData.append('categorie', categorie);
-        formData.append('prix', prix);
+        formData.append('prix_unitaire', prix);
         //console.log comme ceci pour voir formData
         for (const pair of formData.entries()) {
             console.log(`${pair[0]}, ${pair[1]}`);
@@ -77,11 +77,11 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                 </div>
 
                 <div className='inputOptions'>
-                    <label htmlFor="prix">Prix:</label>
+                    <label htmlFor="prix_unitaire">Prix:</label>
                     <input
                     type="text"
-                    id="prix"
-                    name="prix"
+                    id="prix_unitaire"
+                    name="prix_unitaire"
                     value={prix}
                     onChange={(e) => setPrix(e.target.value)}
                     />
