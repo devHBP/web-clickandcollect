@@ -5,6 +5,7 @@ import {AiOutlineEye} from "react-icons/ai";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import {initialData} from '../datas/datas'
+import axios from 'axios'
 
 function CommandePage() {
 
@@ -13,6 +14,7 @@ function CommandePage() {
 
   useEffect(() => {
     setCommandeDataSource(getCommandeDataSource(initialData));
+    allOrders()
   }, []);
 
   const updateCommandeDataSource = (newData) => {
@@ -48,6 +50,56 @@ function CommandePage() {
       };
     });
   };
+
+  const allOrders = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8080/allOrders');
+      const orders = response.data;
+      //console.log('all orders',  orders)
+      const orderData = transformOrderData(orders);
+      console.log('all orders', orderData)
+      //setCommandeDataSource(orderData);
+
+
+      // ok - details de la commandes
+    // // Récupérer les valeurs de l'objet orders (tableau de commandes)
+    // const orderValues = Object.values(orders);
+
+    // // Itérer sur les commandes
+    // for (const order of orderValues[0]) {
+    //   const orderId = order.orderId;
+    //   // Appel à l'API pour récupérer les détails de la commande
+    //   const orderResponse = await axios.get(`http://127.0.0.1:8080/getOrderProducts/${orderId}`);
+    //   const orderData = orderResponse.data;
+      
+    //   // Utilisez les données de la commande comme souhaité
+    //   console.log('Commande', orderId, ':', orderData);
+    // }
+     
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  //mise en forme data
+  const transformOrderData = (orders) => {
+    const orderArray = Object.values(orders);
+    console.log(orderArray)
+    return orderArray.map((order) => {
+      return {
+        key: order.orderId,
+        numero_commande: order.numero_commande,
+        client: order.firstname_client + ' ' + order.lastname_client,
+        prix_total: order.prix_total,
+        produits: order.productIds,
+        date: order.date,
+        status: order.status,
+        magasin: order.storeId
+      };
+    });
+  };
+  
+
   
   // Définir les colonnes du tableau
   const columns = [

@@ -2,7 +2,7 @@ import React, { useState, useEffect} from 'react'
 import axios from 'axios'
 import ModaleAdd from './ModaleAdd'
 import { Table, Modal, Input } from 'antd'
-import { AiOutlineRest, AiOutlineReload} from "react-icons/ai";
+import { AiOutlineRest, AiOutlineReload, AiOutlineStock} from "react-icons/ai";
 const { Search } = Input
 
 
@@ -15,6 +15,10 @@ const ProduitsPage = () => {
     const [categorie, setCategorie] = useState('')
     const [prix, setPrix] = useState('')
     const [visible, setVisible] = useState(false); 
+    const [visibleStock, setVisibleStock] = useState(false); 
+    const [stock, setStock] = useState('')
+    const [ increaseAmount, setIncreaseAmount] = useState('')
+    const [decreaseAmount, setDecreaseAmount] = useState('')
     const [selectedProductId, setSelectedProductId] = useState(null)
     const [searchTerm, setSearchTerm] = useState('');
     const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Salades et Bowls', 'Boissons'];
@@ -106,13 +110,17 @@ const ProduitsPage = () => {
     })
     }; 
     const Update = (record) => { 
-       console.log(record.productId)
+      //  console.log(record.productId)
        setVisible(true)
        setLibelle(record.libelle);
        setCategorie(record.categorie);
        setPrix(record.prix_unitaire)
        setSelectedProductId(record.productId)
       
+    }
+    const ModifyStock = (record) => {
+      // console.log(record.stock)
+      setVisibleStock(true)
     }
 
     const handleSearch =  (e) => {
@@ -146,6 +154,24 @@ const ProduitsPage = () => {
       key: 'prix_unitaire',
       sorter: (a, b) => a.prix_unitaire - b.prix_unitaire,
     },
+    {
+      title: 'Prix Collab',
+      dataIndex: 'prix_remise_collaborateur',
+      key: 'prix_remise_collaborateur',
+      // sorter: (a, b) => a.prix_remise_collaborateur- b.prix_remise_collaborateur,
+    },
+    // {
+    //   title: 'Prix Client',
+    //   dataIndex: 'prix_remise_client',
+    //   key: 'prix_remise_client',
+    //   sorter: (a, b) => a.prix_remise_client- b.prix_remise_client,
+    // },
+    {
+      title: 'Stock',
+      dataIndex: 'stock',
+      key: 'stock',
+      //sorter: (a, b) => a.stock- b.stock,
+    },
     { 
       key: "action", 
       title: "Actions", 
@@ -158,6 +184,8 @@ const ProduitsPage = () => {
       <AiOutlineRest 
       onClick={() => Delete(record)} 
       />
+      <AiOutlineStock 
+      onClick={() => ModifyStock(record)}/>
       <Modal 
           title="Modification du produit"
           open={visible}
@@ -207,6 +235,46 @@ const ProduitsPage = () => {
                     />
                 </div>
           </Modal>
+
+          <Modal 
+          title='Modification du stock'
+          open={visibleStock}
+          onCancel={() => setVisibleStock(false)} 
+          onOk={() => {
+            console.log('ajout stock', increaseAmount)
+            console.log('baisse stock', decreaseAmount)
+            console.log('product Id', record.productId)
+            
+          }}
+          okText="Save" 
+          maskStyle={{ backgroundColor: 'lightgray' }}
+          >
+            <p>Produit: {record.libelle}</p>
+            <div style={{display:'flex', gap: '20px'}}>
+            <div className='inputOptions'>
+                    <label htmlFor="stock">Ajouter Stock:</label>
+                    <input
+                    type="text"
+                    id="stock"
+                    value={ increaseAmount}
+                    onChange={(e) => setIncreaseAmount(e.target.value)}
+                    style={{ width: '30px' }}
+                    />
+                </div>
+                <div className='inputOptions'>
+                    <label htmlFor="stock">Diminuer Stock:</label>
+                    <input
+                    type="text"
+                    id="stock"
+                    value={decreaseAmount}
+                    onChange={(e) => setDecreaseAmount(e.target.value)}
+                    style={{ width: '30px' }}
+                    />
+                </div>
+            </div>
+            
+                
+          </Modal>
    
       </> 
       ); 
@@ -218,6 +286,7 @@ const ProduitsPage = () => {
     <>
     <div className='page_produits_container'>
         <h3>Les produits</h3>
+        
         <div style={{display:'flex', justifyContent:'space-around'}}>
           <button onClick={() => setOpenModaleAdd(true)}>Ajouter un produit</button>
           <Search 

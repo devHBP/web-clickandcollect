@@ -131,7 +131,7 @@ export default function Promos() {
         </div>
         <Table 
                 dataSource={elements} 
-                columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} rowKey='id' />
+                columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} rowKey='promotionId' />
               
     </div>
     {
