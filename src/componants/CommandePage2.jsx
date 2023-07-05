@@ -1,16 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Tasks from './Tasks2';
+import { Table, Tag } from "antd";
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import {AiOutlineEye} from "react-icons/ai";
 
 
 function CommandePageSimple() {
   const [commandes, setCommandes] = useState([]);
-  
+  const [tableData, setTableData] = useState([]); 
 
   useEffect(() => {
     
     allOrders()
   }, []);
+  const updateOrderStatus = (orderId, status) => {
+    // Update commandes
+    setCommandes(prevCommandes => {
+      const updatedCommandes = { ...prevCommandes };
+      const orderToUpdate = updatedCommandes.tasks[orderId];
+      if (orderToUpdate) {
+        orderToUpdate.status = status;
+      }
+      return updatedCommandes;
+    });
+  
+    // Update tableData
+    setTableData(prevTableData => {
+      const updatedTableData = [...prevTableData];
+      const orderToUpdate = updatedTableData.find(order => order.key === orderId);
+      if (orderToUpdate) {
+        orderToUpdate.status = status;
+      }
+      return updatedTableData;
+    });
+  };
 
   const allOrders = async () => {
     try {
@@ -21,6 +45,11 @@ function CommandePageSimple() {
       const orderData = transformOrderData(orders);
       console.log('orderdata', orderData)
       setCommandes(orderData);
+      // Update status in commandes and tableData
+    Object.values(orderData.tasks).forEach(order => {
+        updateOrderStatus(order.key, order.status);
+      });
+    //   setTableData(Object.values(orderData.tasks))
     } catch (error) {
       console.error(error);
     }
@@ -43,6 +72,7 @@ function CommandePageSimple() {
             client: order.firstname_client + ' ' + order.lastname_client,
             prix_total: order.prix_total,
             nombre_produits: productIdsArray.length,
+            status:order.status
           };
           return acc;
         }, {}),
@@ -153,6 +183,7 @@ function CommandePageSimple() {
     try {
         const orderId = commandes.tasks[draggableId].key;
         const response = await axios.put(`http://127.0.0.1:8080/updateStatusOrder/${orderId}`, { status });
+        updateOrderStatus(orderId, status);
         //console.log('Order status updated successfully:', response.data);
       } catch (error) {
         console.error('An error occurred while updating the order status:', error);
@@ -160,12 +191,70 @@ function CommandePageSimple() {
 
 }
   
-
+//tableau
+const columns = [
+    {
+      title: "Numéro de commande",
+      dataIndex: "numero_commande",
+      key: "numero_commande"
+    },
+    {
+    title: "Statut",
+    dataIndex: "status",
+    key: "status",
+    render: (status) => {
+      let color;
+      switch (status) {
+        case 'en attente':
+          color = 'orange';
+          break;
+        case 'preparation':
+          color = 'blue';
+          break;
+        case 'prete':
+          color = 'green';
+          break;
+        case 'livree':
+          color = 'yellow';
+          break;
+        case 'annulee':
+          color = 'red';
+          break;
+        default:
+          color = 'default';
+      }
+      return <Tag color={color}>{status}</Tag>;
+    }
+      },
+    
+  ];
   
 
   return (
     <div className="commande-page">
       <Tasks commandes={commandes} onDragEnd={onDragEnd} />
+
+      <Tabs className="tableau_commandes">
+
+          <TabList>
+             <Tab>Toutes les commandes</Tab>
+             <Tab>Livrées</Tab>
+             <Tab>Annulées</Tab>
+           </TabList>
+
+          <TabPanel>
+                 <Table dataSource={tableData} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
+          </TabPanel>
+           <TabPanel>
+                 <Table dataSource={tableData.filter(commande => commande.status === 'livree')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
+          </TabPanel>
+          <TabPanel>
+                 <Table dataSource={tableData.filter(commande => commande.status === 'annulee')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
+          </TabPanel> 
+          
+           
+
+         </Tabs>
     </div>
   );
 }
