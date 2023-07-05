@@ -15,6 +15,8 @@ function CommandePageSimple() {
     
     allOrders()
   }, []);
+
+
   const updateOrderStatus = (orderId, status) => {
     // Update commandes
     setCommandes(prevCommandes => {
@@ -46,14 +48,18 @@ function CommandePageSimple() {
       //console.log('all orders',  orders)
 
         // Fetch product details for each order
-    const ordersWithDetails = await Promise.all(orders.map(async order => {
-        const productResponse = await axios.get(`http://127.0.0.1:8080/getOrderProducts/${order.orderId}`);
+      const ordersWithDetails = await Promise.all(orders.map(async order => {
+      const productResponse = await axios.get(`http://127.0.0.1:8080/getOrderProducts/${order.orderId}`);
+      const storeResponse = await axios.get(`http://127.0.0.1:8080/getOneStore/${order.storeId}`);
+      const storeName= storeResponse.data.nom_magasin
+ 
         return {
           ...order,
           productDetails: productResponse.data, // Add product details to order
+          storeName: storeName
         };
       }));
-
+      
       const orderData = transformOrderData(ordersWithDetails);
       //console.log('orderdata', orderData)
       setCommandes(orderData);
@@ -80,6 +86,15 @@ function CommandePageSimple() {
         console.log('Commande', orderId, ':', product);
         console.log('Libelle:', libelle);
       }
+
+    
+      //   const storeId = order.storeId
+      //   const response = await axios.get(`http://127.0.0.1:8080/getOneStore/${storeId}`);
+      //   const storeDetails = response.data; 
+      //  const storeName = storeDetails.nom_magasin
+      //   console.log('storeN', storeName)
+        
+      
       
     }
     } catch (error) {
@@ -87,17 +102,22 @@ function CommandePageSimple() {
     }
   };
 
+
   //mise en forme data
   const transformOrderData = (orders) => {
     const orderArray = Object.values(orders);
     console.log(orderArray)
    
     return {
-       
-       
         tasks: orderArray.reduce((acc, order) => {
             const productIdsArray = order.productIds.split(","); // Convertir la chaîne de caractères en tableau
-       
+
+            const date = new Date(order.date);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Les mois sont indexés à partir de 0
+            const year = date.getFullYear();
+            const formattedDate = `${day}-${month}-${year}`; 
+
           acc[order.numero_commande] = {
             key: order.orderId,
             numero_commande: order.numero_commande,
@@ -106,6 +126,9 @@ function CommandePageSimple() {
             nombre_produits: productIdsArray.length,
             status:order.status,
             productDetails: order.productDetails, 
+            date:formattedDate,
+            heure: order.heure,
+            magasin:order.storeName
           };
           return acc;
         }, {}),
