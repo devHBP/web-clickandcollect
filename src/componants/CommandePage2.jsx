@@ -255,6 +255,29 @@ const columns = [
       key: "numero_commande"
     },
     {
+      title: "Client",
+      dataIndex: "client",
+      key: "client"
+    },
+    ,
+    {
+      title: "Prix total",
+      dataIndex: "prix_total",
+      key: "prix_total"
+    },
+    ,
+    {
+      title:'Pain du Jour',
+      dataIndex:'magasin', 
+      key:'magasin'
+    },
+    ,
+    {
+      title: "Passée le ",
+      dataIndex: "date",
+      key: "date"
+    },
+    {
     title: "Statut",
     dataIndex: "status",
     key: "status",
@@ -282,8 +305,22 @@ const columns = [
       return <Tag color={color}>{status}</Tag>;
     }
       },
-    
+      { 
+        key: "action", 
+        title: "Actions", 
+        render: (record) => { 
+        return ( 
+        <> 
+        <AiOutlineEye 
+        onClick={() => Open(record)} 
+        /> 
+        </>
+        )
+      }}
   ];
+  const Open = (record) => { 
+    console.log(record)
+ }
   
 
   return (
