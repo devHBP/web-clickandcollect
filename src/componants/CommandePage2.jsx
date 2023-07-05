@@ -39,18 +39,49 @@ function CommandePageSimple() {
 
   const allOrders = async () => {
     try {
+     
       const response = await axios.get('http://127.0.0.1:8080/allOrders');
       const orders = response.data.orders;
       //console.log('resp', response)
       //console.log('all orders',  orders)
-      const orderData = transformOrderData(orders);
-      console.log('orderdata', orderData)
+
+        // Fetch product details for each order
+    const ordersWithDetails = await Promise.all(orders.map(async order => {
+        const productResponse = await axios.get(`http://127.0.0.1:8080/getOrderProducts/${order.orderId}`);
+        return {
+          ...order,
+          productDetails: productResponse.data, // Add product details to order
+        };
+      }));
+
+      const orderData = transformOrderData(ordersWithDetails);
+      //console.log('orderdata', orderData)
       setCommandes(orderData);
       // Update status in commandes and tableData
       Object.values(orderData.tasks).forEach(order => {
         updateOrderStatus(order.key, order.status);
       });
       setTableData(Object.values(orderData.tasks))
+
+      
+    // Itérer sur les commandes
+    for (const order of orders) {
+      const orderId = order.orderId;
+      //console.log('orderId', orderId)
+      // Appel à l'API pour récupérer les détails de la commande
+      const orderResponse = await axios.get(`http://127.0.0.1:8080/getOrderProducts/${orderId}`);
+      const orderData = orderResponse.data;
+     
+      for (const product of orderData) {
+        // Accéder à la propriété 'libelle'
+        const libelle = product.libelle;
+    
+        // Utilisez les données de la commande comme souhaité
+        console.log('Commande', orderId, ':', product);
+        console.log('Libelle:', libelle);
+      }
+      
+    }
     } catch (error) {
       console.error(error);
     }
@@ -73,7 +104,8 @@ function CommandePageSimple() {
             client: order.firstname_client + ' ' + order.lastname_client,
             prix_total: order.prix_total,
             nombre_produits: productIdsArray.length,
-            status:order.status
+            status:order.status,
+            productDetails: order.productDetails, 
           };
           return acc;
         }, {}),

@@ -57,7 +57,7 @@ function CommandePage() {
       const orders = response.data;
       //console.log('all orders',  orders)
       const orderData = transformOrderData(orders);
-      console.log('all orders', orderData)
+      //console.log('all orders', orderData)
       //setCommandeDataSource(orderData);
 
 
@@ -84,7 +84,7 @@ function CommandePage() {
   //mise en forme data
   const transformOrderData = (orders) => {
     const orderArray = Object.values(orders);
-    console.log(orderArray)
+    //console.log(orderArray)
     return orderArray.map((order) => {
       return {
         key: order.orderId,
