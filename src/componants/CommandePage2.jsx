@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Tasks from './Tasks2';
+
 
 function CommandePageSimple() {
   const [commandes, setCommandes] = useState([]);
@@ -67,7 +67,7 @@ function CommandePageSimple() {
       };
     
   };
-  const onDragEnd = (result) => {
+  const onDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
 
     if (!destination) {
@@ -131,6 +131,32 @@ function CommandePageSimple() {
       };
   
       setCommandes(newState);
+
+      // Log the status of the order
+    let status;
+    switch (newFinish.id) {
+      case 'column-1':
+        status = 'en attente';
+        break;
+      case 'column-2':
+        status = 'preparation';
+        break;
+      case 'column-3':
+        status = 'prete';
+        break;
+      default:
+        status = 'unknown';
+    }
+    console.log(`Order ${draggableId} is now  : ${status}`);
+
+    // Update the status of the order in the database
+    try {
+        const orderId = commandes.tasks[draggableId].key;
+        const response = await axios.put(`http://127.0.0.1:8080/updateStatusOrder/${orderId}`, { status });
+        //console.log('Order status updated successfully:', response.data);
+      } catch (error) {
+        console.error('An error occurred while updating the order status:', error);
+      }
 
 }
   
