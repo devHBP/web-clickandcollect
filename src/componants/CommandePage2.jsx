@@ -50,7 +50,7 @@ function CommandePageSimple() {
           "column-1": {
             id: "column-1",
             title: "Commandes en attente",
-            taskIds: orderArray.filter(order => order.status === 'paid').map(order => order.numero_commande),
+            taskIds: orderArray.filter(order => order.status === 'en attente').map(order => order.numero_commande),
           },
           "column-2": {
             id: "column-2",
@@ -67,13 +67,79 @@ function CommandePageSimple() {
       };
     
   };
+  const onDragEnd = (result) => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) {
+      return;
+    }
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    const start = commandes.columns[source.droppableId];
+    const finish = commandes.columns[destination.droppableId];
+
+    if (start === finish) {
+      const newTaskIds = Array.from(start.taskIds);
+      newTaskIds.splice(source.index, 1);
+      newTaskIds.splice(destination.index, 0, draggableId);
+
+      const newColumn = {
+        ...start,
+        taskIds: newTaskIds,
+      };
+
+      const newState = {
+        ...commandes,
+        columns: {
+          ...commandes.columns,
+          [newColumn.id]: newColumn,
+        },
+      };
+
+      setCommandes(newState);
+      return;
+    }
+
+    // Moving from one list to another
+    const startTaskIds = Array.from(start.taskIds);
+    startTaskIds.splice(source.index, 1);
+    const newStart = {
+      ...start,
+      taskIds: startTaskIds,
+    };
+
+    const finishTaskIds = Array.from(finish.taskIds);
+    finishTaskIds.splice(destination.index, 0, draggableId);
+    const newFinish = {
+      ...finish,
+      taskIds: finishTaskIds,
+    };
+
+    const newState = {
+        ...commandes,
+        columns: {
+          ...commandes.columns,
+          [newStart.id]: newStart,
+          [newFinish.id]: newFinish,
+        },
+      };
+  
+      setCommandes(newState);
+
+}
   
 
   
 
   return (
     <div className="commande-page">
-      <Tasks commandes={commandes} />
+      <Tasks commandes={commandes} onDragEnd={onDragEnd} />
     </div>
   );
 }
