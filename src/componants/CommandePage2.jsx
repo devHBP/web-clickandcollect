@@ -46,7 +46,7 @@ function CommandePageSimple() {
       console.log('orderdata', orderData)
       setCommandes(orderData);
       // Update status in commandes and tableData
-    Object.values(orderData.tasks).forEach(order => {
+      Object.values(orderData.tasks).forEach(order => {
         updateOrderStatus(order.key, order.status);
       });
     //   setTableData(Object.values(orderData.tasks))
