@@ -10,6 +10,7 @@ function CommandePageSimple() {
   const [commandes, setCommandes] = useState([]);
   const [tableData, setTableData] = useState([]); 
 
+
   useEffect(() => {
     
     allOrders()
@@ -49,7 +50,7 @@ function CommandePageSimple() {
       Object.values(orderData.tasks).forEach(order => {
         updateOrderStatus(order.key, order.status);
       });
-    //   setTableData(Object.values(orderData.tasks))
+      setTableData(Object.values(orderData.tasks))
     } catch (error) {
       console.error(error);
     }
