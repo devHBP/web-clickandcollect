@@ -3,7 +3,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import {AiFillCaretDown} from "react-icons/ai";
 import axios from 'axios'
 
-function Task({ commande, index, updateOrderStatus }) {
+function Task({ commande, index, updateOrderStatus, socket }) {
   const [showDetails, setShowDetails] = useState(false)
   const [isTaskReady, setIsTaskReady] = useState(commande.status === "attente");
 
@@ -13,7 +13,7 @@ function Task({ commande, index, updateOrderStatus }) {
 
   const toggleDetails = () => {
     setShowDetails(!showDetails)
-    console.log(commande)
+    //console.log(commande)
   }
   const handleDelivery = async () => {
     const status = 'livree';
@@ -26,12 +26,24 @@ function Task({ commande, index, updateOrderStatus }) {
   };
   const handleCancel = async () => {
     const status = 'annulee';
+    // try {
+    //   const response = await axios.put(`http://127.0.0.1:8080/updateStatusOrder/${commande.key}`, { status });
+    //   updateOrderStatus(commande.key, status);
+    // } catch (error) {
+    //   console.error('An error occurred while updating the order status:', error);
+    // } 
     try {
       const response = await axios.put(`http://127.0.0.1:8080/updateStatusOrder/${commande.key}`, { status });
       updateOrderStatus(commande.key, status);
+
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        const message = JSON.stringify({ type: 'updatedOrder', data: { orderId: commande.key, status } });
+        socket.send(message);
+      }
+
     } catch (error) {
       console.error('An error occurred while updating the order status:', error);
-    } 
+    }
   }
 
   return (

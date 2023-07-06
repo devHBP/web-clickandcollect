@@ -9,21 +9,45 @@ import {AiOutlineEye} from "react-icons/ai";
 function CommandePageSimple() {
   const [commandes, setCommandes] = useState([]);
   const [tableData, setTableData] = useState([]); 
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
     allOrders()
+    initializeWebSocket();
   }, []);
+
+  const initializeWebSocket = () => {
+    const newSocket = new WebSocket('ws://localhost:8080');
+
+    newSocket.onopen = () => {
+      console.log('WebSocket connection established.');
+    };
+
+    newSocket.onmessage = event => {
+      const message = event.data;
+      console.log('Received WebSocket message:', message);
+    };
+
+    newSocket.onclose = event => {
+      console.log('WebSocket connection closed:', event.code, event.reason);
+    };
+
+    setSocket(newSocket);
+  };
 
 
   const updateOrderStatus = (orderId, status) => {
     // Update commandes
     setCommandes(prevCommandes => {
       const updatedCommandes = { ...prevCommandes };
-      const orderToUpdate = updatedCommandes.tasks[orderId];
+      //const orderToUpdate = updatedCommandes.tasks[orderId];
+      const orderToUpdate = Object.values(updatedCommandes.tasks).find(order => order.key === orderId);
       if (orderToUpdate) {
         if (status === 'livree' || status === 'annulee') {
           //supprime des tasks une fois livree ou annulee
-          delete updatedCommandes.tasks[orderId];
+          console.log('annulee')
+          delete updatedCommandes.tasks[orderToUpdate.numero_commande];
+          //delete updatedCommandes.tasks[orderId];
         } else {
           orderToUpdate.status = status;
         }
@@ -40,6 +64,13 @@ function CommandePageSimple() {
         }   
       return updatedTableData;
     });
+
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      //revoir la logique "nouvelle commande ici peut etre"
+      //const message = JSON.stringify({ type: 'updatedOrder', data: { orderId, status } });
+      //socket.send(message);
+    }
+
   };
 
   const allOrders = async () => {
@@ -80,8 +111,8 @@ function CommandePageSimple() {
         // Accéder à la propriété 'libelle'
         const libelle = product.libelle;
         // Utilisez les données de la commande comme souhaité
-        console.log('Commande', orderId, ':', product);
-        console.log('Libelle:', libelle);
+        //console.log('Commande', orderId, ':', product);
+        //console.log('Libelle:', libelle);
       }      
     }
     } catch (error) {
@@ -310,7 +341,10 @@ const columns = [
 
   return (
     <div className="commande-page">
-      <Tasks commandes={commandes} onDragEnd={onDragEnd} updateOrderStatus={updateOrderStatus} />
+      <Tasks commandes={commandes} 
+          onDragEnd={onDragEnd} 
+          updateOrderStatus={updateOrderStatus} 
+          socket={socket} />
 
       <Tabs className="tableau_commandes">
 
