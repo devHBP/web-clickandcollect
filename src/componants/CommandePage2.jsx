@@ -10,9 +10,7 @@ function CommandePageSimple() {
   const [commandes, setCommandes] = useState([]);
   const [tableData, setTableData] = useState([]); 
 
-
   useEffect(() => {
-    
     allOrders()
   }, []);
 
@@ -23,7 +21,12 @@ function CommandePageSimple() {
       const updatedCommandes = { ...prevCommandes };
       const orderToUpdate = updatedCommandes.tasks[orderId];
       if (orderToUpdate) {
-        orderToUpdate.status = status;
+        if (status === 'livree' || status === 'annulee') {
+          //supprime des tasks une fois livree ou annulee
+          delete updatedCommandes.tasks[orderId];
+        } else {
+          orderToUpdate.status = status;
+        }
       }
       return updatedCommandes;
     });
@@ -32,9 +35,9 @@ function CommandePageSimple() {
     setTableData(prevTableData => {
       const updatedTableData = [...prevTableData];
       const orderToUpdate = updatedTableData.find(order => order.key === orderId);
-      if (orderToUpdate) {
-        orderToUpdate.status = status;
-      }
+        if (orderToUpdate) {
+          orderToUpdate.status = status;
+        }   
       return updatedTableData;
     });
   };
@@ -44,9 +47,6 @@ function CommandePageSimple() {
      
       const response = await axios.get('http://127.0.0.1:8080/allOrders');
       const orders = response.data.orders;
-      //console.log('resp', response)
-      //console.log('all orders',  orders)
-
         // Fetch product details for each order
       const ordersWithDetails = await Promise.all(orders.map(async order => {
       const productResponse = await axios.get(`http://127.0.0.1:8080/getOrderProducts/${order.orderId}`);
@@ -61,7 +61,6 @@ function CommandePageSimple() {
       }));
       
       const orderData = transformOrderData(ordersWithDetails);
-      //console.log('orderdata', orderData)
       setCommandes(orderData);
       // Update status in commandes and tableData
       Object.values(orderData.tasks).forEach(order => {
@@ -73,7 +72,6 @@ function CommandePageSimple() {
     // Itérer sur les commandes
     for (const order of orders) {
       const orderId = order.orderId;
-      //console.log('orderId', orderId)
       // Appel à l'API pour récupérer les détails de la commande
       const orderResponse = await axios.get(`http://127.0.0.1:8080/getOrderProducts/${orderId}`);
       const orderData = orderResponse.data;
@@ -81,21 +79,10 @@ function CommandePageSimple() {
       for (const product of orderData) {
         // Accéder à la propriété 'libelle'
         const libelle = product.libelle;
-    
         // Utilisez les données de la commande comme souhaité
         console.log('Commande', orderId, ':', product);
         console.log('Libelle:', libelle);
-      }
-
-    
-      //   const storeId = order.storeId
-      //   const response = await axios.get(`http://127.0.0.1:8080/getOneStore/${storeId}`);
-      //   const storeDetails = response.data; 
-      //  const storeName = storeDetails.nom_magasin
-      //   console.log('storeN', storeName)
-        
-      
-      
+      }      
     }
     } catch (error) {
       console.error(error);
@@ -240,11 +227,9 @@ function CommandePageSimple() {
         const orderId = commandes.tasks[draggableId].key;
         const response = await axios.put(`http://127.0.0.1:8080/updateStatusOrder/${orderId}`, { status });
         updateOrderStatus(orderId, status);
-        //console.log('Order status updated successfully:', response.data);
       } catch (error) {
         console.error('An error occurred while updating the order status:', error);
       }
-
 }
   
 //tableau
@@ -325,7 +310,7 @@ const columns = [
 
   return (
     <div className="commande-page">
-      <Tasks commandes={commandes} onDragEnd={onDragEnd} />
+      <Tasks commandes={commandes} onDragEnd={onDragEnd} updateOrderStatus={updateOrderStatus} />
 
       <Tabs className="tableau_commandes">
 
@@ -336,18 +321,16 @@ const columns = [
            </TabList>
 
           <TabPanel>
-                 <Table dataSource={tableData} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
-          </TabPanel>
-           <TabPanel>
-                 <Table dataSource={tableData.filter(commande => commande.status === 'livree')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
+             <Table dataSource={tableData} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
           </TabPanel>
           <TabPanel>
-                 <Table dataSource={tableData.filter(commande => commande.status === 'annulee')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
-          </TabPanel> 
-          
-           
+             <Table dataSource={tableData.filter(commande => commande.status === 'livree')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
+          </TabPanel>
+          <TabPanel>
+              <Table dataSource={tableData.filter(commande => commande.status === 'annulee')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
+          </TabPanel>    
 
-         </Tabs>
+      </Tabs>
     </div>
   );
 }
