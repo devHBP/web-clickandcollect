@@ -7,6 +7,7 @@ import UsersPage from '../componants/UsersPage'
 import CommandePage from '../componants/CommandePage'
 import Promos from '../componants/Promos'
 import CommandePageSimple from '../componants/CommandePage2'
+import { MaBoulangerie } from '../componants/MaBoulangerie'
 
 export const Home = () => {
 
@@ -37,6 +38,7 @@ export const Home = () => {
             <button onClick={() => handleContentSelection("commandes")}>Commandes</button>
             <button onClick={() => handleContentSelection("commandes2")}>Commandes2</button>
             <button onClick={() => handleContentSelection("promos")}>Promotions</button>
+            <button onClick={() => handleContentSelection("boulangerie")}>Ma boulangerie</button>
         </div>
         <div className='dashboard_content'>
               
@@ -46,6 +48,7 @@ export const Home = () => {
               { currentPage === "commandes" && <CommandePage />}
               { currentPage === "commandes2" && <CommandePageSimple />}
               { currentPage === "promos" && <Promos />}
+              { currentPage === "boulangerie" && <MaBoulangerie />}
               {/* Autres pages ici */}
          
           </div>
