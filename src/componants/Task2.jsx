@@ -26,20 +26,15 @@ function Task({ commande, index, updateOrderStatus, socket }) {
   };
   const handleCancel = async () => {
     const status = 'annulee';
-    // try {
-    //   const response = await axios.put(`http://127.0.0.1:8080/updateStatusOrder/${commande.key}`, { status });
-    //   updateOrderStatus(commande.key, status);
-    // } catch (error) {
-    //   console.error('An error occurred while updating the order status:', error);
-    // } 
+ 
     try {
-      const response = await axios.put(`http://127.0.0.1:8080/updateStatusOrder/${commande.key}`, { status });
+      const response = await axios.post(`http://127.0.0.1:8080/cancelOrder`, { orderId: commande.key });
       updateOrderStatus(commande.key, status);
 
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        const message = JSON.stringify({ type: 'updatedOrder', data: { orderId: commande.key, status } });
-        socket.send(message);
-      }
+      // if (socket && socket.readyState === WebSocket.OPEN) {
+      //   const message = JSON.stringify({ type: 'updatedOrder', data: { orderId: commande.key, status } });
+      //   socket.send(message);
+      // }
 
     } catch (error) {
       console.error('An error occurred while updating the order status:', error);
