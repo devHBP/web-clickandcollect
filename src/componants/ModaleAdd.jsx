@@ -8,8 +8,11 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
     const [libelle, setLibelle] = useState('')
     const [categorie, setCategorie] = useState('')
     const [prix, setPrix] = useState('')
+    const [prixRemiseCollaborateur, setPrixRemiseCollaborateur] = useState('');
+    const [disponibilite, setDisponibilite] = useState(false);
+    const [stock, setStock] = useState('');
 
-    const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons', 'Desserts'];
+    const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons', 'Desserts', 'Salades et Bowls'];
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -31,6 +34,9 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
         formData.append('libelle', libelle);
         formData.append('categorie', categorie);
         formData.append('prix_unitaire', prix);
+        formData.append('prix_remise_collaborateur', prixRemiseCollaborateur);
+        formData.append('disponibilite', disponibilite);
+        formData.append('stock', stock);
         //console.log comme ceci pour voir formData
         for (const pair of formData.entries()) {
             console.log(`${pair[0]}, ${pair[1]}`);
@@ -84,6 +90,39 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                     name="prix_unitaire"
                     value={prix}
                     onChange={(e) => setPrix(e.target.value)}
+                    />
+                </div>
+                
+                <div className='inputOptions'>
+                    <label htmlFor="prix_remise_collaborateur">Prix remise collaborateur:</label>
+                    <input
+                    type="text"
+                    id="prix_remise_collaborateur"
+                    name="prix_remise_collaborateur"
+                    value={prixRemiseCollaborateur}
+                    onChange={(e) => setPrixRemiseCollaborateur(e.target.value)}
+                    />
+                </div>
+
+                <div className='inputOptions'>
+                    <label htmlFor="disponibilite">Disponible:</label>
+                    <input
+                    type="checkbox"
+                    id="disponibilite"
+                    name="disponibilite"
+                    checked={disponibilite}
+                    onChange={(e) => setDisponibilite(e.target.checked)}
+                    />
+                </div>
+
+                <div className='inputOptions'>
+                    <label htmlFor="stock">Stock:</label>
+                    <input
+                    type="number"
+                    id="stock"
+                    name="stock"
+                    value={stock}
+                    onChange={(e) => setStock(e.target.value)}
                     />
                 </div>
 

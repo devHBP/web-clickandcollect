@@ -2,7 +2,7 @@ import React, { useState, useEffect} from 'react'
 import axios from 'axios'
 import ModaleAdd from './ModaleAdd'
 import { Table, Modal, Input } from 'antd'
-import { AiOutlineRest, AiOutlineReload, AiOutlineStock} from "react-icons/ai";
+import { AiOutlineRest, AiOutlineReload, AiOutlineStock, AiOutlinePlusCircle, AiOutlineMinusCircle} from "react-icons/ai";
 const { Search } = Input
 
 
@@ -15,8 +15,10 @@ const ProduitsPage = () => {
     const [categorie, setCategorie] = useState('')
     const [prix, setPrix] = useState('')
     const [visible, setVisible] = useState(false); 
-    const [visibleStock, setVisibleStock] = useState(false); 
-    const [stock, setStock] = useState('')
+    const [visibleIncreaseStock, setVisibleIncreaseStock] = useState(false); 
+    const [visibleDecreaseStock, setVisibleDecreaseStock] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    //const [stock, setStock] = useState('')
     const [ increaseAmount, setIncreaseAmount] = useState('')
     const [decreaseAmount, setDecreaseAmount] = useState('')
     const [selectedProductId, setSelectedProductId] = useState(null)
@@ -100,6 +102,54 @@ const ProduitsPage = () => {
       console.error('There has been a problem with your Axios request:', error);
     }
   };
+
+  // requete ajout stock
+  const handleIncreaseStock = async (productId, increaseAmount) => {
+    try {
+      const baseUrl = 'http://127.0.0.1:8080';
+      const response = await axios.put(`${baseUrl}/increaseStock/${productId}`, { increaseAmount });
+  
+      if (response.status !== 200) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const updatedElements = elements.map((element) => {
+        if (element.productId === productId) {
+          return { ...element, stock: element.stock + Number(increaseAmount) };
+        }
+        return element;
+      });
+  
+      setElements(updatedElements);
+    } catch (error) {
+      console.error('There has been a problem with your Axios request:', error);
+    }
+  };
+
+  const handleDecreaseStock = async (productId, decreaseAmount) => {
+    try {
+      const baseUrl = 'http://127.0.0.1:8080';
+      const response = await axios.put(`${baseUrl}/decreaseStock/${productId}`, { decreaseAmount });
+  
+      if (response.status !== 200) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const updatedElements = elements.map((element) => {
+        if (element.productId === productId) {
+          return { ...element, stock: element.stock - Number(decreaseAmount) };
+        }
+        return element;
+      });
+  
+      setElements(updatedElements);
+    } catch (error) {
+      console.error('There has been a problem with your Axios request:', error);
+    }
+  };
+  
+
+  
   const Delete = (record) => { 
     // console.log(record.id_produit)
     Modal.confirm({
@@ -118,9 +168,18 @@ const ProduitsPage = () => {
        setSelectedProductId(record.productId)
       
     }
-    const ModifyStock = (record) => {
+    const IncreaseStock = (record) => {
       // console.log(record.stock)
-      setVisibleStock(true)
+      setVisibleIncreaseStock(true);
+    setSelectedProductId(record.productId);
+    setSelectedProduct(record);
+    }
+
+    const DecreaseStock = (record) => {
+       console.log(record.stock)
+       setVisibleDecreaseStock(true);
+       setSelectedProductId(record.productId);
+       setSelectedProduct(record);
     }
 
     const handleSearch =  (e) => {
@@ -172,6 +231,72 @@ const ProduitsPage = () => {
       key: 'stock',
       //sorter: (a, b) => a.stock- b.stock,
     },
+    {
+      title: 'Modifier stock',
+      render : (record) => {
+        return (
+          <>
+          <AiOutlinePlusCircle onClick={() => IncreaseStock(record)}/>
+          
+          <Modal 
+          title='Modification du stock'
+          open={visibleIncreaseStock}
+          onCancel={() => setVisibleIncreaseStock(false)} 
+          onOk={() => {
+            handleIncreaseStock(selectedProductId, increaseAmount);
+            setVisibleIncreaseStock(false);
+          }}
+          okText="Save" 
+          maskStyle={{ backgroundColor: 'lightgray' }}
+          >
+            <p>Produit: {selectedProduct?.libelle}</p>
+            <div style={{display:'flex', gap: '20px'}}>
+            <div className='inputOptions'>
+                    <label htmlFor="stock">Ajouter Stock:</label>
+                    <input
+                    type="text"
+                    id="stock"
+                    value={ increaseAmount}
+                    onChange={(e) => setIncreaseAmount(e.target.value)}
+                    style={{ width: '30px' }}
+                    />
+                </div>
+        
+            </div>
+          </Modal>
+
+          <AiOutlineMinusCircle onClick={() => DecreaseStock(record)}/>
+
+          <Modal 
+              title='Modification du stock'
+              open={visibleDecreaseStock}
+              onCancel={() => setVisibleDecreaseStock(false)} 
+              onOk={() => {
+                handleDecreaseStock(selectedProductId, decreaseAmount);
+                setVisibleDecreaseStock(false);
+              }}
+              okText="Save" 
+              maskStyle={{ backgroundColor: 'lightgray' }}
+            >
+              <p>Produit: {selectedProduct?.libelle}</p>
+              <div style={{display:'flex', gap: '20px'}}>
+                <div className='inputOptions'>
+                  <label htmlFor="stock">Diminuer Stock:</label>
+                  <input
+                    type="text"
+                    id="stock"
+                    value={ decreaseAmount}
+                    onChange={(e) => setDecreaseAmount(e.target.value)}
+                    style={{ width: '30px' }}
+                  />
+                </div>
+              </div>
+            </Modal>
+
+          </>
+        )
+      }
+    },
     { 
       key: "action", 
       title: "Actions", 
@@ -184,98 +309,6 @@ const ProduitsPage = () => {
       <AiOutlineRest 
       onClick={() => Delete(record)} 
       />
-      <AiOutlineStock 
-      onClick={() => ModifyStock(record)}/>
-      <Modal 
-          title="Modification du produit"
-          open={visible}
-          onCancel={() => setVisible(false)} 
-          onOk={() => {
-            const updatedData = {
-              libelle: libelle,
-              categorie: categorie,
-              prix_unitaire: prix
-            };
-            // console.log(updatedData)
-            // console.log('select id', selectedProductId)
-            handleUpdateProduct(selectedProductId, updatedData)
-            setVisible(false);
-            
-          }}
-          okText="Save" 
-          maskStyle={{ backgroundColor: 'lightgray' }}
-          >
-            <div className='inputOptions'>
-                    <label htmlFor="libelle">Libellé:</label>
-                    <input
-                    type="text"
-                    id="libelle"
-                    value={libelle}
-                    onChange={(e) => setLibelle(e.target.value)}
-                    />
-                </div>
-                <div className="inputOptions">
-                    <label htmlFor="categorie">Sélectionner une catégorie:</label>
-                    <select id="categorie" value={categorie} onChange={(e) => setCategorie(e.target.value)}>
-                    <option value="">Catégorie</option>
-                    {categories.map((category, index) => (
-                        <option key={index} value={category}>
-                        {category}
-                        </option>
-                    ))}
-                    </select>
-                </div>
-                <div className='inputOptions'>
-                    <label htmlFor="prix">Prix:</label>
-                    <input
-                    type="text"
-                    id="prix_unitaire"
-                    value={prix}
-                    onChange={(e) => setPrix(e.target.value)}
-                    />
-                </div>
-          </Modal>
-
-          <Modal 
-          title='Modification du stock'
-          open={visibleStock}
-          onCancel={() => setVisibleStock(false)} 
-          onOk={() => {
-            console.log('ajout stock', increaseAmount)
-            console.log('baisse stock', decreaseAmount)
-            console.log('product Id', record.productId)
-            
-          }}
-          okText="Save" 
-          maskStyle={{ backgroundColor: 'lightgray' }}
-          >
-            <p>Produit: {record.libelle}</p>
-            <div style={{display:'flex', gap: '20px'}}>
-            <div className='inputOptions'>
-                    <label htmlFor="stock">Ajouter Stock:</label>
-                    <input
-                    type="text"
-                    id="stock"
-                    value={ increaseAmount}
-                    onChange={(e) => setIncreaseAmount(e.target.value)}
-                    style={{ width: '30px' }}
-                    />
-                </div>
-                <div className='inputOptions'>
-                    <label htmlFor="stock">Diminuer Stock:</label>
-                    <input
-                    type="text"
-                    id="stock"
-                    value={decreaseAmount}
-                    onChange={(e) => setDecreaseAmount(e.target.value)}
-                    style={{ width: '30px' }}
-                    />
-                </div>
-            </div>
-            
-                
-          </Modal>
-   
       </> 
       ); 
       }, 
