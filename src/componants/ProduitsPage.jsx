@@ -14,7 +14,8 @@ const ProduitsPage = () => {
     const [libelle, setLibelle] = useState('')
     const [categorie, setCategorie] = useState('')
     const [prix, setPrix] = useState('')
-    const [visible, setVisible] = useState(false); 
+    const [prixCollab, setPrixCollab] = useState('')
+     const [visible, setVisible] = useState(false); 
     const [visibleIncreaseStock, setVisibleIncreaseStock] = useState(false); 
     const [visibleDecreaseStock, setVisibleDecreaseStock] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -23,8 +24,8 @@ const ProduitsPage = () => {
     const [decreaseAmount, setDecreaseAmount] = useState('')
     const [selectedProductId, setSelectedProductId] = useState(null)
     const [searchTerm, setSearchTerm] = useState('');
-    const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Salades et Bowls', 'Boissons'];
-   
+    const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons', 'Desserts', 'Salades et Bowls', 'Pains'];
+
 
 
   useEffect(() => {
@@ -159,12 +160,22 @@ const ProduitsPage = () => {
       }
     })
     }; 
+
+    const handlePrixUnitaire = (e) => {
+        const value = e.target.value;
+        setPrix(value.replace(',','.'))
+    }
+    const handlePrixCollaborateur = (e) => {
+        const value = e.target.value;
+        setPrixCollab(value.replace(',','.'))
+    }
     const Update = (record) => { 
-      //  console.log(record.productId)
+       console.log(record.productId)
        setVisible(true)
        setLibelle(record.libelle);
        setCategorie(record.categorie);
        setPrix(record.prix_unitaire)
+       setPrixCollab(record.prix_remise_collaborateur)
        setSelectedProductId(record.productId)
       
     }
@@ -306,6 +317,65 @@ const ProduitsPage = () => {
       <AiOutlineReload 
       onClick={() => Update(record)} 
       /> 
+      <Modal 
+          title="Modification du produit"
+          open={visible}
+          onCancel={() => setVisible(false)} 
+          onOk={() => {
+            const updatedData = {
+              libelle: libelle,
+              categorie: categorie,
+              prix_unitaire: prix,
+              prix_remise_collaborateur:prixCollab
+            };
+            // console.log(updatedData)
+            // console.log('select id', selectedProductId)
+            handleUpdateProduct(selectedProductId, updatedData)
+            setVisible(false);
+
+          }}
+          okText="Save" 
+          maskStyle={{ backgroundColor: 'lightgray' }}
+          >
+            <div className='inputOptions'>
+                    <label htmlFor="libelle">Libellé:</label>
+                    <input
+                    type="text"
+                    id="libelle"
+                    value={libelle}
+                    onChange={(e) => setLibelle(e.target.value)}
+                    />
+                </div>
+                <div className="inputOptions">
+                    <label htmlFor="categorie">Sélectionner une catégorie:</label>
+                    <select id="categorie" value={categorie} onChange={(e) => setCategorie(e.target.value)}>
+                    <option value="">Catégorie</option>
+                    {categories.map((category, index) => (
+                        <option key={index} value={category}>
+                        {category}
+                        </option>
+                    ))}
+                    </select>
+                </div>
+                <div className='inputOptions'>
+                    <label htmlFor="prix">Prix:</label>
+                    <input
+                    type="text"
+                    id="prix_unitaire"
+                    value={prix}
+                    onChange={handlePrixUnitaire}
+                    />
+                </div>
+                <div className='inputOptions'>
+                    <label htmlFor="prix">Prix:</label>
+                    <input
+                    type="text"
+                    id="prix_unitaire"
+                    value={prixCollab}
+                    onChange={handlePrixCollaborateur}
+                    />
+                </div>
+          </Modal>
       <AiOutlineRest 
       onClick={() => Delete(record)} 
       />

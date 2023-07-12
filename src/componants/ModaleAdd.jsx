@@ -12,13 +12,23 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
     const [disponibilite, setDisponibilite] = useState(false);
     const [stock, setStock] = useState('');
 
-    const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons', 'Desserts', 'Salades et Bowls'];
+    const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons', 'Desserts', 'Salades et Bowls', 'Pains'];
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         console.log(file)
         setImage(file);
       };
+
+    //transforme virgule en point dans le prix
+    const handlePrixUnitaire = (e) => {
+        const value = e.target.value;
+        setPrix(value.replace(',','.'))
+    }
+    const handlePrixCollaborateur = (e) => {
+        const value = e.target.value;
+        setPrixRemiseCollaborateur(value.replace(',','.'))
+    }
 
     const handleAdd = async (e) => {
         e.preventDefault();
@@ -44,6 +54,8 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
           //nouveau produit ajouté
         handleAddProduct(formData);
     }
+
+
     
 
   return (
@@ -89,7 +101,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                     id="prix_unitaire"
                     name="prix_unitaire"
                     value={prix}
-                    onChange={(e) => setPrix(e.target.value)}
+                    onChange={handlePrixUnitaire}
                     />
                 </div>
                 
@@ -100,7 +112,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                     id="prix_remise_collaborateur"
                     name="prix_remise_collaborateur"
                     value={prixRemiseCollaborateur}
-                    onChange={(e) => setPrixRemiseCollaborateur(e.target.value)}
+                    onChange={handlePrixCollaborateur}
                     />
                 </div>
 
