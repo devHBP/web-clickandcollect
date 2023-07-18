@@ -24,7 +24,8 @@ const ProduitsPage = () => {
     const [decreaseAmount, setDecreaseAmount] = useState('')
     const [selectedProductId, setSelectedProductId] = useState(null)
     const [searchTerm, setSearchTerm] = useState('');
-    const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons', 'Desserts', 'Salades et Bowls', 'Pains'];
+    const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons',
+     'Desserts', 'Salades et Bowls', 'Boules et Pains spéciaux', 'Baguettes'];
 
 
 
@@ -36,7 +37,7 @@ const ProduitsPage = () => {
         console.log(response.data)
         setElements(response.data);
       } catch (error) {
-        console.error('Une erreur s\'est produite :', error);
+        console.error('Une erreur s\'est produite, allproducts :', error);
       }
     };
 
@@ -358,7 +359,7 @@ const ProduitsPage = () => {
                     </select>
                 </div>
                 <div className='inputOptions'>
-                    <label htmlFor="prix">Prix:</label>
+                    <label htmlFor="prix">Prix Unitaire:</label>
                     <input
                     type="text"
                     id="prix_unitaire"
@@ -367,7 +368,7 @@ const ProduitsPage = () => {
                     />
                 </div>
                 <div className='inputOptions'>
-                    <label htmlFor="prix">Prix:</label>
+                    <label htmlFor="prix">Prix Collaborateur:</label>
                     <input
                     type="text"
                     id="prix_unitaire"

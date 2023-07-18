@@ -12,8 +12,9 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
     const [disponibilite, setDisponibilite] = useState(false);
     const [stock, setStock] = useState('');
 
-    const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons', 'Desserts', 'Salades et Bowls', 'Pains'];
-
+    const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons',
+    'Desserts', 'Salades et Bowls', 'Boules et Pains spéciaux', 'Baguettes'];
+    
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         console.log(file)
