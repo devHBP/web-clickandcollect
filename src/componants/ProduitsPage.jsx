@@ -12,7 +12,8 @@ const ProduitsPage = () => {
     const [openModaleAdd, setOpenModaleAdd] = useState(false)
     const baseUrl = "http://127.0.0.1:8080"
     const [libelle, setLibelle] = useState('')
-    const [categorie, setCategorie] = useState('')
+    const [categories, setCategorie] = useState([])
+    const [selectedCategorie, setSelectedCategorie] = useState('')
     const [prix, setPrix] = useState('')
     const [prixCollab, setPrixCollab] = useState('')
      const [visible, setVisible] = useState(false); 
@@ -24,8 +25,8 @@ const ProduitsPage = () => {
     const [decreaseAmount, setDecreaseAmount] = useState('')
     const [selectedProductId, setSelectedProductId] = useState(null)
     const [searchTerm, setSearchTerm] = useState('');
-    const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons',
-     'Desserts', 'Salades et Bowls', 'Boules et Pains spéciaux', 'Baguettes'];
+    // const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons',
+    //  'Desserts', 'Salades et Bowls', 'Boules et Pains spéciaux', 'Baguettes'];
 
 
 
@@ -34,7 +35,7 @@ const ProduitsPage = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://127.0.0.1:8080/getAllProducts');
-        console.log(response.data)
+        //console.log(response.data)
         setElements(response.data);
       } catch (error) {
         console.error('Une erreur s\'est produite, allproducts :', error);
@@ -43,6 +44,25 @@ const ProduitsPage = () => {
 
     fetchData(); // Appel de la fonction fetchData lors du montage du composant
   }, []);
+
+  useEffect(() => {
+    // Fonction pour récupérer les données de la base de données
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8080/getAllFamillyProducts');
+        console.log(response.data)
+    
+        const nomFamilleProduit = response.data.famillesProduit.map(famille => famille.nom_famille_produit);
+        console.log(nomFamilleProduit);
+        setCategorie(nomFamilleProduit)
+      } catch (error) {
+        console.error('Une erreur s\'est produite, allproducts :', error);
+      }
+    };
+
+    fetchCategories(); // Appel de la fonction fetchData lors du montage du composant
+  }, []);
+
 
   const handleDelete = async (productId) => {
       try {
@@ -174,7 +194,7 @@ const ProduitsPage = () => {
        console.log(record.productId)
        setVisible(true)
        setLibelle(record.libelle);
-       setCategorie(record.categorie);
+       setSelectedCategorie(record.categorie);
        setPrix(record.prix_unitaire)
        setPrixCollab(record.prix_remise_collaborateur)
        setSelectedProductId(record.productId)
@@ -325,7 +345,7 @@ const ProduitsPage = () => {
           onOk={() => {
             const updatedData = {
               libelle: libelle,
-              categorie: categorie,
+              categorie: selectedCategorie,
               prix_unitaire: prix,
               prix_remise_collaborateur:prixCollab
             };
@@ -349,7 +369,8 @@ const ProduitsPage = () => {
                 </div>
                 <div className="inputOptions">
                     <label htmlFor="categorie">Sélectionner une catégorie:</label>
-                    <select id="categorie" value={categorie} onChange={(e) => setCategorie(e.target.value)}>
+                    {/* <select id="categorie" value={categorie} onChange={(e) => setCategorie(e.target.value)}> */}
+                    <select id="categorie" value={selectedCategorie} onChange={(e) => setSelectedCategorie(e.target.value)}>
                     <option value="">Catégorie</option>
                     {categories.map((category, index) => (
                         <option key={index} value={category}>
