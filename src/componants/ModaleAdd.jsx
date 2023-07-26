@@ -1,20 +1,38 @@
-import React, { useState} from 'react'
+import React, { useState, useEffect} from 'react'
 import { AiFillCloseCircle} from "react-icons/ai";
-
+import axios from 'axios'
 
 const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
 
     const [image, setImage] = useState(null);
     const [libelle, setLibelle] = useState('')
-    const [categorie, setCategorie] = useState('')
+    const [categories, setCategorie] = useState([])
+    const [selectedCategorie, setSelectedCategorie] = useState('')
     const [prix, setPrix] = useState('')
     const [prixRemiseCollaborateur, setPrixRemiseCollaborateur] = useState('');
     const [disponibilite, setDisponibilite] = useState(false);
     const [stock, setStock] = useState('');
 
-    const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons',
-    'Desserts', 'Salades et Bowls', 'Boules et Pains spéciaux', 'Baguettes'];
+    // const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons',
+    // 'Desserts', 'Salades et Bowls', 'Boules et Pains spéciaux', 'Baguettes'];
     
+    useEffect(() => {
+        // Fonction pour récupérer les données de la base de données
+        const fetchCategories = async () => {
+          try {
+            const response = await axios.get('http://127.0.0.1:8080/getAllFamillyProducts');
+            console.log(response.data)
+        
+            const nomFamilleProduit = response.data.famillesProduit.map(famille => famille.nom_famille_produit);
+            console.log(nomFamilleProduit);
+            setCategorie(nomFamilleProduit)
+          } catch (error) {
+            console.error('Une erreur s\'est produite, allproducts :', error);
+          }
+        };
+    
+        fetchCategories(); // Appel de la fonction fetchData lors du montage du composant
+      }, []);
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         console.log(file)
@@ -43,7 +61,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
         const formData = new FormData();
         formData.append('image', image);
         formData.append('libelle', libelle);
-        formData.append('categorie', categorie);
+        formData.append('categorie', selectedCategorie);
         formData.append('prix_unitaire', prix);
         formData.append('prix_remise_collaborateur', prixRemiseCollaborateur);
         formData.append('disponibilite', disponibilite);
@@ -85,7 +103,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
 
                 <div className="inputOptions">
                     <label htmlFor="categorie">Sélectionner une catégorie:</label>
-                    <select id="categorie" value={categorie} onChange={(e) => setCategorie(e.target.value)} name="categorie">
+                    <select id="categorie" value={selectedCategorie} onChange={(e) => setSelectedCategorie(e.target.value)} name="categorie">
                     <option value="">Catégorie</option>
                     {categories.map((category) => (
                         <option key={category} value={category}>
