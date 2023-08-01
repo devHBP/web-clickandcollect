@@ -65,7 +65,14 @@
     display:flex;
     flex-direction: column;
 }
-
+.inputCheckbox{
+  display:flex;
+  flex-direction: row;
+  margin-top: 10px;
+}
+.check{
+  margin-right: 10px;
+}
 /* Home */
 .home_container{
     padding-top: 8vh;
@@ -174,7 +181,7 @@
     left:50%;
     transform: translate(-50%, -50%); 
     width: 700px;
-    height: 400px;
+    height: 90%;
     background-color: white;
     border-radius: 25px;
 
@@ -193,6 +200,7 @@
     align-items: center;
     justify-content: center;
     gap: 20px;
+    height: 100%;
   }
  
 
