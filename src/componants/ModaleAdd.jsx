@@ -13,6 +13,18 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
     const [disponibilite, setDisponibilite] = useState(false);
     const [stock, setStock] = useState('');
 
+    //specificités produit
+    const [specificites, setSpecificites] = useState({
+      Vegetarien: '',
+      Halal: '',
+      Vegan: ''
+    });
+    const [descriptionProduit, setDescriptionProduit] = useState('');
+    const [ingredients, setIngredients] = useState('');
+
+
+    
+
     // const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons',
     // 'Desserts', 'Salades et Bowls', 'Boules et Pains spéciaux', 'Baguettes'];
     
@@ -48,7 +60,22 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
         const value = e.target.value;
         setPrixRemiseCollaborateur(value.replace(',','.'))
     }
-
+    //choix des options spécifiques
+    const handleSpecificiteChange = (option, value) => {
+      setSpecificites((prevSpecificites) => ({
+        ...prevSpecificites,
+        [option]: value ? option : '',
+      }));
+    };
+    //descriptionProduit
+    const handleDescriptionChange = (e) => {
+      setDescriptionProduit(e.target.value);
+    };
+    //ingredients
+    const handleIngredientsChange = (e) => {
+      setIngredients(e.target.value);
+    };
+    
     const handleAdd = async (e) => {
         e.preventDefault();
         // const newProduct = {
@@ -66,6 +93,18 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
         formData.append('prix_remise_collaborateur', prixRemiseCollaborateur);
         formData.append('disponibilite', disponibilite);
         formData.append('stock', stock);
+
+        let description = '';
+        for (const option in specificites) {
+          if (specificites[option]) {
+            description += option + ', ';
+          }
+        }
+        // Supprimez la dernière virgule et l'espace
+        description = description.slice(0, -2);
+        formData.append('description', description);
+        formData.append('descriptionProduit', descriptionProduit);
+        formData.append('ingredients', ingredients);
         //console.log comme ceci pour voir formData
         for (const pair of formData.entries()) {
             console.log(`${pair[0]}, ${pair[1]}`);
@@ -156,6 +195,49 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                     onChange={(e) => setStock(e.target.value)}
                     />
                 </div>
+                
+                
+                <div className='inputCheckbox'>
+                <p>Spécificités:</p>
+                    {Object.entries(specificites).map(([option, checked]) => (
+                  <div  key={option}>
+                    <label htmlFor={option}>{option}:</label>
+                    <input
+                      type="checkbox"
+                      id={option}
+                      name={option}
+                      checked={checked}
+                      onChange={(e) => handleSpecificiteChange(option, e.target.checked)}
+                      className='check'
+                    />
+                  </div>
+                  ))}
+                </div>
+               
+                <div className='inputOptions'>
+                  <label htmlFor="description">Description du produit:</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={descriptionProduit}
+                    onChange={handleDescriptionChange}
+                    rows={4}
+                    cols={50}
+                  />
+              </div>
+
+              <div className='inputOptions'>
+                <label htmlFor="ingredients">Ingrédients :</label>
+                <textarea
+                    id="ingredients"
+                    name="ingredients"
+                    value={ingredients}
+                    onChange={handleIngredientsChange}
+                    rows={4}
+                    cols={50}
+                  />
+              </div>
+
 
                 <button type='submit'>Valider</button>
             </form>
