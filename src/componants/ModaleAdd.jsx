@@ -12,6 +12,8 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
     const [prixRemiseCollaborateur, setPrixRemiseCollaborateur] = useState('');
     const [disponibilite, setDisponibilite] = useState(false);
     const [stock, setStock] = useState('');
+    const [offre, setOffre] = useState('');
+    const [referenceFournisseur, setReferenceFournisseur] = useState('');
 
     //specificités produit
     const [specificites, setSpecificites] = useState({
@@ -21,9 +23,6 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
     });
     const [descriptionProduit, setDescriptionProduit] = useState('');
     const [ingredients, setIngredients] = useState('');
-
-
-    
 
     // const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons',
     // 'Desserts', 'Salades et Bowls', 'Boules et Pains spéciaux', 'Baguettes'];
@@ -75,16 +74,20 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
     const handleIngredientsChange = (e) => {
       setIngredients(e.target.value);
     };
+
+    //enleve les espaces des offres
+    const handleOffre31Change = (e) => {
+      const cleanedLibelle = libelle.replace(/\s+/g, '');
+      setOffre(e.target.checked ? 'offre31_' + cleanedLibelle : '');
+    };
+
+    const handleSolanidChange = (e) => {
+      setReferenceFournisseur(e.target.checked ? 'Solanid' : '');
+    };
+    
     
     const handleAdd = async (e) => {
         e.preventDefault();
-        // const newProduct = {
-        //     image, 
-        //     libelle,
-        //     categorie,
-        //     prix
-        // }
-        // console.log(newProduct)
         const formData = new FormData();
         formData.append('image', image);
         formData.append('libelle', libelle);
@@ -105,6 +108,9 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
         formData.append('description', description);
         formData.append('descriptionProduit', descriptionProduit);
         formData.append('ingredients', ingredients);
+        formData.append('offre', offre);
+        formData.append('reference_fournisseur', referenceFournisseur);
+
         //console.log comme ceci pour voir formData
         for (const pair of formData.entries()) {
             console.log(`${pair[0]}, ${pair[1]}`);
@@ -237,6 +243,29 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                     cols={50}
                   />
               </div>
+
+              <div className='inputOptions'>
+                  <label htmlFor="offre31">Offre 3+1:</label>
+                  <input
+                    type="checkbox"
+                    id="offre31"
+                    name="offre31"
+                    checked={offre}
+                    onChange={handleOffre31Change}
+                  />
+                </div>
+
+                <div className='inputOptions'>
+                <label htmlFor="solanid">Solanid:</label>
+                <input
+                  type="checkbox"
+                  id="solanid"
+                  name="solanid"
+                  checked={referenceFournisseur === 'Solanid'}
+                  onChange={handleSolanidChange}
+                />
+              </div>
+
 
 
                 <button type='submit'>Valider</button>
