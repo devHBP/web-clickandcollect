@@ -8,6 +8,7 @@ import axios from 'axios'
 
 export const Login = () => {
 
+  const baseUrl = 'http://127.0.0.1:8080';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -26,10 +27,12 @@ export const Login = () => {
       email,
       password
   }
-  console.log(clientData)
+  
   try{
     //appel axios pour se loger
-    const res = await axios.post('http://localhost:8080/login', clientData)
+    // const res = await axios.post('http://localhost:8080/login', clientData)
+    const res = await axios.post(`${baseUrl}/login`, clientData)
+
     // console.log('token', res.data.token)
     // console.log('login reussi')
     const user = res.data.user

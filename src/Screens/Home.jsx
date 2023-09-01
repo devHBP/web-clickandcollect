@@ -4,17 +4,17 @@ import { useSelector } from 'react-redux'
 import  DashboardPage  from '../componants/DashboardPage'
 import ProduitsPage from '../componants/ProduitsPage'
 import UsersPage from '../componants/UsersPage'
-import CommandePage from '../componants/CommandePage'
 import Promos from '../componants/Promos'
 import CommandePageSimple from '../componants/CommandePage2'
-import { MaBoulangerie } from '../componants/MaBoulangerie'
+import  MaBoulangerie from '../componants/MaBoulangerie'
+import  ClickandCollect  from '../componants/ClickandCollect'
+import AntiGaspi from '../componants/AntiGaspi'
 
-export const Home = () => {
+const Home = () => {
 
  const [currentPage, setCurrentPage] = useState(null);
 
  const user = useSelector((state) => state.auth.user)
-//  console.log('user', user)
 
  //selection page visible suivant le bouton cliqué
  const handleContentSelection = (page) => {
@@ -33,20 +33,28 @@ export const Home = () => {
         <div className='dashboard_menu'>
           {/* boutons de navigation */}
             <button onClick={() => handleContentSelection("dashboard")}>Dashboard</button>
-            <button onClick={() => handleContentSelection("produits")}>Produits</button>
+            {
+              user.role === 'gestionnaire' &&  <button onClick={() => handleContentSelection("produits")}>Produits</button>
+            }
+           
+            
+            {
+              user.role === 'gestionnaire' && <button onClick={() => handleContentSelection("clickandcollect")}>ClickandCollect</button>
+            }
+            <button onClick={() => handleContentSelection("antigaspi")}>AntiGaspi</button>
             <button onClick={() => handleContentSelection("users")}>Clients</button>
             <button onClick={() => handleContentSelection("commandes")}>Commandes</button>
-            <button onClick={() => handleContentSelection("commandes2")}>Commandes2</button>
             <button onClick={() => handleContentSelection("promos")}>Promotions</button>
             <button onClick={() => handleContentSelection("boulangerie")}>Ma boulangerie</button>
         </div>
         <div className='dashboard_content'>
               
-              {currentPage === "dashboard" && <DashboardPage />}
-              {currentPage === "produits" && <ProduitsPage />}
+              { currentPage === "dashboard" && <DashboardPage />}
+              { currentPage === "produits" && <ProduitsPage />}
+              { currentPage === "clickandcollect" && <ClickandCollect />}
+              { currentPage === "antigaspi" && <AntiGaspi />}
               { currentPage === "users" && <UsersPage />}
-              { currentPage === "commandes" && <CommandePage />}
-              { currentPage === "commandes2" && <CommandePageSimple />}
+              { currentPage === "commandes" && <CommandePageSimple />}
               { currentPage === "promos" && <Promos />}
               { currentPage === "boulangerie" && <MaBoulangerie />}
               {/* Autres pages ici */}
@@ -56,3 +64,4 @@ export const Home = () => {
     </div>
   )
 }
+export default Home
