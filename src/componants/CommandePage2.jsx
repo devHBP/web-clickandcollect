@@ -26,6 +26,14 @@ function CommandePageSimple() {
     newSocket.onmessage = event => {
       const message = event.data;
       console.log('Received WebSocket message:', message);
+
+      const { type } = JSON.parse(message);
+
+      if (type === 'newOrder') {
+       
+        allOrders()
+      }
+
     };
 
     newSocket.onclose = event => {
@@ -45,7 +53,6 @@ function CommandePageSimple() {
       if (orderToUpdate) {
         if (status === 'livree' || status === 'annulee') {
           //supprime des tasks une fois livree ou annulee
-          console.log('annulee')
           delete updatedCommandes.tasks[orderToUpdate.numero_commande];
           //delete updatedCommandes.tasks[orderId];
         } else {
@@ -65,11 +72,6 @@ function CommandePageSimple() {
       return updatedTableData;
     });
 
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      //revoir la logique "nouvelle commande ici peut etre"
-      //const message = JSON.stringify({ type: 'updatedOrder', data: { orderId, status } });
-      //socket.send(message);
-    }
 
   };
 
@@ -115,6 +117,12 @@ function CommandePageSimple() {
         //console.log('Libelle:', libelle);
       }      
     }
+
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const message = JSON.stringify({ type: 'newOrder', });
+      socket.send(message);
+    }
+
     } catch (error) {
       console.error(error);
     }
@@ -297,6 +305,8 @@ const columns = [
     title: "Statut",
     dataIndex: "status",
     key: "status",
+    sorter: (a, b) => a.status.localeCompare(b.status), // Ajoutez cette ligne
+    sortDirections: ['descend', 'ascend'],
     render: (status) => {
       let color;
       switch (status) {
@@ -355,7 +365,7 @@ const columns = [
            </TabList>
 
           <TabPanel>
-             <Table dataSource={tableData} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
+             <Table dataSource={tableData} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 10 }} />
           </TabPanel>
           <TabPanel>
              <Table dataSource={tableData.filter(commande => commande.status === 'livree')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />

@@ -1,8 +1,9 @@
 import React from 'react'
 
-export const MaBoulangerie = () => {
+ const MaBoulangerie = () => {
   return (
     <div>MaBoulangerie</div>
   )
 }
 
+export default MaBoulangerie

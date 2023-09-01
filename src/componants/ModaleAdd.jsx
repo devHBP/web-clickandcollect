@@ -4,6 +4,8 @@ import axios from 'axios'
 
 const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
 
+  const baseUrl = 'http://127.0.0.1:8080';
+  
     const [image, setImage] = useState(null);
     const [libelle, setLibelle] = useState('')
     const [categories, setCategorie] = useState([])
@@ -31,7 +33,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
         // Fonction pour récupérer les données de la base de données
         const fetchCategories = async () => {
           try {
-            const response = await axios.get('http://127.0.0.1:8080/getAllFamillyProducts');
+            const response = await axios.get(`${baseUrl}/getAllFamillyProducts`);
             console.log(response.data)
         
             const nomFamilleProduit = response.data.famillesProduit.map(famille => famille.nom_famille_produit);

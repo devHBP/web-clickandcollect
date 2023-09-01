@@ -17,7 +17,7 @@ export default function Promos() {
             console.log(response.data);
             setElements(response.data)
           } catch (error) {
-            console.error('Une erreur s\'est produite :', error);
+            console.error('Une erreur s\'est produite, promocodes :', error);
           }
         };
     
