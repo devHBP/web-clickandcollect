@@ -4,6 +4,8 @@ import ModaleAdd from './ModaleAdd'
 import { Table, Modal, Input } from 'antd'
 import { AiOutlineRest, AiOutlineReload, AiOutlineStock, AiOutlinePlusCircle, AiOutlineMinusCircle} from "react-icons/ai";
 import { Clickandcollect } from '../../SVG/Clickandcollect';
+import { Antigaspi } from '../../SVG/Antigaspi';
+import { TextInput } from './TextInput';
 const { Search } = Input
 
 
@@ -29,6 +31,8 @@ const ProduitsPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const colorClickandCollectOff = "#636C77";
     const colorClickandCollectOn = "#E9520E";
+    const [stockValue, setStockValue] = useState({});
+    
     
     
     // const [image, setImage] = useState(null);
@@ -224,6 +228,39 @@ const handleToggleClickandCollect = async (productId) => {
   }
 };
 
+//requete toggle antigaspi
+const handleToggleAntigaspi = async (productId) => {
+  try {
+    // Trouvez le produit actuel avec productId (en supposant que vous avez une liste de produits dans un état ou une variable)
+    const product = elements.find(p => p.productId === productId); // Remplacez `products` par le nom de votre état ou variable
+
+    if (!product) {
+      throw new Error('Product not found');
+    }
+
+    // basculer la valeur de clickandcollect
+    const updatedAntigaspiValue = !product.antigaspi;
+
+    const response = await axios.put(`${baseUrl}/updateProduct/${productId}`, { antigaspi: updatedAntigaspiValue });
+
+    if (response.status !== 200) {
+      throw new Error('Network response was not ok');
+    }
+
+    // Mettre à jour votre état local pour refléter la nouvelle valeur de clickandcollect
+    setElements(prevElements => {
+      return prevElements.map(p => {
+        if (p.productId === productId) {
+          return { ...p, antigaspi: updatedAntigaspiValue };
+        }
+        return p;
+      });
+    });
+
+  } catch (error) {
+    console.error('There has been a problem with your Axios request:', error);
+  }
+};
   
   const Delete = (record) => { 
     // console.log(record.id_produit)
@@ -310,6 +347,59 @@ const handleToggleClickandCollect = async (productId) => {
       // sorter: (a, b) => a.prix_remise_collaborateur- b.prix_remise_collaborateur,
     },
     {
+      title: 'Stock Anti-Gaspi',
+      align: 'center',
+    
+      render: (record) => {
+    
+        const handleInputChange = (e, productId) => {
+          // Just update the local state
+          const updatedValue = e.target.value;
+          
+          setStockValue(prevStock => ({ ...prevStock, [productId]: updatedValue }));
+        };
+    
+        const handleSave = async (productId) => {
+          const updatedValue = stockValue[productId];
+          if (updatedValue && updatedValue !== record.stockantigaspi) {
+            try {
+              const response = await axios.put(`${baseUrl}/updateProduct/${productId}`, { stockantigaspi: updatedValue });
+    
+              if (response.status !== 200) {
+                throw new Error('Network response was not ok');
+              }
+    
+              setElements(prevElements => {
+                return prevElements.map(p => {
+                  if (p.productId === productId) {
+                    return { ...p, stockantigaspi: updatedValue };
+                  }
+                  return p;
+                });
+              });
+    
+            } catch (error) {
+              console.error('There has been a problem with your Axios request:', error);
+            }
+          }
+        };
+    
+        return (
+          <div>
+            <TextInput 
+          value={stockValue[record.productId] !== undefined ? stockValue[record.productId] : (record.stockantigaspi !== null ? record.stockantigaspi : '')}
+              onChange={(e) => handleInputChange(e, record.productId)}
+              onBlur={() => handleSave(record.productId)}
+              // onClick={() => console.log('stock', record.stockantigaspi)}
+            />
+          </div>
+        );
+      }
+    }
+    
+    
+,    
+    {
       title: 'ClickandCollect',
       align: 'center',
 
@@ -322,6 +412,25 @@ const handleToggleClickandCollect = async (productId) => {
     
         return (
             <Clickandcollect 
+              color={color} 
+              onSvgClick={handleSvgClick}
+            />
+        );
+      }
+    },
+    {
+      title: 'Antigaspi',
+      align: 'center',
+
+      render: (record) => {
+        const handleSvgClick = async () => {
+          await handleToggleAntigaspi(record.productId);
+        };
+    
+        const color = record.antigaspi ? colorClickandCollectOn : colorClickandCollectOff;
+    
+        return (
+            <Antigaspi
               color={color} 
               onSvgClick={handleSvgClick}
             />
