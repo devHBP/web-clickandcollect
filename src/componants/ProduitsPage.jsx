@@ -3,6 +3,7 @@ import axios from 'axios'
 import ModaleAdd from './ModaleAdd'
 import { Table, Modal, Input } from 'antd'
 import { AiOutlineRest, AiOutlineReload, AiOutlineStock, AiOutlinePlusCircle, AiOutlineMinusCircle} from "react-icons/ai";
+import { Clickandcollect } from '../../SVG/Clickandcollect';
 const { Search } = Input
 
 
@@ -10,7 +11,8 @@ const ProduitsPage = () => {
 
     const [elements, setElements] = useState([]);
     const [openModaleAdd, setOpenModaleAdd] = useState(false)
-    const baseUrl = "http://127.0.0.1:8080"
+    // const baseUrl = "http://141.94.222.27:8080"
+    const baseUrl = 'http://127.0.0.1:8080';
     const [libelle, setLibelle] = useState('')
     const [categories, setCategorie] = useState([])
     const [selectedCategorie, setSelectedCategorie] = useState('')
@@ -25,6 +27,12 @@ const ProduitsPage = () => {
     const [decreaseAmount, setDecreaseAmount] = useState('')
     const [selectedProductId, setSelectedProductId] = useState(null)
     const [searchTerm, setSearchTerm] = useState('');
+    const colorClickandCollectOff = "#636C77";
+    const colorClickandCollectOn = "#E9520E";
+    
+    
+    // const [image, setImage] = useState(null);
+
     // const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons',
     //  'Desserts', 'Salades et Bowls', 'Boules et Pains spéciaux', 'Baguettes'];
 
@@ -34,7 +42,7 @@ const ProduitsPage = () => {
     // Fonction pour récupérer les données de la base de données
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8080/getAllProducts');
+        const response = await axios.get(`${baseUrl}/getAllProducts`);
         //console.log(response.data)
         setElements(response.data);
       } catch (error) {
@@ -49,11 +57,11 @@ const ProduitsPage = () => {
     // Fonction pour récupérer les données de la base de données
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8080/getAllFamillyProducts');
-        console.log(response.data)
+        const response = await axios.get(`${baseUrl}/getAllFamillyProducts`);
+        //console.log(response.data)
     
         const nomFamilleProduit = response.data.famillesProduit.map(famille => famille.nom_famille_produit);
-        console.log(nomFamilleProduit);
+       // console.log(nomFamilleProduit);
         setCategorie(nomFamilleProduit)
       } catch (error) {
         console.error('Une erreur s\'est produite, allproducts :', error);
@@ -67,7 +75,6 @@ const ProduitsPage = () => {
   const handleDelete = async (productId) => {
       try {
          //serveur nodeJS
-        const baseUrl = "http://127.0.0.1:8080"
         const response = await axios.delete(`${baseUrl}/deleteProduct/${productId}`);
 
         // Vérifiez le statut de la réponse
@@ -83,29 +90,43 @@ const ProduitsPage = () => {
         console.error('There has been a problem with your Axios request:', error);
       }
   }
-  
+
+
   const handleUpdateProduct = async (productId, updatedData) => {
     console.log(updatedData)
     try {
-      const baseUrl = 'http://127.0.0.1:8080';
-      const response = await axios.put(`${baseUrl}/updateProduct/${productId}`, updatedData);
-  
-      if (response.status !== 200) {
-        throw new Error('Network response was not ok');
-      }
-  
-      const updatedElements = elements.map((element) => {
-        if (element.productId === productId) {
-          return { ...element, ...updatedData };
+        const formData = new FormData();
+        formData.append('libelle', updatedData.libelle);
+        formData.append('categorie', updatedData.categorie);
+        formData.append('prix_unitaire', updatedData.prix_unitaire);
+        formData.append('prix_remise_collaborateur', updatedData.prix_remise_collaborateur);
+        
+        // if (image) {
+        //     formData.append('image', image);
+        // }
+
+        const response = await axios.put(`${baseUrl}/updateProduct/${productId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        if (response.status !== 200) {
+            throw new Error('Network response was not ok');
         }
-        return element;
-      });
-  
-      setElements(updatedElements);
+
+        const updatedElements = elements.map((element) => {
+            if (element.productId === productId) {
+                return { ...element, ...updatedData}; // supposant que votre API renvoie la nouvelle URL de l'image
+            }
+            return element;
+        });
+
+        setElements(updatedElements);
     } catch (error) {
-      console.error('There has been a problem with your Axios request:', error);
+        console.error('There has been a problem with your Axios request:', error);
     }
-  };
+};
   const updateProduits = (newProduits) => {
     setElements(newProduits);
   };
@@ -113,7 +134,7 @@ const ProduitsPage = () => {
   //ajout handleAddProduct
   const handleAddProduct = async (formData) => {
     try {
-      const baseUrl = 'http://127.0.0.1:8080';
+      
       await axios.post(`${baseUrl}/addProduct`, formData);
       const response = await axios.get(`${baseUrl}/getAllProducts`);
       const allProductsUpdated = response.data;
@@ -128,7 +149,6 @@ const ProduitsPage = () => {
   // requete ajout stock
   const handleIncreaseStock = async (productId, increaseAmount) => {
     try {
-      const baseUrl = 'http://127.0.0.1:8080';
       const response = await axios.put(`${baseUrl}/increaseStock/${productId}`, { increaseAmount });
   
       if (response.status !== 200) {
@@ -148,9 +168,9 @@ const ProduitsPage = () => {
     }
   };
 
+
   const handleDecreaseStock = async (productId, decreaseAmount) => {
     try {
-      const baseUrl = 'http://127.0.0.1:8080';
       const response = await axios.put(`${baseUrl}/decreaseStock/${productId}`, { decreaseAmount });
   
       if (response.status !== 200) {
@@ -170,6 +190,39 @@ const ProduitsPage = () => {
     }
   };
   
+// requete toggle produit clickandcollect
+const handleToggleClickandCollect = async (productId) => {
+  try {
+    // Trouvez le produit actuel avec productId (en supposant que vous avez une liste de produits dans un état ou une variable)
+    const product = elements.find(p => p.productId === productId); // Remplacez `products` par le nom de votre état ou variable
+
+    if (!product) {
+      throw new Error('Product not found');
+    }
+
+    // basculer la valeur de clickandcollect
+    const updatedClickAndCollectValue = !product.clickandcollect;
+
+    const response = await axios.put(`${baseUrl}/updateProduct/${productId}`, { clickandcollect: updatedClickAndCollectValue });
+
+    if (response.status !== 200) {
+      throw new Error('Network response was not ok');
+    }
+
+    // Mettre à jour votre état local pour refléter la nouvelle valeur de clickandcollect
+    setElements(prevElements => {
+      return prevElements.map(p => {
+        if (p.productId === productId) {
+          return { ...p, clickandcollect: updatedClickAndCollectValue };
+        }
+        return p;
+      });
+    });
+
+  } catch (error) {
+    console.error('There has been a problem with your Axios request:', error);
+  }
+};
 
   
   const Delete = (record) => { 
@@ -198,7 +251,9 @@ const ProduitsPage = () => {
        setPrix(record.prix_unitaire)
        setPrixCollab(record.prix_remise_collaborateur)
        setSelectedProductId(record.productId)
-      
+    //    if (record.imageUrl) {
+    //     setImage(record.imageUrl);  
+    // }
     }
     const IncreaseStock = (record) => {
       // console.log(record.stock)
@@ -218,7 +273,10 @@ const ProduitsPage = () => {
       // console.log('value:', e.target.value)
       setSearchTerm(e.target.value);
     };
-      
+  //   const handleImageChange = (e) => {
+  //     console.log("Image change handler called");
+  //     setImage(e.target.files[0]);
+  // };
 
   const columns = [
     {
@@ -251,12 +309,26 @@ const ProduitsPage = () => {
       key: 'prix_remise_collaborateur',
       // sorter: (a, b) => a.prix_remise_collaborateur- b.prix_remise_collaborateur,
     },
-    // {
-    //   title: 'Prix Client',
-    //   dataIndex: 'prix_remise_client',
-    //   key: 'prix_remise_client',
-    //   sorter: (a, b) => a.prix_remise_client- b.prix_remise_client,
-    // },
+    {
+      title: 'ClickandCollect',
+      align: 'center',
+
+      render: (record) => {
+        const handleSvgClick = async () => {
+          await handleToggleClickandCollect(record.productId);
+        };
+    
+        const color = record.clickandcollect ? colorClickandCollectOn : colorClickandCollectOff;
+    
+        return (
+            <Clickandcollect 
+              color={color} 
+              onSvgClick={handleSvgClick}
+            />
+        );
+      }
+    },
+    
     {
       title: 'Stock',
       dataIndex: 'stock',
@@ -397,6 +469,14 @@ const ProduitsPage = () => {
                     onChange={handlePrixCollaborateur}
                     />
                 </div>
+                {/* <div className='inputOptions'>
+                  <label htmlFor="image">Image:</label>
+                  <input
+                      type="file"
+                      id="image"
+                    onChange={handleImageChange} />
+                    
+              </div> */}
           </Modal>
       <AiOutlineRest 
       onClick={() => Delete(record)} 
@@ -425,7 +505,7 @@ const ProduitsPage = () => {
             
                 <Table 
                 dataSource={elements.filter((product) =>product.libelle.toLowerCase().includes(searchTerm.toLowerCase()))} 
-                columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} rowKey='productId' />
+                columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 20 }} rowKey='productId' />
               
               </div>
     </div>
@@ -439,4 +519,4 @@ const ProduitsPage = () => {
   )
 }
 
-export default ProduitsPage
+export default ProduitsPage;
