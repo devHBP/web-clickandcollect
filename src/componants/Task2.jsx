@@ -4,6 +4,11 @@ import {AiFillCaretDown} from "react-icons/ai";
 import axios from 'axios'
 
 function Task({ commande, index, updateOrderStatus, socket }) {
+
+
+
+  // const baseUrl = 'http://127.0.0.1:8080';
+  const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [showDetails, setShowDetails] = useState(false)
   const [isTaskReady, setIsTaskReady] = useState(commande.status === "attente");
 
@@ -18,7 +23,7 @@ function Task({ commande, index, updateOrderStatus, socket }) {
   const handleDelivery = async () => {
     const status = 'livree';
     try {
-      const response = await axios.put(`http://127.0.0.1:8080/updateStatusOrder/${commande.key}`, { status });
+      const response = await axios.put(`${baseUrl}/updateStatusOrder/${commande.key}`, { status });
       updateOrderStatus(commande.key, status);
     } catch (error) {
       console.error('An error occurred while updating the order status:', error);
@@ -28,7 +33,7 @@ function Task({ commande, index, updateOrderStatus, socket }) {
     const status = 'annulee';
  
     try {
-      const response = await axios.post(`http://127.0.0.1:8080/cancelOrder`, { orderId: commande.key });
+      const response = await axios.post(`${baseUrl}/cancelOrder`, { orderId: commande.key });
       updateOrderStatus(commande.key, status);
 
       // if (socket && socket.readyState === WebSocket.OPEN) {

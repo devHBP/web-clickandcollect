@@ -4,7 +4,8 @@ import axios from 'axios'
 
 const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
 
-  const baseUrl = 'http://127.0.0.1:8080';
+   // const baseUrl = 'http://127.0.0.1:8080';
+   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   
     const [image, setImage] = useState(null);
     const [libelle, setLibelle] = useState('')

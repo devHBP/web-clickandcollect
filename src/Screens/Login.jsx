@@ -4,11 +4,14 @@ import  '../styles/styles.css'
 import { useDispatch } from 'react-redux'
 import { loginUser } from '../reducers/authSlice'
 
+
 import axios from 'axios'
 
 export const Login = () => {
 
-  const baseUrl = 'http://127.0.0.1:8080';
+  // const baseUrl = 'http://127.0.0.1:8080';
+  const baseUrl = import.meta.env.VITE_REACT_API_URL;
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 

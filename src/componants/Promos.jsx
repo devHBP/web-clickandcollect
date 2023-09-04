@@ -9,11 +9,14 @@ export default function Promos() {
     const [elements, setElements] = useState([]);
     const [openModaleAddPromo, setOpenModaleAddPromo] = useState(false)
 
+     // const baseUrl = 'http://127.0.0.1:8080';
+    const baseUrl = import.meta.env.VITE_REACT_API_URL;
+
     useEffect(() => {
         // Fonction pour récupérer les données de la base de données
         const fetchData = async () => {
           try {
-            const response = await axios.get('http://127.0.0.1:8080/promocodes');
+            const response = await axios.get(`${baseUrl}/promocodes`);
             console.log(response.data);
             setElements(response.data)
           } catch (error) {
@@ -31,7 +34,6 @@ export default function Promos() {
       //ajout handleAddProduct
       const handleAddPromo = async (newCode) => {
         try {
-          const baseUrl = 'http://127.0.0.1:8080';
           await axios.post(`${baseUrl}/promocodes`, newCode);
     
           const response = await axios.get(`${baseUrl}/promocodes`);
@@ -46,8 +48,6 @@ export default function Promos() {
       };
       const handleDeletePromo = async (id) => {
         try {
-           //serveur nodeJS
-          const baseUrl = "http://127.0.0.1:8080"
           const response = await axios.delete(`${baseUrl}/deletepromocodes/${id}`);
   
           // Vérifiez le statut de la réponse

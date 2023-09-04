@@ -10,8 +10,8 @@ const { Search } = Input
 const AntiGaspi = () => {
 
     const [elements, setElements] = useState([]);
-    // const baseUrl = "http://141.94.222.27:8080"
-    const baseUrl = 'http://127.0.0.1:8080';
+    // const baseUrl = 'http://127.0.0.1:8080';
+    const baseUrl = import.meta.env.VITE_REACT_API_URL;    
     const [categories, setCategorie] = useState([])    
     const [searchTerm, setSearchTerm] = useState('');
     const colorClickandCollectOff = "#636C77";

@@ -9,6 +9,9 @@ import axios from 'axios'
 
 function CommandePage() {
 
+   // const baseUrl = 'http://127.0.0.1:8080';
+   const baseUrl = import.meta.env.VITE_REACT_API_URL;
+
   //mise à jour données entre commandepage et tasks
   const [commandeDataSource, setCommandeDataSource] = useState([]);
 
@@ -53,7 +56,7 @@ function CommandePage() {
 
   const allOrders = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8080/allOrders');
+      const response = await axios.get(`${baseUrl}/allOrders`);
       const orders = response.data;
       //console.log('all orders',  orders)
       const orderData = transformOrderData(orders);

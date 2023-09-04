@@ -10,6 +10,10 @@ function CommandePageSimple() {
   const [commandes, setCommandes] = useState([]);
   const [tableData, setTableData] = useState([]); 
   const [socket, setSocket] = useState(null);
+  const [hasOrders, setHasOrders] = useState(true);
+
+   // const baseUrl = 'http://127.0.0.1:8080';
+   const baseUrl = import.meta.env.VITE_REACT_API_URL;
 
   useEffect(() => {
     allOrders()
@@ -78,12 +82,18 @@ function CommandePageSimple() {
   const allOrders = async () => {
     try {
      
-      const response = await axios.get('http://127.0.0.1:8080/allOrders');
+      const response = await axios.get(`${baseUrl}/allOrders`);
+      if (response.data.orders && response.data.orders.length === 0) {
+        setHasOrders(false);
+    } else {
+        setHasOrders(true);
+    }
+      console.log('order res', response)
       const orders = response.data.orders;
         // Fetch product details for each order
       const ordersWithDetails = await Promise.all(orders.map(async order => {
-      const productResponse = await axios.get(`http://127.0.0.1:8080/getOrderProducts/${order.orderId}`);
-      const storeResponse = await axios.get(`http://127.0.0.1:8080/getOneStore/${order.storeId}`);
+      const productResponse = await axios.get(`${baseUrl}/getOrderProducts/${order.orderId}`);
+      const storeResponse = await axios.get(`${baseUrl}/getOneStore/${order.storeId}`);
       const storeName= storeResponse.data.nom_magasin
  
         return {
@@ -106,7 +116,7 @@ function CommandePageSimple() {
     for (const order of orders) {
       const orderId = order.orderId;
       // Appel à l'API pour récupérer les détails de la commande
-      const orderResponse = await axios.get(`http://127.0.0.1:8080/getOrderProducts/${orderId}`);
+      const orderResponse = await axios.get(`${baseUrl}/getOrderProducts/${orderId}`);
       const orderData = orderResponse.data;
      
       for (const product of orderData) {
@@ -123,11 +133,17 @@ function CommandePageSimple() {
       socket.send(message);
     }
 
-    } catch (error) {
-      console.error(error);
-    }
-  };
+   } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.error("No orders found.");
+        setHasOrders(false);
 
+        // Ici, vous pouvez mettre à jour un état pour afficher un message à l'utilisateur, si nécessaire.
+      } else {
+        console.error(error);
+      }
+    }
+  }
 
   //mise en forme data
   const transformOrderData = (orders) => {
@@ -264,7 +280,7 @@ function CommandePageSimple() {
     // Update the status of the order in the database
     try {
         const orderId = commandes.tasks[draggableId].key;
-        const response = await axios.put(`http://127.0.0.1:8080/updateStatusOrder/${orderId}`, { status });
+        const response = await axios.put(`${baseUrl}/updateStatusOrder/${orderId}`, { status });
         updateOrderStatus(orderId, status);
       } catch (error) {
         console.error('An error occurred while updating the order status:', error);
@@ -350,32 +366,43 @@ const columns = [
   
 
   return (
-    <div className="commande-page">
-      <Tasks commandes={commandes} 
-          onDragEnd={onDragEnd} 
-          updateOrderStatus={updateOrderStatus} 
-          socket={socket} />
+    (
+      hasOrders 
+      ?
 
-      <Tabs className="tableau_commandes">
+     ( <div className="commande-page">
+    <Tasks commandes={commandes} 
+        onDragEnd={onDragEnd} 
+        updateOrderStatus={updateOrderStatus} 
+        socket={socket} />
 
-          <TabList>
-             <Tab>Toutes les commandes</Tab>
-             <Tab>Livrées</Tab>
-             <Tab>Annulées</Tab>
-           </TabList>
+    <Tabs className="tableau_commandes">
 
-          <TabPanel>
-             <Table dataSource={tableData} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 10 }} />
-          </TabPanel>
-          <TabPanel>
-             <Table dataSource={tableData.filter(commande => commande.status === 'livree')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
-          </TabPanel>
-          <TabPanel>
-              <Table dataSource={tableData.filter(commande => commande.status === 'annulee')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
-          </TabPanel>    
+        <TabList>
+           <Tab>Toutes les commandes</Tab>
+           <Tab>Livrées</Tab>
+           <Tab>Annulées</Tab>
+         </TabList>
 
-      </Tabs>
-    </div>
+        <TabPanel>
+           <Table dataSource={tableData} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 10 }} />
+        </TabPanel>
+        <TabPanel>
+           <Table dataSource={tableData.filter(commande => commande.status === 'livree')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
+        </TabPanel>
+        <TabPanel>
+            <Table dataSource={tableData.filter(commande => commande.status === 'annulee')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
+        </TabPanel>    
+
+    </Tabs>
+  </div>)
+:
+
+(
+  <p>Pas de commandes</p>
+)
+    )
+    
   );
 }
 
