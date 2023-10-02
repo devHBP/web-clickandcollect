@@ -4,7 +4,7 @@ import  '../styles/styles.css'
 import  '../styles/login.css'
 import { useDispatch } from 'react-redux'
 import { loginUser } from '../reducers/authSlice'
-
+import logo from "../assets/logo_pdj.png"
 
 import axios from 'axios'
 
@@ -54,8 +54,8 @@ export const Login = () => {
   }
   return (
     <div className='login'>
-      <div className='login_container'>
         <div className='login_formulaire'>
+          <img src={logo} alt="" width="150px"/>
             <form onSubmit={handleSubmit} className='formulaire_login'>
               <div className='inputOptions'>
                 <input
@@ -91,7 +91,6 @@ export const Login = () => {
             </form>  
             
         </div>
-      </div>
 </div>
   )
 }
