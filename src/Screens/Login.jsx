@@ -1,6 +1,7 @@
 import React, {  useState }from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import  '../styles/styles.css'
+import  '../styles/login.css'
 import { useDispatch } from 'react-redux'
 import { loginUser } from '../reducers/authSlice'
 
@@ -55,32 +56,40 @@ export const Login = () => {
     <div className='login'>
       <div className='login_container'>
         <div className='login_formulaire'>
-          <h2>Veuillez vous connecter</h2>
             <form onSubmit={handleSubmit} className='formulaire_login'>
               <div className='inputOptions'>
-                <label htmlFor="email">E-mail:</label>
                 <input
                   type="email"
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder='Nom d utilisateur'
                 />
               </div>
               <div className='inputOptions'>
-                <label htmlFor="password">Mot de passe:</label>
                 <input
                   type="password"
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  placeholder='Mot de passe'
                 />
+               
               </div>
-              <button type="submit" >Se connecter</button>
-            </form>
-            <div>
-              Pas encore inscrit ?
-              <Link to="/signup"> S'inscrire </Link>
-            </div>
+              <div className='bloc_login'>
+              <div>
+                <div className='bloc_texte'>
+                <Link className='link'> Mot de passe oublié ? Demandez un nouveau mot de passe</Link>
+                  </div>
+                  <div style={{color:"white"}}>
+                   Pas encore de compte ? <Link to="/signup" className='link'> Inscrivez vous </Link>
+                  </div>
+                  </div>
+                  <button type="submit" className='button'>Connexion</button>
+              </div>
+           
+            </form>  
+            
         </div>
       </div>
 </div>

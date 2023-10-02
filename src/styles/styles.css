@@ -1,6 +1,7 @@
 *{
     padding: 0;
     margin: 0;
+    font-family: 'postino';
 }
 
 /* navbar */
@@ -25,45 +26,6 @@
 /* accueil before login */
 .before_login{
     padding-top: 10vh;
-}
-/* signup */
-.login{
-    width:100vw;
-    height:100vh;
-    background-color:  rgb(230, 225, 225);
-    padding-top: 5vh;
-    display:flex;
-    justify-content: center;
-    align-items: center;
-}
-.login_container{
-    width: 80%;
-    height: 80%;
-    background-color:white;
-    border-radius: 10px;
-    display:flex;
-    justify-content: center;
-    align-items: center;
-}
-.login_formulaire{
-    border: 1px solid rgb(238, 236, 236);
-    width: 80%;
-    height: 80%;
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-}
-.formulaire_login{
-    display:flex;
-    flex-direction: column;
-    gap: 30px;
-    margin-bottom: 80px;
-}
-.inputOptions{
-    display:flex;
-    flex-direction: column;
 }
 .inputCheckbox{
   display:flex;

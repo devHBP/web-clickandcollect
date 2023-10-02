@@ -18,10 +18,10 @@ function App() {
 
   return (
     <div className="App">
-      <Navbar />
+      {/* <Navbar /> */}
       <Routes>
-        <Route path="/" Component={Accueil}/>
-        <Route path="/login" Component={Login}/> 
+        {/* <Route path="/" Component={Accueil}/> */}
+        <Route path="/" Component={Login}/> 
         <Route path="/signup" Component={Signup}/>
         {
           isLoggedIn && <Route path="/home" Component={Home}/>

@@ -36,7 +36,7 @@ export const Signup = () => {
     console.log('client data créé', clientData)
     const user = { firstname, lastname, email, password}
     dispatch(registerUser(user))
-    navigate('/login')
+    navigate('/')
     
   }catch (error){
       console.log(error)
@@ -99,7 +99,7 @@ export const Signup = () => {
             </form>
             <div>
               Vous êtes déja inscrit ?
-              <Link to="/login"> Se connecter </Link>
+              <Link to="/"> Se connecter </Link>
             </div>
         </div>
       </div>
