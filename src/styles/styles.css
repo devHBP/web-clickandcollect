@@ -46,26 +46,14 @@
     text-align: center;
     padding: 20px 0;
 }
-.dashboard_container{
-    display:flex; 
-    width: 100%;
-    /* revoir la taille ici */
-   height: fit-content
-}
-.dashboard_menu{
-    display: flex;
-    flex-direction: column;
-    gap:40px;
-    width: 15%;
-    border: 1px solid lightgray;
-    /* background-color: aquamarine; */
-    padding: 40px 20px;
-}
-.dashboard_content{
-    border: 1Px solid lightgray;
-    width: 85%;
 
+.dashboard_content{
+    border: 1px solid lightgray;
+    width: 85%;
     /* background-color: beige; */
+    height:100%;
+    overflow-y: auto;
+
    
 }
 .dashboard_content h3{
@@ -79,6 +67,7 @@
 /* custom table produits */
 .Tableau{
     margin: 40px;
+    /* background-color: aqua; */
 }
 .rdt_Table{
   border: 1px solid red;
@@ -86,43 +75,6 @@
   padding: 20px;
 
 }
-/* .table_produits{
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: 10px;
-} */
-
-  /* .table_produits th, .table_produits td {
-    padding: 10px;
-    border: 1px solid lightgray;
-  }
-   */
-  /* .table_produits th {
-    background-color: #f2f2f2;
-    text-align: start;
-  } */
-  /* photo */
-  /* .colomn_photo{
-    width: 50px;
-  } */
-  /* .table_produits img {
-    width: 100%;
-    max-height: 60px;
-    object-fit: cover;
-  } */
-  /* actions */
-  /* .colomn_actions{
-    width: 50px;
-  } */
-  /* .actions{
-    text-align: center;
-  } */
-  /* .icones_actions{
-    font-size: 20px;
-    margin: 0 5px;
-  } */
-
-  /* modale  */
   
   .modale_container{
     background-color: rgba(54, 54, 54, 0.872);

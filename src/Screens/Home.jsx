@@ -9,10 +9,14 @@ import CommandePageSimple from '../componants/CommandePage2'
 import  MaBoulangerie from '../componants/MaBoulangerie'
 import  ClickandCollect  from '../componants/ClickandCollect'
 import AntiGaspi from '../componants/AntiGaspi'
+import  '../styles/home.css'
+
 
 const Home = () => {
 
  const [currentPage, setCurrentPage] = useState(null);
+ const [isClicked, setIsClicked] = useState(false);
+
 
  const user = useSelector((state) => state.auth.user)
 
@@ -32,20 +36,36 @@ const Home = () => {
       <div className='dashboard_container'>
         <div className='dashboard_menu'>
           {/* boutons de navigation */}
-            <button onClick={() => handleContentSelection("dashboard")}>Dashboard</button>
+            <button onClick={() => handleContentSelection("dashboard")} 
+                  className={currentPage === 'dashboard' ? 'button_menu_clicked' : 'button_menu'}
+                  >Dashboard</button>
             {
-              user.role === 'gestionnaire' &&  <button onClick={() => handleContentSelection("produits")}>Produits</button>
+              user.role === 'gestionnaire' &&  <button onClick={() => handleContentSelection("produits")} 
+              className={currentPage === 'produits'? 'button_menu_clicked' : 'button_menu'}
+              >Produits</button>
             }
            
             
             {
-              user.role === 'gestionnaire' && <button onClick={() => handleContentSelection("clickandcollect")}>ClickandCollect</button>
+              user.role === 'gestionnaire' && <button onClick={() => handleContentSelection("clickandcollect")} 
+              className={currentPage === 'clickandcollect'? 'button_menu_clicked' : 'button_menu'}
+              >ClickandCollect</button>
             }
-            <button onClick={() => handleContentSelection("antigaspi")}>AntiGaspi</button>
-            <button onClick={() => handleContentSelection("users")}>Clients</button>
-            <button onClick={() => handleContentSelection("commandes")}>Commandes</button>
-            <button onClick={() => handleContentSelection("promos")}>Promotions</button>
-            <button onClick={() => handleContentSelection("boulangerie")}>Ma boulangerie</button>
+            <button onClick={() => handleContentSelection("antigaspi")} 
+            className={currentPage === 'antigaspi'? 'button_menu_clicked' : 'button_menu'}
+            >AntiGaspi</button>
+            <button onClick={() => handleContentSelection("users")} 
+            className={currentPage === 'users'? 'button_menu_clicked' : 'button_menu'}
+            >Clients</button>
+            <button onClick={() => handleContentSelection("commandes")} 
+            className={currentPage === 'commandes'? 'button_menu_clicked' : 'button_menu'}
+            >Commandes</button>
+            <button onClick={() => handleContentSelection("promos")} 
+            className={currentPage === 'promos'? 'button_menu_clicked' : 'button_menu'}
+            >Promotions</button>
+            <button onClick={() => handleContentSelection("boulangerie")} 
+            className={currentPage === 'boulangerie'? 'button_menu_clicked' : 'button_menu'}
+            >Ma boulangerie</button>
         </div>
         <div className='dashboard_content'>
               
