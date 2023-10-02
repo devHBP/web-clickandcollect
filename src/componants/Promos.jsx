@@ -124,7 +124,6 @@ export default function Promos() {
   return (
     <>
     <div>
-        <h3>Codes - Promotions</h3>
 
         <div style={{display:'flex', justifyContent:'center', margin: 30}}>
         <button onClick={() => setOpenModaleAddPromo(true)} >Ajouter un code promo</button>

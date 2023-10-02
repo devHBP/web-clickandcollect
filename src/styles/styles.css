@@ -37,9 +37,11 @@
 }
 /* Home */
 .home_container{
-    padding-top: 8vh;
+    /* padding-top: 8vh; */
     /* background-color: aqua; */
-    height: 92vh;
+    height: 100vh;
+    background: #ECECEC;
+
 }
 .profil{
     /* border: 1Px solid lightgray; */
@@ -48,7 +50,7 @@
 }
 
 .dashboard_content{
-    border: 1px solid lightgray;
+    /* border: 1px solid lightgray; */
     width: 85%;
     /* background-color: beige; */
     height:100%;

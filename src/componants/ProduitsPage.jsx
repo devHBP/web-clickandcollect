@@ -7,6 +7,8 @@ import { Clickandcollect } from '../../SVG/Clickandcollect';
 import { Antigaspi } from '../../SVG/Antigaspi';
 import { TextInput } from './TextInput';
 const { Search } = Input
+import {Add} from '../../SVG/Add.jsx'
+import '../styles/home.css'
 
 
 const ProduitsPage = () => {
@@ -602,7 +604,9 @@ const handleToggleAntigaspi = async (productId) => {
         {/* <h3>Les produits</h3> */}
         
         <div style={{display:'flex', justifyContent:'space-around'}}>
-          <button onClick={() => setOpenModaleAdd(true)}>Ajouter un produit</button>
+          <button onClick={() => setOpenModaleAdd(true)} className='button_add'>
+          <Add />Ajouter un produit</button>
+            
           <Search 
             placeholder='Rechercher un produit' 
             size="medium" 

@@ -175,7 +175,6 @@ const AntiGaspi = () => {
   return (
     <>
     <div className='page_produits_container'>
-        <h3>Les produits Anti Gaspi</h3>
         
         <div style={{display:'flex', justifyContent:'space-around'}}>
           <Search 
