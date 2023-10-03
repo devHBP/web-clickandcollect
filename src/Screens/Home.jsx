@@ -15,15 +15,23 @@ import  logo  from '../assets/logo_menu.png'
 
 const Home = () => {
 
- const [currentPage, setCurrentPage] = useState(null);
- const [isClicked, setIsClicked] = useState(false);
-
+ const [currentPage, setCurrentPage] = useState("dashboard");
 
  const user = useSelector((state) => state.auth.user)
 
  //selection page visible suivant le bouton cliqué
  const handleContentSelection = (page) => {
   setCurrentPage(page);
+};
+const pageNames = {
+  dashboard: 'Dashboard',
+  produits: 'Produits',
+  clickandcollect: 'Click and Collect',
+  antigaspi: 'AntiGaspi',
+  users: 'Clients',
+  commandes: 'Commandes',
+  promos: 'Promotions',
+  boulangerie: 'Ma Boulangerie',
 };
 
   return (
@@ -35,10 +43,17 @@ const Home = () => {
         } */}
         <div className='nav'>
         <img src={logo} alt="" /> 
-        {
-           <div className='nav'>{currentPage}</div>
-           
-        }
+
+
+        <div style={{display:'flex', flexDirection:'column', alignItems:'left'}}>
+        { <div>{currentPage}</div>}
+        {/* Breadcrumbs */}
+       <div className='breadcrumbs'>
+       Accueil {'>'} {pageNames[currentPage]}
+       </div>
+        
+        </div>
+        
         </div>
         
      </div>
