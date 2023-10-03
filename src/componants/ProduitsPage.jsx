@@ -522,6 +522,7 @@ const handleToggleAntigaspi = async (productId) => {
       onClick={() => Update(record)} 
       /> 
       <Modal 
+          width={800}
           title="Modification du produit"
           open={visible}
           onCancel={() => setVisible(false)} 

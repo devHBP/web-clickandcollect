@@ -1,7 +1,6 @@
 *{
     padding: 0;
     margin: 0;
-    font-family: 'postino';
 }
 
 /* navbar */
@@ -45,8 +44,17 @@
 }
 .profil{
     /* border: 1Px solid lightgray; */
-    text-align: center;
+    text-align: left;
     padding: 20px 0;
+}
+.nav{
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  gap: 20px;
+  margin-left: 40px;
+  font-size: 30px;
+  text-transform: capitalize;
 }
 
 .dashboard_content{

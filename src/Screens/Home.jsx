@@ -10,6 +10,7 @@ import  MaBoulangerie from '../componants/MaBoulangerie'
 import  ClickandCollect  from '../componants/ClickandCollect'
 import AntiGaspi from '../componants/AntiGaspi'
 import  '../styles/home.css'
+import  logo  from '../assets/logo_menu.png'
 
 
 const Home = () => {
@@ -29,9 +30,17 @@ const Home = () => {
     <div className='home_container'>
      
      <div className='profil'>
-        {
+        {/* {
           user && <h2>Bienvenue {user.firstname}</h2>
+        } */}
+        <div className='nav'>
+        <img src={logo} alt="" /> 
+        {
+           <div className='nav'>{currentPage}</div>
+           
         }
+        </div>
+        
      </div>
       <div className='dashboard_container'>
         <div className='dashboard_menu'>
