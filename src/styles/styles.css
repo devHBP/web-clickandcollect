@@ -36,10 +36,11 @@
 }
 /* Home */
 .home_container{
-    /* padding-top: 8vh; */
     /* background-color: aqua; */
     height: 100vh;
+    width:100vw;
     background: #ECECEC;
+    padding: 0px 5px;
 
 }
 .profil{
@@ -63,15 +64,13 @@
     /* background-color: beige; */
     height:100%;
     overflow-y: auto;
-
-   
 }
 .dashboard_content h3{
-    border: 1Px solid lightgray;
+    /* border: 1Px solid lightgray; */
     text-align: center;
-    margin: 30px;
-    padding: 20px;
-    border-radius: 10px;
+    margin: 10px;
+    /* padding: 20px; */
+    /* border-radius: 10px; */
 }
 
 /* custom table produits */
@@ -149,34 +148,39 @@
   
 .tasks {
   display: flex;
-  justify-content: space-between;
-  margin: 20px;
+  justify-content: space-around;
+  margin: 10px;
+  background-color: white;
 }
 
-.tasks_column {
+/* .tasks_column {
   margin:0 1rem;
   flex:1;
-}
+} */
 .tasks_column h4{
   text-align: center;
-  margin: 20px 0;
+  margin: 5px 0;
+}
+.column{
+  width:45vw
 }
 .tasks_list {  
   display: flex;
   flex-direction: column;
   min-height: 110px;
-  border:1px solid #DDD;
+  /* border:1px solid #DDD; */
   border-radius: 5px;;
-  padding:.5rem 1rem;
-  background-color: #EEE;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  padding:0px 1rem;
+  /* background-color: #EEE; */
+  /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.05); */
 }
 .task_item {  
-  border: 1px solid #DDD;
-  background-color: rgb(255, 255, 255);  
+  border: 1px solid #ECECEC;
+  background-color: #ECECEC;  
   padding: .5rem;
   margin: .3rem 0;
-  position:relative
+  position:relative;
+  border-radius: 5px;
 }
 .task_item:hover{
   cursor: pointer;

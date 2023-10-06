@@ -150,18 +150,18 @@ function CommandePageSimple() {
             title: "Commandes en attente",
             taskIds: orderArray.filter(order => order.status === 'en attente').map(order => order.numero_commande),
           },
-          "column-2": {
-            id: "column-2",
-            title: "Commandes en préparation",
-            taskIds: orderArray.filter(order => order.status === 'preparation').map(order => order.numero_commande),
-          },
+          // "column-2": {
+          //   id: "column-2",
+          //   title: "Commandes en préparation",
+          //   taskIds: orderArray.filter(order => order.status === 'preparation').map(order => order.numero_commande),
+          // },
           "column-3": {
             id: "column-3",
             title: "Commandes prêtes à récupérer",
             taskIds: orderArray.filter(order => order.status === 'prete').map(order => order.numero_commande),
           }
         },
-        columnOrder: ["column-1", "column-2", "column-3"]
+        columnOrder: ["column-1", "column-3"]
       };
     
   };
@@ -236,9 +236,9 @@ function CommandePageSimple() {
       case 'column-1':
         status = 'en attente';
         break;
-      case 'column-2':
-        status = 'preparation';
-        break;
+      // case 'column-2':
+      //   status = 'preparation';
+      //   break;
       case 'column-3':
         status = 'prete';
         break;
