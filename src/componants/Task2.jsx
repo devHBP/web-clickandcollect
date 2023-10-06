@@ -55,6 +55,7 @@ function Task({ commande, index, updateOrderStatus, socket }) {
           <div className="task-number">{commande.numero_commande}</div>
             <div className="task-client">{commande.client}</div>
             <div className="task-client">Total Commande: {commande.prix_total} euros</div>
+            <div className="task-client">Email: {commande.email}</div>
             <div className="task-products">Nombre de produits: {commande.nombre_produits}</div>
 
             {showDetails && (

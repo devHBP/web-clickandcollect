@@ -17,36 +17,7 @@ function CommandePageSimple() {
 
   useEffect(() => {
     allOrders()
-    initializeWebSocket();
   }, []);
-
-  const initializeWebSocket = () => {
-    const newSocket = new WebSocket('ws://localhost:8080');
-
-    newSocket.onopen = () => {
-      console.log('WebSocket connection established.');
-    };
-
-    newSocket.onmessage = event => {
-      const message = event.data;
-      console.log('Received WebSocket message:', message);
-
-      const { type } = JSON.parse(message);
-
-      if (type === 'newOrder') {
-       
-        allOrders()
-      }
-
-    };
-
-    newSocket.onclose = event => {
-      console.log('WebSocket connection closed:', event.code, event.reason);
-    };
-
-    setSocket(newSocket);
-  };
-
 
   const updateOrderStatus = (orderId, status) => {
     // Update commandes
@@ -75,31 +46,34 @@ function CommandePageSimple() {
         }   
       return updatedTableData;
     });
-
-
   };
 
   const allOrders = async () => {
     try {
      
       const response = await axios.get(`${baseUrl}/allOrders`);
+
       if (response.data.orders && response.data.orders.length === 0) {
         setHasOrders(false);
     } else {
         setHasOrders(true);
     }
-      console.log('order res', response)
+    
       const orders = response.data.orders;
         // Fetch product details for each order
       const ordersWithDetails = await Promise.all(orders.map(async order => {
       const productResponse = await axios.get(`${baseUrl}/getOrderProducts/${order.orderId}`);
       const storeResponse = await axios.get(`${baseUrl}/getOneStore/${order.storeId}`);
       const storeName= storeResponse.data.nom_magasin
+
+      const emailUserId = await axios.get(`${baseUrl}/getEmailByUserId/${order.userId}/email`)
+      const emailUser = emailUserId.data.email
  
         return {
           ...order,
           productDetails: productResponse.data, // Add product details to order
-          storeName: storeName
+          storeName: storeName,
+          email: emailUser
         };
       }));
       
@@ -128,11 +102,6 @@ function CommandePageSimple() {
       }      
     }
 
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      const message = JSON.stringify({ type: 'newOrder', });
-      socket.send(message);
-    }
-
    } catch (error) {
       if (error.response && error.response.status === 404) {
         console.error("No orders found.");
@@ -148,7 +117,6 @@ function CommandePageSimple() {
   //mise en forme data
   const transformOrderData = (orders) => {
     const orderArray = Object.values(orders);
-    console.log(orderArray)
    
     return {
         tasks: orderArray.reduce((acc, order) => {
@@ -170,10 +138,12 @@ function CommandePageSimple() {
             productDetails: order.productDetails, 
             date:formattedDate,
             heure: order.heure,
-            magasin:order.storeName
+            magasin:order.storeName,
+            email: order.email
           };
           return acc;
         }, {}),
+
         columns: {
           "column-1": {
             id: "column-1",
@@ -275,13 +245,29 @@ function CommandePageSimple() {
       default:
         status = 'unknown';
     }
-    console.log(`Order ${draggableId} is now  : ${status}`);
 
     // Update the status of the order in the database
     try {
         const orderId = commandes.tasks[draggableId].key;
         const response = await axios.put(`${baseUrl}/updateStatusOrder/${orderId}`, { status });
         updateOrderStatus(orderId, status);
+
+        if (status === 'prete'){
+          const order = commandes.tasks[draggableId];
+          // console.log('Commande:', order);
+          const sendEmail = async () => {
+            try {
+              // Assurez-vous que user.email et user.firstname sont accessibles à partir de cet endroit du code.
+              const res = await axios.post(`${baseUrl}/orderStatusReady`, {
+                  email: order.email, 
+                  firstname: order.client
+              });
+            } catch (error) {
+              console.error("An error occurred while sending the email:", error);
+            }
+          };
+          sendEmail();
+        }
       } catch (error) {
         console.error('An error occurred while updating the order status:', error);
       }
@@ -321,7 +307,7 @@ const columns = [
     title: "Statut",
     dataIndex: "status",
     key: "status",
-    sorter: (a, b) => a.status.localeCompare(b.status), // Ajoutez cette ligne
+    sorter: (a, b) => a.status.localeCompare(b.status), 
     sortDirections: ['descend', 'ascend'],
     render: (status) => {
       let color;
