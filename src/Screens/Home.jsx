@@ -1,5 +1,8 @@
 import React, {  useState} from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { logoutUser } from '../reducers/authSlice'
+
 
 import  DashboardPage  from '../componants/DashboardPage'
 import ProduitsPage from '../componants/ProduitsPage'
@@ -17,6 +20,8 @@ const Home = () => {
 
  const [currentPage, setCurrentPage] = useState("dashboard");
 
+ const navigate = useNavigate()
+ const dispatch = useDispatch();
  const user = useSelector((state) => state.auth.user)
 
  //selection page visible suivant le bouton cliqué
@@ -33,6 +38,14 @@ const pageNames = {
   promos: 'Promotions',
   boulangerie: 'Ma Boulangerie',
 };
+
+//deconnexion
+const handleLogout = () => {
+  dispatch(logoutUser());
+  navigate('/')
+
+};
+
 
   return (
     <div className='home_container'>
@@ -51,7 +64,9 @@ const pageNames = {
        <div className='breadcrumbs'>
        Accueil {'>'} {pageNames[currentPage]}
        </div>
-        
+
+       <button onClick={handleLogout}>Déconnexion</button>
+
         </div>
         
         </div>
