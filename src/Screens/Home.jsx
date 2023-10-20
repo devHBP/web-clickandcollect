@@ -2,8 +2,6 @@ import React, {  useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logoutUser } from '../reducers/authSlice'
-
-
 import  DashboardPage  from '../componants/DashboardPage'
 import ProduitsPage from '../componants/ProduitsPage'
 import UsersPage from '../componants/UsersPage'
