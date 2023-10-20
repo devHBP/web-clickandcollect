@@ -63,7 +63,7 @@ export const Login = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder='Nom d utilisateur'
+                  placeholder='Votre email'
                 />
               </div>
               <div className='inputOptions'>
