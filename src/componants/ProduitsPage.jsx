@@ -9,8 +9,6 @@ import { TextInput } from './TextInput';
 const { Search } = Input
 import {Add} from '../../SVG/Add.jsx'
 import '../styles/home.css'
-import { useSelector } from 'react-redux';
-
 
 
 const ProduitsPage = () => {
@@ -36,14 +34,8 @@ const ProduitsPage = () => {
     const colorClickandCollectOff = "#636C77";
     const colorClickandCollectOn = "#E9520E";
     const [stockValue, setStockValue] = useState({});
-    const [role, setRole] = useState(null);
 
 
-    const user = useSelector(state => state.auth.user);
-    console.log(user.role)
-    
-    
-    
     // const [image, setImage] = useState(null);
 
     // const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons',
@@ -57,13 +49,8 @@ const ProduitsPage = () => {
       try {
         const response = await axios.get(`${baseUrl}/getAllProducts`);
         let products = response.data;
-
         //console.log(response.data)
 
-        // Si le rôle est "employé", filtrer les produits
-        if (user.role === "employe") {
-          products = products.filter(product => product.antigaspi === true);
-        }
         setElements(products);
       } catch (error) {
         console.error('Une erreur s\'est produite, allproducts :', error);
@@ -71,7 +58,7 @@ const ProduitsPage = () => {
     };
 
     fetchData(); // Appel de la fonction fetchData lors du montage du composant
-  }, [role]);
+  }, []);
 
   useEffect(() => {
     // Fonction pour récupérer les données de la base de données

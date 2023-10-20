@@ -5,6 +5,7 @@ import { Clickandcollect } from '../../SVG/Clickandcollect';
 import { Antigaspi } from '../../SVG/Antigaspi';
 import { TextInput } from './TextInput';
 const { Search } = Input
+import { useSelector } from 'react-redux';
 
 
 const AntiGaspi = () => {
@@ -17,9 +18,11 @@ const AntiGaspi = () => {
     const colorClickandCollectOff = "#636C77";
     const colorClickandCollectOn = "#E9520E";
     const [stockValue, setStockValue] = useState({});
-    
-    
+    const [role, setRole] = useState(null);
 
+    
+    const user = useSelector(state => state.auth.user);
+    console.log("role", user.role)
 
   useEffect(() => {
     // Fonction pour récupérer les données de la base de données
@@ -27,7 +30,13 @@ const AntiGaspi = () => {
       try {
         const response = await axios.get(`${baseUrl}/getAllProducts`);
         //console.log(response.data)
-        setElements(response.data);
+        let products = response.data;
+
+        // Si le rôle est "employé", filtrer les produits
+        // if (user.role === "employe") {
+          products = products.filter(product => product.antigaspi === true);
+        // }
+        setElements(products);
       } catch (error) {
         console.error('Une erreur s\'est produite, allproducts :', error);
       }

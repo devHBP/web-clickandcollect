@@ -254,13 +254,16 @@ function CommandePageSimple() {
 
         if (status === 'prete'){
           const order = commandes.tasks[draggableId];
-          // console.log('Commande:', order);
+           console.log('Commande:', order);
           const sendEmail = async () => {
             try {
               // Assurez-vous que user.email et user.firstname sont accessibles à partir de cet endroit du code.
               const res = await axios.post(`${baseUrl}/orderStatusReady`, {
                   email: order.email, 
-                  firstname: order.client
+                  firstname: order.client,
+                  numero_commande: order.numero_commande,
+                  date: order.date,
+                  point_de_vente: order.magasin
               });
             } catch (error) {
               console.error("An error occurred while sending the email:", error);

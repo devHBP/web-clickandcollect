@@ -33,9 +33,6 @@ const ClickandCollect = () => {
     const colorClickandCollectOn = "#E9520E";
     const [stockValue, setStockValue] = useState({});
     
-    
-    
-  
 
   useEffect(() => {
     // Fonction pour récupérer les données de la base de données
@@ -43,7 +40,9 @@ const ClickandCollect = () => {
       try {
         const response = await axios.get(`${baseUrl}/getAllProducts`);
         //console.log(response.data)
-        setElements(response.data);
+   
+       const  products = response.data.filter(product => product.clickandcollect === true);
+        setElements(products);
       } catch (error) {
         console.error('Une erreur s\'est produite, allproducts :', error);
       }
