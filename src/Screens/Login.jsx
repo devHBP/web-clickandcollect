@@ -40,7 +40,7 @@ export const Login = () => {
     // console.log('token', res.data.token)
     // console.log('login reussi')
     const user = res.data.user
-    console.log('user login', user)
+    //console.log('user login', user)
     dispatch(loginUser(user))
     navigate('/home')
       // // Réinitialiser les champs du formulaire
