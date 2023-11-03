@@ -5,8 +5,6 @@ import axios from 'axios'
 
 function Task({ commande, index, updateOrderStatus, socket }) {
 
-
-
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [showDetails, setShowDetails] = useState(false)
@@ -22,9 +20,27 @@ function Task({ commande, index, updateOrderStatus, socket }) {
   }
   const handleDelivery = async () => {
     const status = 'livree';
+   
     try {
       const response = await axios.put(`${baseUrl}/updateStatusOrder/${commande.key}`, { status });
       updateOrderStatus(commande.key, status);
+      console.log('commande livrée')
+      //envoi de l'email de feedback
+      const sendEmail = async () => {
+        try {
+          // Assurez-vous que user.email et user.firstname sont accessibles à partir de cet endroit du code.
+          const res = await axios.post(`${baseUrl}/feedback`, {
+              email: commande.email, 
+              firstname: commande.client,
+              numero_commande: commande.numero_commande,
+              date: commande.date,
+              point_de_vente: commande.magasin
+          });
+        } catch (error) {
+          console.error("An error occurred while sending the email:", error);
+        }
+      };
+      sendEmail();
     } catch (error) {
       console.error('An error occurred while updating the order status:', error);
     } 

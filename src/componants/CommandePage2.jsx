@@ -254,7 +254,7 @@ function CommandePageSimple() {
 
         if (status === 'prete'){
           const order = commandes.tasks[draggableId];
-           console.log('Commande:', order);
+           //console.log('Commande:', order);
           const sendEmail = async () => {
             try {
               // Assurez-vous que user.email et user.firstname sont accessibles à partir de cet endroit du code.
