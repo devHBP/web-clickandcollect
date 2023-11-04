@@ -22,10 +22,8 @@ export const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Effectuer des actions de connexion, comme envoyer les données au serveur
     // console.log('Email:', email);
     // console.log('Mot de passe:', password);
-
 
     const clientData = {
       email,
@@ -33,12 +31,11 @@ export const Login = () => {
   }
   
   try{
-    //appel axios pour se loger
+    //appel axios pour se logger
     // const res = await axios.post('http://localhost:8080/login', clientData)
     const res = await axios.post(`${baseUrl}/login`, clientData)
 
     // console.log('token', res.data.token)
-    // console.log('login reussi')
     const user = res.data.user
     //console.log('user login', user)
     dispatch(loginUser(user))
@@ -77,14 +74,7 @@ export const Login = () => {
                
               </div>
               <div className='bloc_login'>
-              <div>
-                <div className='bloc_texte'>
-                <Link className='link'> Mot de passe oublié ? Demandez un nouveau mot de passe</Link>
-                  </div>
-                  <div style={{color:"white"}}>
-                   Pas encore de compte ? <Link to="/signup" className='link'> Inscrivez vous </Link>
-                  </div>
-                  </div>
+             
                   <button type="submit" className='button'>Connexion</button>
               </div>
            
