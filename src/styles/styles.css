@@ -75,7 +75,7 @@
 
 /* custom table produits */
 .Tableau{
-    margin: 40px;
+    margin: 20px;
     /* background-color: aqua; */
 }
 .rdt_Table{
@@ -84,7 +84,7 @@
   padding: 20px;
 
 }
-  
+/*   
   .modale_container{
     background-color: rgba(54, 54, 54, 0.872);
     position: absolute;
@@ -103,7 +103,7 @@
      top:50%;
     left:50%;
     transform: translate(-50%, -50%); 
-    width: 700px;
+    width: 800px;
     height: 90%;
     background-color: white;
     border-radius: 25px;
@@ -117,15 +117,138 @@
     font-size: 30px;
   }
   .modale_content{
-    /* height: 100%; */
     display:flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 20px;
     height: 100%;
+    width: 90%;
   }
- 
+  */
+/* Modal Container Style */
+.modale_container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* high z-index to ensure it's on top */
+}
+
+/* Modal Style */
+.modale {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 600px; /* not too wide */
+}
+.title_modale{
+  display: flex;
+  justify-content: center;
+  font-weight: 600;
+  color: #333;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+/* Close Button Style */
+.button_close {
+  float: right;
+  cursor: pointer;
+  font-size: 24px;
+  color: #333;
+}
+
+/* Modal Content Style */
+.modale_content {
+  clear: both;
+  margin-top: 20px;
+  max-height: 80vh; /* maximum height before scrolling */
+  overflow-y: auto; 
+}
+
+/* Form element styles */
+.modale_content form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px; /* space out form elements */
+}
+
+.modale_content form div {
+  display: flex;
+  flex-direction: column;
+}
+
+.modale_content form label {
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #333;
+}
+
+.modale_content form input[type="file"],
+.modale_content form input[type="text"],
+.modale_content form input[type="number"],
+.modale_content form select,
+.modale_content form textarea {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.modale_content form input[type="checkbox"] {
+  margin-top: 5px;
+}
+
+/* Style for checkboxes in the form */
+.inputCheckbox {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.inputCheckbox label {
+  margin-right: 10px; /* space between label and checkbox */
+}
+
+.inputCheckbox .check {
+  margin-top: 0;
+}
+
+/* Options and Description Textarea Styles */
+.inputOptions textarea {
+  resize: vertical; /* allows only vertical resizing */
+}
+
+/* Submit Button Style */
+.modale_content form button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modale_content form button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive tweaks (if needed) */
+@media (max-width: 768px) {
+  .modale {
+    width: 100%;
+    margin: 10px;
+    max-width: unset;
+  }
+}
 
   .page_produits_container{
     display:flex;

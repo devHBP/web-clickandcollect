@@ -16,7 +16,7 @@ import  logo  from '../assets/logo_menu.png'
 
 const Home = () => {
 
- const [currentPage, setCurrentPage] = useState("dashboard");
+ const [currentPage, setCurrentPage] = useState("produits");
 
  const navigate = useNavigate()
  const dispatch = useDispatch();

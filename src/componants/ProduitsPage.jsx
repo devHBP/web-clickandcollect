@@ -326,6 +326,12 @@ const handleToggleAntigaspi = async (productId) => {
       render: (image) => <img src={`${baseUrl}/${image}`} alt="Produit" width="50" />,
     },
     {
+      title: 'Stock',
+      dataIndex: 'stock',
+      key: 'stock',
+      //sorter: (a, b) => a.stock- b.stock,
+    },
+    {
       title: 'Libellé',
       dataIndex: 'libelle',
       key: 'libelle',
@@ -343,12 +349,12 @@ const handleToggleAntigaspi = async (productId) => {
       key: 'prix_unitaire',
       sorter: (a, b) => a.prix_unitaire - b.prix_unitaire,
     },
-    {
-      title: 'Prix Collab',
-      dataIndex: 'prix_remise_collaborateur',
-      key: 'prix_remise_collaborateur',
-      // sorter: (a, b) => a.prix_remise_collaborateur- b.prix_remise_collaborateur,
-    },
+    // {
+    //   title: 'Prix Collab',
+    //   dataIndex: 'prix_remise_collaborateur',
+    //   key: 'prix_remise_collaborateur',
+    //   // sorter: (a, b) => a.prix_remise_collaborateur- b.prix_remise_collaborateur,
+    // },
     {
       title: 'Stock Anti-Gaspi',
       align: 'center',
@@ -403,7 +409,7 @@ const handleToggleAntigaspi = async (productId) => {
     
 ,    
     {
-      title: 'ClickandCollect',
+      title: 'C&Collect',
       align: 'center',
 
       render: (record) => {
@@ -441,18 +447,79 @@ const handleToggleAntigaspi = async (productId) => {
       }
     },
     
-    {
-      title: 'Stock',
-      dataIndex: 'stock',
-      key: 'stock',
-      //sorter: (a, b) => a.stock- b.stock,
-    },
-    {
-      title: 'Modifier stock',
-      render : (record) => {
-        return (
-          <>
-          <AiOutlinePlusCircle onClick={() => IncreaseStock(record)}/>
+    // {
+    //   title: 'Modifier stock',
+    //   render : (record) => {
+    //     return (
+    //       <>
+    //       <AiOutlinePlusCircle onClick={() => IncreaseStock(record)}/>
+          
+    //       <Modal 
+    //       title='Modification du stock'
+    //       open={visibleIncreaseStock}
+    //       onCancel={() => setVisibleIncreaseStock(false)} 
+    //       onOk={() => {
+    //         handleIncreaseStock(selectedProductId, increaseAmount);
+    //         setVisibleIncreaseStock(false);
+    //       }}
+    //       okText="Save" 
+    //       maskStyle={{ backgroundColor: 'lightgray' }}
+    //       >
+    //         <p>Produit: {selectedProduct?.libelle}</p>
+    //         <div style={{display:'flex', gap: '20px'}}>
+    //         <div className='inputOptions'>
+    //                 <label htmlFor="stock">Ajouter Stock:</label>
+    //                 <input
+    //                 type="text"
+    //                 id="stock"
+    //                 value={ increaseAmount}
+    //                 onChange={(e) => setIncreaseAmount(e.target.value)}
+    //                 style={{ width: '30px' }}
+    //                 />
+    //             </div>
+        
+    //         </div>
+    //       </Modal>
+
+    //       <AiOutlineMinusCircle onClick={() => DecreaseStock(record)}/>
+
+    //       <Modal 
+    //           title='Modification du stock'
+    //           open={visibleDecreaseStock}
+    //           onCancel={() => setVisibleDecreaseStock(false)} 
+    //           onOk={() => {
+    //             handleDecreaseStock(selectedProductId, decreaseAmount);
+    //             setVisibleDecreaseStock(false);
+    //           }}
+    //           okText="Save" 
+    //           maskStyle={{ backgroundColor: 'lightgray' }}
+    //         >
+    //           <p>Produit: {selectedProduct?.libelle}</p>
+    //           <div style={{display:'flex', gap: '20px'}}>
+    //             <div className='inputOptions'>
+    //               <label htmlFor="stock">Diminuer Stock:</label>
+    //               <input
+    //                 type="text"
+    //                 id="stock"
+    //                 value={ decreaseAmount}
+    //                 onChange={(e) => setDecreaseAmount(e.target.value)}
+    //                 style={{ width: '30px' }}
+    //               />
+    //             </div>
+    //           </div>
+    //         </Modal>
+
+    //       </>
+    //     )
+    //   }
+    // },
+    { 
+      key: "action", 
+      title: "Actions", 
+      render: (record) => { 
+      return ( 
+      <> 
+      <AiOutlinePlusCircle onClick={() => IncreaseStock(record)}/>
           
           <Modal 
           title='Modification du stock'
@@ -509,16 +576,7 @@ const handleToggleAntigaspi = async (productId) => {
               </div>
             </Modal>
 
-          </>
-        )
-      }
-    },
-    { 
-      key: "action", 
-      title: "Actions", 
-      render: (record) => { 
-      return ( 
-      <> 
+        
       <AiOutlineReload 
       onClick={() => Update(record)} 
       /> 

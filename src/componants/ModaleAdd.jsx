@@ -130,15 +130,18 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
          <div className='modale'>
             < AiFillCloseCircle className='button_close' onClick={() => setOpenModaleAdd(false)}/>
             <div className='modale_content'>
-            <p>Ajouter un produit</p>
+              <div className='title_modale'>
+              <p>Ajouter un produit</p>
+              </div>
+           
             <form onSubmit={handleAdd}>
                 
-                <div className="inputOptions">
+                <div className="">
                 <label htmlFor="image">Image:</label>
                 <input type="file" id="image" onChange={handleImageChange} name="image" />
                 </div>
 
-                <div className='inputOptions'>
+                <div className=''>
                     <label htmlFor="libelle">Libellé:</label>
                     <input
                     type="text"
@@ -149,7 +152,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                     />
                 </div>
 
-                <div className="inputOptions">
+                <div className="">
                     <label htmlFor="categorie">Sélectionner une catégorie:</label>
                     <select id="categorie" value={selectedCategorie} onChange={(e) => setSelectedCategorie(e.target.value)} name="categorie">
                     <option value="">Catégorie</option>
@@ -161,7 +164,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                     </select>
                 </div>
 
-                <div className='inputOptions'>
+                <div className=''>
                     <label htmlFor="prix_unitaire">Prix:</label>
                     <input
                     type="text"
@@ -172,7 +175,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                     />
                 </div>
                 
-                <div className='inputOptions'>
+                <div className=''>
                     <label htmlFor="prix_remise_collaborateur">Prix remise collaborateur:</label>
                     <input
                     type="text"
@@ -183,7 +186,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                     />
                 </div>
 
-                <div className='inputOptions'>
+                <div className=''>
                     <label htmlFor="disponibilite">Disponible:</label>
                     <input
                     type="checkbox"
@@ -194,7 +197,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                     />
                 </div>
 
-                <div className='inputOptions'>
+                <div className=''>
                     <label htmlFor="stock">Stock:</label>
                     <input
                     type="number"
