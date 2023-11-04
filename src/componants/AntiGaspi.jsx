@@ -22,7 +22,7 @@ const AntiGaspi = () => {
 
     
     const user = useSelector(state => state.auth.user);
-    console.log("role", user.role)
+    //console.log("role", user.role)
 
   useEffect(() => {
     // Fonction pour récupérer les données de la base de données
