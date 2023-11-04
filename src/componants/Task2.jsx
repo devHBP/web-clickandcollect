@@ -24,14 +24,14 @@ function Task({ commande, index, updateOrderStatus, socket }) {
     try {
       const response = await axios.put(`${baseUrl}/updateStatusOrder/${commande.key}`, { status });
       updateOrderStatus(commande.key, status);
-      console.log('commande livrée')
+      //console.log('commande livrée')
       //envoi de l'email de feedback
       const sendEmail = async () => {
         try {
           // Assurez-vous que user.email et user.firstname sont accessibles à partir de cet endroit du code.
           const res = await axios.post(`${baseUrl}/feedback`, {
               email: commande.email, 
-              firstname: commande.client,
+              firstname: commande.firstname,
               numero_commande: commande.numero_commande,
               date: commande.date,
               point_de_vente: commande.magasin

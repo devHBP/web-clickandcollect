@@ -139,7 +139,8 @@ function CommandePageSimple() {
             date:formattedDate,
             heure: order.heure,
             magasin:order.storeName,
-            email: order.email
+            email: order.email, 
+            firstname: order.firstname_client
           };
           return acc;
         }, {}),
@@ -260,10 +261,10 @@ function CommandePageSimple() {
               // Assurez-vous que user.email et user.firstname sont accessibles à partir de cet endroit du code.
               const res = await axios.post(`${baseUrl}/orderStatusReady`, {
                   email: order.email, 
-                  firstname: order.client,
                   numero_commande: order.numero_commande,
                   date: order.date,
-                  point_de_vente: order.magasin
+                  point_de_vente: order.magasin,
+                  firstname: order.firstname
               });
             } catch (error) {
               console.error("An error occurred while sending the email:", error);
