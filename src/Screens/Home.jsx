@@ -63,7 +63,7 @@ const handleLogout = () => {
        Accueil {'>'} {pageNames[currentPage]}
        </div>
 
-       <button onClick={handleLogout}>Déconnexion</button>
+       <button onClick={handleLogout} className='button_menu'>Déconnexion</button>
 
         </div>
         
