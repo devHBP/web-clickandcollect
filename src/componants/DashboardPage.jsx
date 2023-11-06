@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Select from 'react-select';
+import Select from "react-select";
 
 import "../styles/dashboard.css";
 
@@ -13,7 +13,7 @@ const DashboardPage = () => {
   });
   const [clientData, setClientData] = useState({ clients: [] });
   const [filterPeriod, setFilterPeriod] = useState("daily");
-  const [salesFilterPeriod, setSalesFilterPeriod] = useState('daily');
+  const [salesFilterPeriod, setSalesFilterPeriod] = useState("daily");
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -86,7 +86,8 @@ const DashboardPage = () => {
       const prixTotalAsNumber = parseFloat(order.prix_total);
       return acc + (isNaN(prixTotalAsNumber) ? 0 : prixTotalAsNumber);
     }, 0);
-    const average = filteredOrders.length > 0 ? totalVentes / filteredOrders.length : 0;
+    const average =
+      filteredOrders.length > 0 ? totalVentes / filteredOrders.length : 0;
 
     setOrdersData((prevData) => ({
       ...prevData,
@@ -95,71 +96,69 @@ const DashboardPage = () => {
     }));
   };
 
-// filtrage des commandes
-const getFilteredOrdersCount = () => {
-  const now = new Date();
-  let filteredOrders;
+  // filtrage des commandes
+  const getFilteredOrdersCount = () => {
+    const now = new Date();
+    let filteredOrders;
 
-  switch (filterPeriod) {
-    case "daily":
-      filteredOrders = ordersData.orders.filter((order) => {
-        const orderDate = new Date(order.createdAt);
-        return orderDate.toDateString() === now.toDateString();
-      });
-      break;
-    case "weekly":
-      filteredOrders = ordersData.orders.filter((order) => {
-        const orderDate = new Date(order.createdAt);
-        const oneWeekAgo = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate() - 7
-        );
-        return orderDate > oneWeekAgo;
-      });
-      break;
-    case "monthly":
-      filteredOrders = ordersData.orders.filter((order) => {
-        const orderDate = new Date(order.createdAt);
-        const oneMonthAgo = new Date(
-          now.getFullYear(),
-          now.getMonth() - 1,
-          now.getDate()
-        );
-        return orderDate > oneMonthAgo;
-      });
-      break;
-    // case "total":
-    //   filteredOrders = ordersData.orders;
-    //   break;
-    default:
-      filteredOrders = ordersData.orders;
-      break;
-  }
-  return filteredOrders.length;
-};
+    switch (filterPeriod) {
+      case "daily":
+        filteredOrders = ordersData.orders.filter((order) => {
+          const orderDate = new Date(order.createdAt);
+          return orderDate.toDateString() === now.toDateString();
+        });
+        break;
+      case "weekly":
+        filteredOrders = ordersData.orders.filter((order) => {
+          const orderDate = new Date(order.createdAt);
+          const oneWeekAgo = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate() - 7
+          );
+          return orderDate > oneWeekAgo;
+        });
+        break;
+      case "monthly":
+        filteredOrders = ordersData.orders.filter((order) => {
+          const orderDate = new Date(order.createdAt);
+          const oneMonthAgo = new Date(
+            now.getFullYear(),
+            now.getMonth() - 1,
+            now.getDate()
+          );
+          return orderDate > oneMonthAgo;
+        });
+        break;
+      // case "total":
+      //   filteredOrders = ordersData.orders;
+      //   break;
+      default:
+        filteredOrders = ordersData.orders;
+        break;
+    }
+    return filteredOrders.length;
+  };
 
-  const handleSelectChange = selectedOption => {
+  const handleSelectChange = (selectedOption) => {
     setFilterPeriod(selectedOption.value);
   };
 
-  const handleSalesSelectChange = selectedOption => {
+  const handleSalesSelectChange = (selectedOption) => {
     setSalesFilterPeriod(selectedOption.value);
   };
 
   const options = [
-    { value: 'daily', label: 'Ce jour' },
-    { value: 'weekly', label: 'Cette semaine' },
-    { value: 'monthly', label: 'Ce mois' },
-    { value: 'total', label: 'Total' }
+    { value: "daily", label: "Ce jour" },
+    { value: "weekly", label: "Cette semaine" },
+    { value: "monthly", label: "Ce mois" },
+    { value: "total", label: "Total" },
   ];
 
   return (
     <div className="content_dashboard">
-      
       <div className="content_analytics">
         <h2>Analyses Le Pain du Jour - Mas Guérido</h2>
-        
 
         {/* 1ere partie */}
         <div className="first_part">
@@ -181,18 +180,16 @@ const getFilteredOrdersCount = () => {
                   .length
               }
             </span>
-           
           </div>
           <div className="highlight-box">
             <p>Nombre de commandes : </p>
-            <span>{getFilteredOrdersCount()}</span>
 
-          <Select 
-            options={options} 
-            onChange={handleSelectChange} 
-            value={options.find(option => option.value === filterPeriod)} 
-          />
-            
+            <Select
+              options={options}
+              onChange={handleSelectChange}
+              value={options.find((option) => option.value === filterPeriod)}
+            />
+            <span>{getFilteredOrdersCount()}</span>
           </div>
         </div>
 
@@ -221,14 +218,16 @@ const getFilteredOrdersCount = () => {
             <span>{ordersData.average.toFixed(2)}€</span>
           </div>
           <div className="highlight-box">
-          <p>Chiffre d'affaires : </p>
-          <span>{ordersData.totalVentes.toFixed(2)}€</span>
-          <Select 
-            options={options} 
-            onChange={handleSalesSelectChange} 
-            value={options.find(option => option.value === salesFilterPeriod)} 
-          />
-        </div>
+            <p>Chiffre d'affaires : </p>
+            <Select
+              options={options}
+              onChange={handleSalesSelectChange}
+              value={options.find(
+                (option) => option.value === salesFilterPeriod
+              )}
+            />
+            <span>{ordersData.totalVentes.toFixed(2)}€</span>
+          </div>
         </div>
         {/* 4e partie */}
         <div className="fourth">
@@ -239,7 +238,6 @@ const getFilteredOrdersCount = () => {
       </div>
     </div>
   );
-
-            }
+};
 
 export default DashboardPage;
