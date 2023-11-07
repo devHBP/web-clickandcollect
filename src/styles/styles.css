@@ -1,52 +1,77 @@
-*{
+ *{
     padding: 0;
     margin: 0;
+    font-family: 'Montserrat';
+} 
+/* --------------------- */
+/* page login */
+.login{
+  width:100vw;
+  height:100vh;
+  background-color:  #273545;
+  /* padding-top: 5vh; */
+  display:flex;
+  justify-content: center; 
+  align-items: center;
+}
+.login_formulaire{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  gap:60px;
+}
+.formulaire_login{
+display:flex;
+  flex-direction: column; 
+  gap: 20px;
+  width:50vw;
+
+}
+.inputOptions{
+  display:flex;
+  flex-direction: column;
+  width:50vw;
+}
+input {
+  padding: 10px;
+  border-radius: 10px;
+}
+.bloc_login{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 0 10px;
+}
+.button{
+  background-color: #E9520E ;
+  border-style: none;
+  padding: 10px 30px;
+  border-radius: 10px;
+  color:white
+}
+.link:link{
+text-decoration: none;
+}
+.link:visited{
+color:white
 }
 
-/* navbar */
-.navbar{
-    border: 1px solid white;
-    height: 8vh; 
-    box-shadow: 0px 2px 5px -3px #b2b2b2;
-    display:flex;
-    align-items: center;
-    justify-content: flex-end;
-    position: fixed;
-    width: 100vw;
-    z-index: 99;
-    top:0;
-    background-color: white;
-    /* gap: 30px; */
-}
-.icone_navbar{
-    /* position icones */
-    margin-right: 40px;
-}
-/* accueil before login */
-.before_login{
-    padding-top: 10vh;
-}
-.inputCheckbox{
-  display:flex;
-  flex-direction: row;
-  margin-top: 10px;
-}
-.check{
-  margin-right: 10px;
-}
-/* Home */
+/* --------------------- */
+/* page Home home_container : profil + dashboard_container */ 
 .home_container{
-    /* background-color: aqua; */
+    background-color: aqua;
     height: 100vh;
     width:100vw;
     background: #ECECEC;
     padding: 0px 5px;
-
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 }
 .profil{
-    /* border: 1Px solid lightgray; */
     text-align: left;
-    padding: 20px 0;
 }
 .nav{
   display: flex;
@@ -57,77 +82,75 @@
   text-transform: capitalize;
   margin-left: 20px;
 }
-
+.breadcrumbs{
+  font-size: 14px;
+}
+/* contient dashboard_menu et dashboard_content */
+.dashboard_container{
+  display:flex; 
+  width: 100%;
+  padding: 0px 5px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  /* height:80vh; */
+} 
+.dashboard_menu{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap:20px;
+  width: 15%;/
+}
 .dashboard_content{
-    /* border: 1px solid lightgray; */
     width: 85%;
-    /* background-color: beige; */
-    height:100%;
-    overflow-y: auto;
     display: flex;
     justify-content: center;
+    height:100%
 }
-.dashboard_content h3{
-    /* border: 1Px solid lightgray; */
+/* .dashboard_content h3{
     text-align: center;
     margin: 10px;
-    /* padding: 20px; */
-    /* border-radius: 10px; */
+} */
+
+/* boutons */
+.button_menu{
+  color:white;
+  background-color: #273545;
+  width: 120px;
+  border: none;
+  padding: 6px;
+  border-radius: 5px;
+}
+.button_menu_clicked{
+  color:#E9520E;
+  background-color: #D9D9D9;
+  width: 120px;
+  border: none;
+  padding: 6px;
+  border-radius: 5px;
+}
+.button_add{
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 150px;
+  background-color: #E9520E;
+  border: none;
+  border-radius: 5px;
+  color:#E5E5E5;
+}
+/* Close Button Style */
+.button_close {
+  float: right;
+  cursor: pointer;
+  font-size: 24px;
+  color: #333;
 }
 
-/* custom table produits */
-.Tableau{
-    margin: 20px;
-    /* background-color: aqua; */
-}
-.rdt_Table{
-  border: 1px solid red;
-  position: relative;
-  padding: 20px;
-
-}
-/*   
-  .modale_container{
-    background-color: rgba(54, 54, 54, 0.872);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right:0;
-    bottom:0;
-    z-index: 99;
-  }
-  .modale{
-    position:absolute;
-    top: 0;
-    left: 0;
-    right:0;
-    bottom:0;
-     top:50%;
-    left:50%;
-    transform: translate(-50%, -50%); 
-    width: 800px;
-    height: 90%;
-    background-color: white;
-    border-radius: 25px;
-
- 
-  }
-  .button_close{
-    position: absolute;
-    top:-10px;
-    right:-10px;
-    font-size: 30px;
-  }
-  .modale_content{
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    height: 100%;
-    width: 90%;
-  }
-  */
+/* Modale */
 /* Modal Container Style */
 .modale_container {
   position: fixed;
@@ -141,7 +164,6 @@
   align-items: center;
   z-index: 1000; /* high z-index to ensure it's on top */
 }
-
 /* Modal Style */
 .modale {
   background-color: #ffffff;
@@ -149,7 +171,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 90%;
-  max-width: 600px; /* not too wide */
+  max-width: 600px; 
 }
 .title_modale{
   display: flex;
@@ -159,29 +181,19 @@
   font-size: 20px;
   margin-bottom: 10px;
 }
-/* Close Button Style */
-.button_close {
-  float: right;
-  cursor: pointer;
-  font-size: 24px;
-  color: #333;
-}
-
 /* Modal Content Style */
 .modale_content {
   clear: both;
   margin-top: 20px;
-  max-height: 80vh; /* maximum height before scrolling */
+  max-height: 80vh; 
   overflow-y: auto; 
 }
-
 /* Form element styles */
 .modale_content form {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 15px; /* space out form elements */
+  gap: 15px; 
 }
-
 .modale_content form div {
   display: flex;
   flex-direction: column;
@@ -192,7 +204,6 @@
   font-weight: 600;
   color: #333;
 }
-
 .modale_content form input[type="file"],
 .modale_content form input[type="text"],
 .modale_content form input[type="number"],
@@ -203,31 +214,25 @@
   padding: 10px;
   font-size: 16px;
 }
-
 .modale_content form input[type="checkbox"] {
   margin-top: 5px;
 }
-
 /* Style for checkboxes in the form */
 .inputCheckbox {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
-
 .inputCheckbox label {
-  margin-right: 10px; /* space between label and checkbox */
+  margin-right: 10px; 
 }
-
 .inputCheckbox .check {
   margin-top: 0;
 }
-
 /* Options and Description Textarea Styles */
 .inputOptions textarea {
-  resize: vertical; /* allows only vertical resizing */
+  resize: vertical; 
 }
-
 /* Submit Button Style */
 .modale_content form button {
   background-color: #007bff;
@@ -238,11 +243,9 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
-
 .modale_content form button:hover {
   background-color: #0056b3;
 }
-
 /* Responsive tweaks (if needed) */
 @media (max-width: 768px) {
   .modale {
@@ -251,53 +254,54 @@
     max-width: unset;
   }
 }
+/* ---- fin modale ---- */
 
-  .page_produits_container{
+
+/* Produits  */
+/* custom table produits */
+.Tableau{
+  margin: 20px;
+  /* background-color: aqua; */
+}
+.rdt_Table{
+border: 1px solid red;
+position: relative;
+padding: 20px;
+
+}
+.page_produits_container{
     display:flex;
     flex-direction: column;
     align-content:center ;
     width: 100%;
-  }
+}
 
-  /* page commande */
-  .tableau_commandes{
-    display:flex;
-    flex-direction: column;
-    /* align-items: center;   */
-    border: 1px solid lightgray; 
-    margin: 0 30px;
-    padding:20px;
-    border-radius: 10px;
-  }
-
-  
+/* page commande */
+.tableau_commandes{
+  display:flex;
+  flex-direction: column;
+  /* align-items: center;   */
+  border: 1px solid lightgray; 
+  margin: 0 30px;
+  padding:20px;
+  border-radius: 10px;
+}
 .tasks {
   display: flex;
   justify-content: space-around;
-  margin: 10px;
+  margin: 20px 10px;
   background-color: white;
 }
-
-/* .tasks_column {
-  margin:0 1rem;
-  flex:1;
-} */
 .tasks_column h4{
   text-align: center;
   margin: 5px 0;
 }
-.column{
-  width:45vw
-}
 .tasks_list {  
   display: flex;
   flex-direction: column;
-  min-height: 110px;
-  /* border:1px solid #DDD; */
   border-radius: 5px;;
   padding:0px 1rem;
-  /* background-color: #EEE; */
-  /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.05); */
+  /* background-color: red; */
 }
 .task_item {  
   border: 1px solid #ECECEC;
@@ -311,7 +315,7 @@
   cursor: pointer;
   background-color: #a0bfef;
 }
-/* details orders */
+/* details orders arrow*/
 .details_order{
 position: absolute;
 bottom: 0;
@@ -333,25 +337,123 @@ padding: 10px;
   padding: 10px 20px;
   border-radius: 20px;
   margin: 10px 5px;
-  background-color: rgb(85, 189, 224);
-  border:1px solid rgb(85, 189, 224);
+  background-color: #34AA55;
+  border:1px solid #34AA55;
+  color:white
 }
 .button_cancel{
   padding: 10px 20px;
   border-radius: 20px;
   margin: 10px 5px;
-  background-color: rgb(230, 86, 53);
-  border:1px solid rgb(230, 86, 53);
+  background-color: #BF2D2D;
+  border:none
 }
 .button_delivery:disabled, .button_cancel:disabled{
   opacity:0.5;
   cursor: not-allowed;
 }
 
-  
- 
-  
 
-  
-  
-  
+/* page users */
+.content_client {
+  width: 80vw;
+  min-height: 70vh;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 50px;
+}
+.table-container .ant-table-body {
+  max-height: 200px; 
+  /* overflow-y: auto;  */
+}
+
+
+/* page dashboard */
+.content_dashboard{
+  width: 90%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  max-height: 600px; /* Ajustez cette valeur à la hauteur souhaitée */
+  overflow-y: auto;
+}
+.first_part,.second_part,.third_part, .fourth_part  {
+  display:flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.highlight-box {
+  padding: 10px;
+  background-color: #f9f9f9; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 140px;
+  flex-grow: 1;
+  margin: 10px;
+  text-align: center;
+  font-family: 'Montserrat';
+}
+.highlight-box span {
+  font-family: 'Montserrat';
+  font-weight: 700;
+
+}
+h2{
+  text-align: center;
+  margin: 20px 0;
+  font-family: 'Montserrat';
+}
+
+/* page orders */
+.commande-page{
+  width: 80vw;
+  height:80vh;
+  overflow-y: auto;
+}
+.task_item{
+  width: 250px;
+}
+.column{
+  width: 300px;
+  overflow-y: auto;
+  flex: 1; 
+  max-height: 100vh;
+}
+.tasks_list {
+  overflow-y: auto;
+
+  color:black;
+}
+.column h3 {
+  margin: 10px 0;
+  text-align: center;
+}
+.flex-container{
+  display: flex;
+  align-items: stretch;
+}
+#column-1 .tasks_list .task_item{
+  background-color: lightgrey;
+}
+#column-3 .tasks_list .task_item{
+  background-color: #e8f4e2;
+ 
+}
+
+/* page resumé */
+.resume-page{
+  background-color: white;
+}

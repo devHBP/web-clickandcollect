@@ -1,33 +1,31 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
-
-import "../styles/dashboard.css";
+import "../styles/styles.css";
 
 const DashboardPage = () => {
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
-  const [ordersData, setOrdersData] = useState({
-    orders: [],
-    average: 0,
-    totalVentes: 0,
-  });
+  const [orders, setOrders] = useState([]);
+  const [average, setAverage] = useState(0);
+  const [totalVentes, setTotalVentes] = useState(0);
+  const [filteredOrdersCount, setFilteredOrdersCount] = useState(0);
   const [clientData, setClientData] = useState({ clients: [] });
-  const [filterPeriod, setFilterPeriod] = useState("daily");
+  const [ordersFilterPeriod, setOrdersFilterPeriod] = useState("daily");
   const [salesFilterPeriod, setSalesFilterPeriod] = useState("daily");
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/allOrders`);
-        setOrdersData((prevData) => ({
-          ...prevData,
-          orders: response.data.orders,
-        }));
+        const ordersResponse = await axios.get(`${baseUrl}/allOrders`);
+        const clientsResponse = await axios.get(`${baseUrl}/getAll`);
 
-        const resp = await axios.get(`${baseUrl}/getAll`);
-        setClientData({
-          clients: resp.data,
-        });
+        if (ordersResponse.data.orders) {
+          setOrders(ordersResponse.data.orders);
+          calculateAverageBasket(ordersResponse.data.orders);
+          filterOrdersByPeriod(ordersResponse.data.orders, "daily"); 
+        }
+
+        setClientData({ clients: clientsResponse.data });
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
@@ -37,114 +35,61 @@ const DashboardPage = () => {
   }, [baseUrl]);
 
   useEffect(() => {
-    //filtrage du chiffre d'affaires
-    const filterOrdersBySalesPeriod = () => {
-      const now = new Date();
-      let filteredOrders = ordersData.orders;
-
-      switch (salesFilterPeriod) {
-        case "daily":
-          filteredOrders = filteredOrders.filter((order) => {
-            const orderDate = new Date(order.createdAt);
-            return orderDate.toDateString() === now.toDateString();
-          });
-          break;
-        case "weekly":
-          filteredOrders = filteredOrders.filter((order) => {
-            const orderDate = new Date(order.createdAt);
-            const oneWeekAgo = new Date(
-              now.getFullYear(),
-              now.getMonth(),
-              now.getDate() - 7
-            );
-            return orderDate > oneWeekAgo;
-          });
-          break;
-        case "monthly":
-          filteredOrders = filteredOrders.filter((order) => {
-            const orderDate = new Date(order.createdAt);
-            const oneMonthAgo = new Date(
-              now.getFullYear(),
-              now.getMonth() - 1,
-              now.getDate()
-            );
-            return orderDate > oneMonthAgo;
-          });
-          break;
-        default:
-          break;
-      }
-      updateSalesData(filteredOrders);
-    };
-
-    filterOrdersBySalesPeriod();
-  }, [salesFilterPeriod, ordersData.orders]);
+    filterSalesByPeriod();
+  }, [salesFilterPeriod, orders]);
 
   //panier moyen
-  const updateSalesData = (filteredOrders) => {
-    const totalVentes = filteredOrders.reduce((acc, order) => {
-      const prixTotalAsNumber = parseFloat(order.prix_total);
-      return acc + (isNaN(prixTotalAsNumber) ? 0 : prixTotalAsNumber);
-    }, 0);
-    const average =
-      filteredOrders.length > 0 ? totalVentes / filteredOrders.length : 0;
-
-    setOrdersData((prevData) => ({
-      ...prevData,
-      average,
-      totalVentes,
-    }));
+  const calculateAverageBasket = (orders) => {
+    const totalAmount = orders.reduce((sum, order) => sum + parseFloat(order.prix_total || 0), 0);
+    const averageAmount = orders.length > 0 ? totalAmount / orders.length : 0;
+    setAverage(averageAmount);
   };
 
-  // filtrage des commandes
-  const getFilteredOrdersCount = () => {
+  //filtres du chiffre d'affaires
+  const filterSalesByPeriod = () => {
     const now = new Date();
-    let filteredOrders;
+    const filtered = orders.filter(order => {
+      const orderDate = new Date(order.createdAt);
+      return isWithinPeriod(orderDate, now, salesFilterPeriod);
+    });
 
-    switch (filterPeriod) {
+    const totalSalesAmount = filtered.reduce((sum, order) => sum + parseFloat(order.prix_total || 0), 0);
+    setTotalVentes(totalSalesAmount);
+  };
+
+  //filtre des commandes 
+  const filterOrdersByPeriod = (allOrders, period) => {
+    const now = new Date();
+    const filtered = allOrders.filter(order => {
+      const orderDate = new Date(order.createdAt);
+      return isWithinPeriod(orderDate, now, period);
+    });
+
+    setFilteredOrdersCount(filtered.length);
+  };
+
+  //cases du filtres
+  const isWithinPeriod = (orderDate, now, period) => {
+    switch (period) {
       case "daily":
-        filteredOrders = ordersData.orders.filter((order) => {
-          const orderDate = new Date(order.createdAt);
-          return orderDate.toDateString() === now.toDateString();
-        });
-        break;
+        return orderDate.toDateString() === now.toDateString();
       case "weekly":
-        filteredOrders = ordersData.orders.filter((order) => {
-          const orderDate = new Date(order.createdAt);
-          const oneWeekAgo = new Date(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate() - 7
-          );
-          return orderDate > oneWeekAgo;
-        });
-        break;
+        const oneWeekAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+        return orderDate >= oneWeekAgo;
       case "monthly":
-        filteredOrders = ordersData.orders.filter((order) => {
-          const orderDate = new Date(order.createdAt);
-          const oneMonthAgo = new Date(
-            now.getFullYear(),
-            now.getMonth() - 1,
-            now.getDate()
-          );
-          return orderDate > oneMonthAgo;
-        });
-        break;
-      // case "total":
-      //   filteredOrders = ordersData.orders;
-      //   break;
+        const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+        return orderDate >= oneMonthAgo;
       default:
-        filteredOrders = ordersData.orders;
-        break;
+        return true;
     }
-    return filteredOrders.length;
   };
 
-  const handleSelectChange = (selectedOption) => {
-    setFilterPeriod(selectedOption.value);
+  const handleOrdersFilterChange = (selectedOption) => {
+    setOrdersFilterPeriod(selectedOption.value);
+    filterOrdersByPeriod(orders, selectedOption.value);
   };
 
-  const handleSalesSelectChange = (selectedOption) => {
+  const handleSalesFilterChange = (selectedOption) => {
     setSalesFilterPeriod(selectedOption.value);
   };
 
@@ -157,8 +102,7 @@ const DashboardPage = () => {
 
   return (
     <div className="content_dashboard">
-      <div className="content_analytics">
-        <h2>Analyses Le Pain du Jour - Mas Guérido</h2>
+
 
         {/* 1ere partie */}
         <div className="first_part">
@@ -166,7 +110,7 @@ const DashboardPage = () => {
             <p>Commandes "En attente" : </p>
             <span>
               {
-                ordersData.orders.filter(
+                orders.filter(
                   (order) => order.status === "en attente"
                 ).length
               }
@@ -176,7 +120,7 @@ const DashboardPage = () => {
             <p>Commandes "Prêtes" : </p>
             <span>
               {
-                ordersData.orders.filter((order) => order.status === "prete")
+                orders.filter((order) => order.status === "prete")
                   .length
               }
             </span>
@@ -185,11 +129,11 @@ const DashboardPage = () => {
             <p>Nombre de commandes : </p>
 
             <Select
-              options={options}
-              onChange={handleSelectChange}
-              value={options.find((option) => option.value === filterPeriod)}
-            />
-            <span>{getFilteredOrdersCount()}</span>
+            options={options}
+            onChange={handleOrdersFilterChange}
+            value={options.find((option) => option.value === ordersFilterPeriod)}
+          />
+          <span>{filteredOrdersCount}</span>
           </div>
         </div>
 
@@ -207,35 +151,35 @@ const DashboardPage = () => {
               }
             </span>
           </div>
-          <div className="highlight-box">
+          {/* <div className="highlight-box">
             <p>Horaires d'affluence</p>
-          </div>
+          </div> */}
         </div>
         {/* 3e partie  */}
         <div className="third_part">
           <div className="highlight-box">
             <p>Panier moyen : </p>
-            <span>{ordersData.average.toFixed(2)}€</span>
+            <span>{average.toFixed(2)}€</span>
           </div>
           <div className="highlight-box">
             <p>Chiffre d'affaires : </p>
             <Select
               options={options}
-              onChange={handleSalesSelectChange}
+              onChange={handleSalesFilterChange}
               value={options.find(
                 (option) => option.value === salesFilterPeriod
               )}
             />
-            <span>{ordersData.totalVentes.toFixed(2)}€</span>
+            <span>{totalVentes.toFixed(2)}€</span>
           </div>
         </div>
         {/* 4e partie */}
-        <div className="fourth">
+        {/* <div className="fourth">
           <div className="highlight-box">
             <p>Top 5 ventes </p>
           </div>
-        </div>
-      </div>
+        </div> */}
+   
     </div>
   );
 };

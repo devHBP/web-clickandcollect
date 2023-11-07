@@ -4,7 +4,7 @@ import Tasks from './Tasks2';
 import { Table, Tag } from "antd";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import {AiOutlineEye} from "react-icons/ai";
-
+import "../styles/styles.css";
 
 function CommandePageSimple() {
   const [commandes, setCommandes] = useState([]);
@@ -151,11 +151,6 @@ function CommandePageSimple() {
             title: "Commandes en attente",
             taskIds: orderArray.filter(order => order.status === 'en attente').map(order => order.numero_commande),
           },
-          // "column-2": {
-          //   id: "column-2",
-          //   title: "Commandes en préparation",
-          //   taskIds: orderArray.filter(order => order.status === 'preparation').map(order => order.numero_commande),
-          // },
           "column-3": {
             id: "column-3",
             title: "Commandes prêtes à récupérer",
@@ -255,10 +250,8 @@ function CommandePageSimple() {
 
         if (status === 'prete'){
           const order = commandes.tasks[draggableId];
-           //console.log('Commande:', order);
           const sendEmail = async () => {
             try {
-              // Assurez-vous que user.email et user.firstname sont accessibles à partir de cet endroit du code.
               const res = await axios.post(`${baseUrl}/orderStatusReady`, {
                   email: order.email, 
                   numero_commande: order.numero_commande,
@@ -277,83 +270,7 @@ function CommandePageSimple() {
       }
 }
   
-//tableau
-const columns = [
-    {
-      title: "Numéro de commande",
-      dataIndex: "numero_commande",
-      key: "numero_commande"
-    },
-    {
-      title: "Client",
-      dataIndex: "client",
-      key: "client"
-    },
-    ,
-    {
-      title: "Prix total",
-      dataIndex: "prix_total",
-      key: "prix_total"
-    },
-    ,
-    {
-      title:'Pain du Jour',
-      dataIndex:'magasin', 
-      key:'magasin'
-    },
-    ,
-    {
-      title: "Passée le ",
-      dataIndex: "date",
-      key: "date"
-    },
-    {
-    title: "Statut",
-    dataIndex: "status",
-    key: "status",
-    sorter: (a, b) => a.status.localeCompare(b.status), 
-    sortDirections: ['descend', 'ascend'],
-    render: (status) => {
-      let color;
-      switch (status) {
-        case 'en attente':
-          color = 'orange';
-          break;
-        case 'preparation':
-          color = 'blue';
-          break;
-        case 'prete':
-          color = 'green';
-          break;
-        case 'livree':
-          color = 'yellow';
-          break;
-        case 'annulee':
-          color = 'red';
-          break;
-        default:
-          color = 'default';
-      }
-      return <Tag color={color}>{status}</Tag>;
-    }
-      },
-      { 
-        key: "action", 
-        title: "Actions", 
-        render: (record) => { 
-        return ( 
-        <> 
-        <AiOutlineEye 
-        onClick={() => Open(record)} 
-        /> 
-        </>
-        )
-      }}
-  ];
-  const Open = (record) => { 
-    console.log(record)
- }
-  
+
 
   return (
     (
@@ -361,30 +278,11 @@ const columns = [
       ?
 
      ( <div className="commande-page">
-    <Tasks commandes={commandes} 
-        onDragEnd={onDragEnd} 
-        updateOrderStatus={updateOrderStatus} 
-        socket={socket} />
+      <Tasks commandes={commandes} 
+          onDragEnd={onDragEnd} 
+          updateOrderStatus={updateOrderStatus} 
+          socket={socket} />
 
-    <Tabs className="tableau_commandes">
-
-        <TabList>
-           <Tab>Toutes les commandes</Tab>
-           <Tab>Livrées</Tab>
-           <Tab>Annulées</Tab>
-         </TabList>
-
-        <TabPanel>
-           <Table dataSource={tableData} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 10 }} />
-        </TabPanel>
-        <TabPanel>
-           <Table dataSource={tableData.filter(commande => commande.status === 'livree')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
-        </TabPanel>
-        <TabPanel>
-            <Table dataSource={tableData.filter(commande => commande.status === 'annulee')} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 4 }} />
-        </TabPanel>    
-
-    </Tabs>
   </div>)
 :
 

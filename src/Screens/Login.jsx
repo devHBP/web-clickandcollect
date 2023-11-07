@@ -1,7 +1,6 @@
 import React, {  useState }from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import  '../styles/styles.css'
-import  '../styles/login.css'
 import { useDispatch } from 'react-redux'
 import { loginUser } from '../reducers/authSlice'
 import logo from "../assets/logo_pdj.png"

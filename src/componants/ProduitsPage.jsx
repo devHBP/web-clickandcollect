@@ -8,7 +8,7 @@ import { Antigaspi } from '../../SVG/Antigaspi';
 import { TextInput } from './TextInput';
 const { Search } = Input
 import {Add} from '../../SVG/Add.jsx'
-import '../styles/home.css'
+import "../styles/styles.css";
 
 
 const ProduitsPage = () => {
@@ -678,7 +678,7 @@ const handleToggleAntigaspi = async (productId) => {
             
                 <Table 
                 dataSource={elements.filter((product) =>product.libelle.toLowerCase().includes(searchTerm.toLowerCase()))} 
-                columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 20 }} rowKey='productId' />
+                columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 6 }} rowKey='productId' />
               
               </div>
     </div>

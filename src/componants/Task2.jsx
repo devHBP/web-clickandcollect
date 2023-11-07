@@ -2,6 +2,7 @@ import React, { useState, useEffect} from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import {AiFillCaretDown} from "react-icons/ai";
 import axios from 'axios'
+import "../styles/styles.css";
 
 function Task({ commande, index, updateOrderStatus, socket }) {
 

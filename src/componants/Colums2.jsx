@@ -4,7 +4,9 @@ import Task from './Task2';
 
 function Colums({ id, title, commandes, updateOrderStatus, socket }) {
   return (
-    <div className="column">
+    <div className="flex-container">
+
+    <div id={id} className="column">
       <h3>{title}</h3>
       <Droppable droppableId={id}>
         {(provided) => (
@@ -16,6 +18,8 @@ function Colums({ id, title, commandes, updateOrderStatus, socket }) {
           </div>
         )}
       </Droppable>
+      
+    </div>
     </div>
   );
 }
