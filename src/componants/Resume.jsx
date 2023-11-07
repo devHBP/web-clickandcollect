@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, Tag } from "antd";
+import { Table, Tag, Modal, List } from "antd";
 import {AiOutlineEye} from "react-icons/ai";
 import "../styles/styles.css";
 
 function Resume() {
   const [tableData, setTableData] = useState([]);
   const [hasOrders, setHasOrders] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState(null); 
+  const [isModalVisible, setIsModalVisible] = useState(false); 
+  const [orderProducts, setOrderProducts] = useState([]); 
+
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
 
   useEffect(() => {
@@ -96,16 +100,85 @@ function Resume() {
     },
   ];
 
-  const viewOrder = (record) => {
-    console.log('Viewing order:', record);
+  const viewOrder = async (record) => {
+    try {
+      // Afficher un indicateur de chargement ici si vous le souhaitez
+      const productsResponse = await axios.get(`${baseUrl}/getOrderProducts/${record.key}`);
+      setOrderProducts(productsResponse.data); // Mettre à jour l'état avec les produits de la commande
+      setSelectedOrder(record); // Mettre à jour l'état avec les détails de la commande
+      setIsModalVisible(true); // Afficher la modale
+    } catch (error) {
+      console.error("Error fetching order products:", error);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const renderOrderDetailsModal = () => {
+    // Utilisez un formatage approprié pour la date et les autres données si nécessaire
+    const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    return (
+      <Modal
+        title={`Détails de la commande ${selectedOrder ? selectedOrder.numero_commande : ''}`}
+        open={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        {selectedOrder && (
+          <div>
+            <p>Nom du client: {selectedOrder.firstname_client} {selectedOrder.lastname_client}</p>
+            <p>N° de commande: {selectedOrder.numero_commande}</p>
+            <p>Statut: 
+              <Tag color={selectedOrder.status === 'annulee' ? 'red' : 'green'}>
+                {selectedOrder.status}
+              </Tag>
+            </p>
+            <p>Date de la commande: {new Date(selectedOrder.date).toLocaleDateString(undefined, dateFormat)}</p>
+            <p>Heure de la commande: {selectedOrder.heure || 'Non spécifiée'}</p>
+            <p>Prix total: {selectedOrder.prix_total}€</p>
+            <p>Méthode de paiement: {selectedOrder.paymentMethod}</p>
+            <p>Commande payée: {selectedOrder.paid ? 'Oui' : 'Non'}</p>
+          </div>
+        )}
+        <List
+          itemLayout="horizontal"
+          dataSource={orderProducts}
+          renderItem={item => (
+            <List.Item>
+              <List.Item.Meta
+                title={item.libelle}
+                description={`Quantité : ${item.quantity}`}
+              />
+              <div>Prix : {item.prix}</div>
+            </List.Item>
+          )}
+        />
+      </Modal>
+    );
   };
 
 
+  // return (
+  //   hasOrders ? (
+  //     <div className="resume-page">
+  //       <Table dataSource={tableData} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 6 }} />
+  //     </div>
+      
+  //   ) : (
+  //     <p>Pas de commandes</p>
+  //   )
+  // );
   return (
     hasOrders ? (
-      <div className="resume-page">
-        <Table dataSource={tableData} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 6 }} />
-      </div>
+      <>
+        <div className="resume-page">
+          <Table dataSource={tableData} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 6 }} />
+        </div>
+        {renderOrderDetailsModal()}
+
+      </>
     ) : (
       <p>Pas de commandes</p>
     )

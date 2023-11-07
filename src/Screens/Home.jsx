@@ -12,7 +12,7 @@ import ClickandCollect from "../componants/ClickandCollect";
 import AntiGaspi from "../componants/AntiGaspi";
 import "../styles/styles.css";
 import logo from "../assets/logo_menu.png";
-import { Resume } from "../componants/Resume";
+import  Resume  from "../componants/Resume";
 
 const Home = () => {
   const [currentPage, setCurrentPage] = useState("produits");
@@ -153,7 +153,7 @@ const Home = () => {
           >
             Promotions
           </button>
-          <button
+          {/* <button
             onClick={() => handleContentSelection("boulangerie")}
             className={
               currentPage === "boulangerie"
@@ -162,7 +162,7 @@ const Home = () => {
             }
           >
             Ma boulangerie
-          </button>
+          </button> */}
         </div>
         <div className="dashboard_content">
           {currentPage === "dashboard" && <DashboardPage />}
