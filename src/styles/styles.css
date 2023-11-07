@@ -136,11 +136,13 @@ color:white
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  width: 150px;
+  width: 200px;
   background-color: #E9520E;
   border: none;
   border-radius: 5px;
   color:#E5E5E5;
+  padding:10px 5px;
+  margin:10px;
 }
 /* Close Button Style */
 .button_close {

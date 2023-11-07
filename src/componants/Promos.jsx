@@ -3,6 +3,7 @@ import axios from 'axios'
 import { Table, Modal, Input } from 'antd'
 import { AiOutlineRest, AiOutlineReload} from "react-icons/ai";
 import ModaleAddPromo from './ModaleAddPromo';
+import { Add } from '../../SVG/Add';
 
 export default function Promos() {
 
@@ -125,8 +126,8 @@ export default function Promos() {
     <>
     <div>
 
-        <div style={{display:'flex', justifyContent:'center', margin: 30}}>
-        <button onClick={() => setOpenModaleAddPromo(true)} >Ajouter un code promo</button>
+        <div style={{display:'flex', justifyContent:'center', margin: '20px'}}>
+        <button onClick={() => setOpenModaleAddPromo(true)} className='button_add'><Add />Ajouter un code promo</button>
         </div>
         <Table 
                 dataSource={elements} 
