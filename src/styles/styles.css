@@ -459,3 +459,15 @@ h2{
 .resume-page{
   background-color: white;
 }
+.tagOrder{
+  margin: 0px 10px;
+}
+.ant-modal-wrap{
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  position:relative
+}
+.ant-modal{
+  padding: 0;
+}
