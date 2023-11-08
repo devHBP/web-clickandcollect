@@ -65,10 +65,13 @@ const Home = () => {
               Accueil {">"} {pageNames[currentPage]}
             </div>
 
+            
+          </div>
+        </div>
+        <div className="button_logout">
             <button onClick={handleLogout} className="button_menu">
               Déconnexion
             </button>
-          </div>
         </div>
       </div>
       <div className="dashboard_container">
