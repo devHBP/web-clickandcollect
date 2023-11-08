@@ -663,7 +663,7 @@ const handleToggleAntigaspi = async (productId) => {
     <div className='page_produits_container'>
         {/* <h3>Les produits</h3> */}
         
-        <div style={{display:'flex', justifyContent:'space-around'}}>
+        <div style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center', gap:'50px'}}>
           <button onClick={() => setOpenModaleAdd(true)} className='button_add'>
           <Add />Ajouter un produit</button>
             

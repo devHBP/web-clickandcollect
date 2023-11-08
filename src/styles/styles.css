@@ -74,6 +74,14 @@ color:white
     text-align: left;
     position: fixed;
     top:30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width:100%;
+}
+.button_logout{
+margin-right: 50px;
 }
 .nav{
   display: flex;
