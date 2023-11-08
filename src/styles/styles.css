@@ -72,6 +72,8 @@ color:white
 }
 .profil{
     text-align: left;
+    position: fixed;
+    top:30px;
 }
 .nav{
   display: flex;
@@ -107,7 +109,8 @@ color:white
     width: 85%;
     display: flex;
     justify-content: center;
-    height:100%
+    align-items: center;
+    height:90%
 }
 /* .dashboard_content h3{
     text-align: center;

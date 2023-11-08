@@ -678,7 +678,7 @@ const handleToggleAntigaspi = async (productId) => {
             
                 <Table 
                 dataSource={elements.filter((product) =>product.libelle.toLowerCase().includes(searchTerm.toLowerCase()))} 
-                columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 6 }} rowKey='productId' />
+                columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 5 }} rowKey='productId' />
               
               </div>
     </div>
