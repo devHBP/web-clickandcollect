@@ -153,7 +153,7 @@ const Home = () => {
           >
             Promotions
           </button>
-          {/* <button
+          <button
             onClick={() => handleContentSelection("boulangerie")}
             className={
               currentPage === "boulangerie"
@@ -162,7 +162,7 @@ const Home = () => {
             }
           >
             Ma boulangerie
-          </button> */}
+          </button>
         </div>
         <div className="dashboard_content">
           {currentPage === "dashboard" && <DashboardPage />}
