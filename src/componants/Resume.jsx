@@ -43,6 +43,12 @@ function Resume() {
       magasin: order.storeName,
       date: new Date(order.date).toLocaleDateString(),
       email: order.email,
+      userId: order.userId,
+      firstname: order.firstname_client,
+      lastname: order.lastname_client,
+      paymentMethod: order.paymentMethod,
+      paid:order.paid,
+
     }));
   };
 
@@ -76,7 +82,6 @@ function Resume() {
         { text: 'Livré', value: 'livree' },
         { text: 'Annulé', value: 'annulee' },
         { text: 'En attente', value: 'en attente' },
-        // Ajoutez d'autres statuts si nécessaire
       ],
       onFilter: (value, record) => record.status.indexOf(value) === 0,
       render: (status) => {
@@ -101,19 +106,39 @@ function Resume() {
   ];
 
   const viewOrder = async (record) => {
+    console.log('Selected order for viewing:', record);
     try {
-      // Afficher un indicateur de chargement ici si vous le souhaitez
+      // Si votre backend supporte la récupération d'une commande spécifique par son ID
       const productsResponse = await axios.get(`${baseUrl}/getOrderProducts/${record.key}`);
+      console.log('Order products:', productsResponse.data);
       setOrderProducts(productsResponse.data); // Mettre à jour l'état avec les produits de la commande
-      setSelectedOrder(record); // Mettre à jour l'état avec les détails de la commande
-      setIsModalVisible(true); // Afficher la modale
+      setSelectedOrder({ ...record, products: productsResponse.data }); // Mettre à jour l'état avec les détails de la commande et les produits
+      setIsModalVisible(true);
     } catch (error) {
-      console.error("Error fetching order products:", error);
+      console.error("Error fetching order details:", error);
     }
   };
+  
 
   const handleCancel = () => {
     setIsModalVisible(false);
+  };
+
+  const getStatusTagColor = (status) => {
+    switch (status) {
+      case 'en attente':
+        return 'orange';
+      case 'preparation':
+        return 'blue';
+      case 'prete':
+        return 'green';
+      case 'livree':
+        return 'yellow';
+      case 'annulee':
+        return 'red';
+      default:
+        return 'default';
+    }
   };
 
   const renderOrderDetailsModal = () => {
@@ -125,20 +150,21 @@ function Resume() {
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
+        className='modalDetails'
       >
         {selectedOrder && (
           <div>
-            <p>Nom du client: {selectedOrder.firstname_client} {selectedOrder.lastname_client}</p>
+            <p>Nom du client: {selectedOrder.lastname} {selectedOrder.firstname}</p>
             <p>N° de commande: {selectedOrder.numero_commande}</p>
-            <p>Statut: 
-              <Tag color={selectedOrder.status === 'annulee' ? 'red' : 'green'}>
-                {selectedOrder.status}
-              </Tag>
+            <p>Statut:  
+            <Tag color={getStatusTagColor(selectedOrder.status)} className='tagOrder'>
+              {selectedOrder.status}
+            </Tag>
             </p>
             <p>Date de la commande: {new Date(selectedOrder.date).toLocaleDateString(undefined, dateFormat)}</p>
-            <p>Heure de la commande: {selectedOrder.heure || 'Non spécifiée'}</p>
+            {/* <p>Heure de la commande: {selectedOrder.heure || 'Non spécifiée'}</p> */}
             <p>Prix total: {selectedOrder.prix_total}€</p>
-            <p>Méthode de paiement: {selectedOrder.paymentMethod}</p>
+            <p>Méthode de paiement: {selectedOrder.paymentMethod === 'onsite' ? 'Sur place' : "En ligne"}</p>
             <p>Commande payée: {selectedOrder.paid ? 'Oui' : 'Non'}</p>
           </div>
         )}
@@ -151,7 +177,6 @@ function Resume() {
                 title={item.libelle}
                 description={`Quantité : ${item.quantity}`}
               />
-              <div>Prix : {item.prix}</div>
             </List.Item>
           )}
         />
@@ -160,16 +185,6 @@ function Resume() {
   };
 
 
-  // return (
-  //   hasOrders ? (
-  //     <div className="resume-page">
-  //       <Table dataSource={tableData} columns={columns} pagination={{ position: ["bottomCenter"], pageSize: 6 }} />
-  //     </div>
-      
-  //   ) : (
-  //     <p>Pas de commandes</p>
-  //   )
-  // );
   return (
     hasOrders ? (
       <>
