@@ -9,6 +9,7 @@ import { TextInput } from './TextInput';
 const { Search } = Input
 import {Add} from '../../SVG/Add.jsx'
 import "../styles/styles.css";
+import UpdateProductModal from './UpdateProductModal';
 
 
 const ProduitsPage = () => {
@@ -17,12 +18,7 @@ const ProduitsPage = () => {
     const [openModaleAdd, setOpenModaleAdd] = useState(false)
      // const baseUrl = 'http://127.0.0.1:8080';
     const baseUrl = import.meta.env.VITE_REACT_API_URL;
-    const [libelle, setLibelle] = useState('')
     const [categories, setCategorie] = useState([])
-    const [selectedCategorie, setSelectedCategorie] = useState('')
-    const [prix, setPrix] = useState('')
-    const [prixCollab, setPrixCollab] = useState('')
-     const [visible, setVisible] = useState(false); 
     const [visibleIncreaseStock, setVisibleIncreaseStock] = useState(false); 
     const [visibleDecreaseStock, setVisibleDecreaseStock] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -34,14 +30,13 @@ const ProduitsPage = () => {
     const colorClickandCollectOff = "#636C77";
     const colorClickandCollectOn = "#E9520E";
     const [stockValue, setStockValue] = useState({});
+    const [updateModalVisible, setUpdateModalVisible] = useState(false);
+    const [selectedProductToUpdate, setSelectedProductToUpdate] = useState(null);
 
 
-    // const [image, setImage] = useState(null);
 
     // const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons',
     //  'Desserts', 'Salades et Bowls', 'Boules et Pains spéciaux', 'Baguettes'];
-
-
 
   useEffect(() => {
     // Fonction pour récupérer les données de la base de données
@@ -99,8 +94,8 @@ const ProduitsPage = () => {
   }
 
 
-  const handleUpdateProduct = async (productId, updatedData) => {
-    console.log(updatedData)
+  const handleProductUpdate = async (productId, updatedData) => {
+    // console.log(updatedData)
     try {
         const formData = new FormData();
         formData.append('libelle', updatedData.libelle);
@@ -275,25 +270,11 @@ const handleToggleAntigaspi = async (productId) => {
     })
     }; 
 
-    const handlePrixUnitaire = (e) => {
-        const value = e.target.value;
-        setPrix(value.replace(',','.'))
-    }
-    const handlePrixCollaborateur = (e) => {
-        const value = e.target.value;
-        setPrixCollab(value.replace(',','.'))
-    }
     const Update = (record) => { 
-       console.log(record.productId)
-       setVisible(true)
-       setLibelle(record.libelle);
-       setSelectedCategorie(record.categorie);
-       setPrix(record.prix_unitaire)
-       setPrixCollab(record.prix_remise_collaborateur)
-       setSelectedProductId(record.productId)
-    //    if (record.imageUrl) {
-    //     setImage(record.imageUrl);  
-    // }
+      //  console.log('produciId page produit',record.productId)
+      setSelectedProductToUpdate(record); 
+      setUpdateModalVisible(true); 
+   
     }
     const IncreaseStock = (record) => {
       // console.log(record.stock)
@@ -310,13 +291,9 @@ const handleToggleAntigaspi = async (productId) => {
     }
 
     const handleSearch =  (e) => {
-      // console.log('value:', e.target.value)
       setSearchTerm(e.target.value);
     };
-  //   const handleImageChange = (e) => {
-  //     console.log("Image change handler called");
-  //     setImage(e.target.files[0]);
-  // };
+
 
   const columns = [
     {
@@ -405,8 +382,6 @@ const handleToggleAntigaspi = async (productId) => {
         );
       }
     }
-    
-    
 ,    
     {
       title: 'C&Collect',
@@ -446,73 +421,7 @@ const handleToggleAntigaspi = async (productId) => {
         );
       }
     },
-    
-    // {
-    //   title: 'Modifier stock',
-    //   render : (record) => {
-    //     return (
-    //       <>
-    //       <AiOutlinePlusCircle onClick={() => IncreaseStock(record)}/>
-          
-    //       <Modal 
-    //       title='Modification du stock'
-    //       open={visibleIncreaseStock}
-    //       onCancel={() => setVisibleIncreaseStock(false)} 
-    //       onOk={() => {
-    //         handleIncreaseStock(selectedProductId, increaseAmount);
-    //         setVisibleIncreaseStock(false);
-    //       }}
-    //       okText="Save" 
-    //       maskStyle={{ backgroundColor: 'lightgray' }}
-    //       >
-    //         <p>Produit: {selectedProduct?.libelle}</p>
-    //         <div style={{display:'flex', gap: '20px'}}>
-    //         <div className='inputOptions'>
-    //                 <label htmlFor="stock">Ajouter Stock:</label>
-    //                 <input
-    //                 type="text"
-    //                 id="stock"
-    //                 value={ increaseAmount}
-    //                 onChange={(e) => setIncreaseAmount(e.target.value)}
-    //                 style={{ width: '30px' }}
-    //                 />
-    //             </div>
-        
-    //         </div>
-    //       </Modal>
-
-    //       <AiOutlineMinusCircle onClick={() => DecreaseStock(record)}/>
-
-    //       <Modal 
-    //           title='Modification du stock'
-    //           open={visibleDecreaseStock}
-    //           onCancel={() => setVisibleDecreaseStock(false)} 
-    //           onOk={() => {
-    //             handleDecreaseStock(selectedProductId, decreaseAmount);
-    //             setVisibleDecreaseStock(false);
-    //           }}
-    //           okText="Save" 
-    //           maskStyle={{ backgroundColor: 'lightgray' }}
-    //         >
-    //           <p>Produit: {selectedProduct?.libelle}</p>
-    //           <div style={{display:'flex', gap: '20px'}}>
-    //             <div className='inputOptions'>
-    //               <label htmlFor="stock">Diminuer Stock:</label>
-    //               <input
-    //                 type="text"
-    //                 id="stock"
-    //                 value={ decreaseAmount}
-    //                 onChange={(e) => setDecreaseAmount(e.target.value)}
-    //                 style={{ width: '30px' }}
-    //               />
-    //             </div>
-    //           </div>
-    //         </Modal>
-
-    //       </>
-    //     )
-    //   }
-    // },
+   
     { 
       key: "action", 
       title: "Actions", 
@@ -580,75 +489,14 @@ const handleToggleAntigaspi = async (productId) => {
       <AiOutlineReload 
       onClick={() => Update(record)} 
       /> 
-      <Modal 
-          width={800}
-          title="Modification du produit"
-          open={visible}
-          onCancel={() => setVisible(false)} 
-          onOk={() => {
-            const updatedData = {
-              libelle: libelle,
-              categorie: selectedCategorie,
-              prix_unitaire: prix,
-              prix_remise_collaborateur:prixCollab
-            };
-            // console.log(updatedData)
-            // console.log('select id', selectedProductId)
-            handleUpdateProduct(selectedProductId, updatedData)
-            setVisible(false);
-
-          }}
-          okText="Save" 
-          maskStyle={{ backgroundColor: 'lightgray' }}
-          >
-            <div className='inputOptions'>
-                    <label htmlFor="libelle">Libellé:</label>
-                    <input
-                    type="text"
-                    id="libelle"
-                    value={libelle}
-                    onChange={(e) => setLibelle(e.target.value)}
-                    />
-                </div>
-                <div className="inputOptions">
-                    <label htmlFor="categorie">Sélectionner une catégorie:</label>
-                    {/* <select id="categorie" value={categorie} onChange={(e) => setCategorie(e.target.value)}> */}
-                    <select id="categorie" value={selectedCategorie} onChange={(e) => setSelectedCategorie(e.target.value)}>
-                    <option value="">Catégorie</option>
-                    {categories.map((category, index) => (
-                        <option key={index} value={category}>
-                        {category}
-                        </option>
-                    ))}
-                    </select>
-                </div>
-                <div className='inputOptions'>
-                    <label htmlFor="prix">Prix Unitaire:</label>
-                    <input
-                    type="text"
-                    id="prix_unitaire"
-                    value={prix}
-                    onChange={handlePrixUnitaire}
-                    />
-                </div>
-                <div className='inputOptions'>
-                    <label htmlFor="prix">Prix Collaborateur:</label>
-                    <input
-                    type="text"
-                    id="prix_unitaire"
-                    value={prixCollab}
-                    onChange={handlePrixCollaborateur}
-                    />
-                </div>
-                {/* <div className='inputOptions'>
-                  <label htmlFor="image">Image:</label>
-                  <input
-                      type="file"
-                      id="image"
-                    onChange={handleImageChange} />
-                    
-              </div> */}
-          </Modal>
+      
+          <UpdateProductModal
+              visible={updateModalVisible}
+              setVisible={setUpdateModalVisible}
+              product={selectedProductToUpdate}
+              categories={categories}
+              onUpdateProduct={handleProductUpdate}
+            />
       <AiOutlineRest 
       onClick={() => Delete(record)} 
       />
