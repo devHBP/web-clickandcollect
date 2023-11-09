@@ -53,8 +53,9 @@ function CommandePageSimple() {
      
       const response = await axios.get(`${baseUrl}/allOrders`);
 
-      if (response.data.orders && response.data.orders.length === 0) {
+      if (!response.data.orders || response.data.orders.length === 0) {
         setHasOrders(false);
+        return;
     } else {
         setHasOrders(true);
     }
@@ -66,9 +67,22 @@ function CommandePageSimple() {
       const storeResponse = await axios.get(`${baseUrl}/getOneStore/${order.storeId}`);
       const storeName= storeResponse.data.nom_magasin
 
-      const emailUserId = await axios.get(`${baseUrl}/getEmailByUserId/${order.userId}/email`)
-      const emailUser = emailUserId.data.email
+      // const emailUserId = await axios.get(`${baseUrl}/getEmailByUserId/${order.userId}/email`)
+      // const emailUser = emailUserId.data.email
  
+
+      let emailUser;
+      try {
+        const emailUserId = await axios.get(`${baseUrl}/getEmailByUserId/${order.userId}/email`);
+        emailUser = emailUserId.data.email;
+      } catch (emailError) {
+        if (emailError.response && emailError.response.status === 404) {
+          console.error("User not found for order:", order.orderId);
+          emailUser = "Utilisateur supprimé"; // Ou tout autre message ou logique de substitution
+        } else {
+          throw emailError; // Relancez l'erreur si ce n'est pas une erreur 404
+        }
+      }
         return {
           ...order,
           productDetails: productResponse.data, // Add product details to order
