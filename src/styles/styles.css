@@ -528,3 +528,11 @@ gap:50px;
 .days{
   font-weight: bold;
 }
+
+/* modale update produit */
+.inputDisponible{
+  display: flex;
+  flex-direction: row;
+  gap:10px;
+  margin: 108x 0;
+}

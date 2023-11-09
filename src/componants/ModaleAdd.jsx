@@ -35,10 +35,10 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
         const fetchCategories = async () => {
           try {
             const response = await axios.get(`${baseUrl}/getAllFamillyProducts`);
-            console.log(response.data)
+            //console.log(response.data)
         
             const nomFamilleProduit = response.data.famillesProduit.map(famille => famille.nom_famille_produit);
-            console.log(nomFamilleProduit);
+            //console.log(nomFamilleProduit);
             setCategorie(nomFamilleProduit)
           } catch (error) {
             console.error('Une erreur s\'est produite, allproducts :', error);
@@ -261,7 +261,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                   />
                 </div>
 
-                <div className='inputOptions'>
+              <div className='inputOptions'>
                 <label htmlFor="solanid">Solanid:</label>
                 <input
                   type="checkbox"

@@ -97,11 +97,25 @@ const ProduitsPage = () => {
   const handleProductUpdate = async (productId, updatedData) => {
     // console.log(updatedData)
     try {
+      
+        
         const formData = new FormData();
+
         formData.append('libelle', updatedData.libelle);
         formData.append('categorie', updatedData.categorie);
         formData.append('prix_unitaire', updatedData.prix_unitaire);
         formData.append('prix_remise_collaborateur', updatedData.prix_remise_collaborateur);
+        formData.append('disponibilite', updatedData.disponibilite);
+        formData.append('description', updatedData.description);
+        formData.append('descriptionProduit', updatedData.descriptionProduit);
+        formData.append('ingredients', updatedData.ingredients);
+        formData.append('reference_fournisseur', updatedData.referenceFournisseur);
+        formData.append('offre', updatedData.offre);
+
+
+      for (const pair of formData.entries()) {
+        console.log(`${pair[0]}, ${pair[1]}`);
+      }
         
         // if (image) {
         //     formData.append('image', image);
