@@ -86,7 +86,7 @@ const columns = [
   return (
     <div className="content_client">
 
-      <Table dataSource={clients} columns={columns} rowKey="id" pagination={{ pageSize: 6 }} />
+      <Table dataSource={clients} columns={columns} rowKey="userId" pagination={{ pageSize: 6 }} />
 
     </div>
     
