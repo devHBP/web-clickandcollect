@@ -358,12 +358,12 @@ function CommandePageSimple() {
               width: "100%",
             }}
           >
-            <Search
+            {/* <Search
               placeholder="Rechercher un produit"
               size="medium"
               style={{ width: 200 }}
               onChange={handleSearch}
-            />
+            /> */}
             <div style={{ width: "100%" }}>
               <Tasks
                 commandes={commandes}
