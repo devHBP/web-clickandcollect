@@ -115,6 +115,7 @@ const ProduitsPage = () => {
       formData.append("description", updatedData.description);
       formData.append("descriptionProduit", updatedData.descriptionProduit);
       formData.append("ingredients", updatedData.ingredients);
+      formData.append("allergenes", updatedData.allergenes);
       formData.append(
         "reference_fournisseur",
         updatedData.referenceFournisseur

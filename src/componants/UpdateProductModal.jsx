@@ -21,6 +21,8 @@ const UpdateProductModal = ({
   });
   const [descriptionProduit, setDescriptionProduit] = useState('');
   const [ingredients, setIngredients] = useState('');
+  const [allergenes, setAllergenes] = useState('');
+
   const [offre, setOffre] = useState('');
   const [referenceFournisseur, setReferenceFournisseur] = useState('');
 
@@ -50,6 +52,8 @@ const UpdateProductModal = ({
     setDescriptionProduit(product.descriptionProduit || ''); 
     setIngredients(product.ingredients || '')
     setReferenceFournisseur(product.reference_fournisseur || false)
+    setAllergenes(product.allergenes || '')
+    setOffre(product.offre || '' )
     }
   }, [product]);
 
@@ -73,10 +77,27 @@ const handleDescriptionChange = (e) => {
 const handleIngredientsChange = (e) => {
   setIngredients(e.target.value);
 };
-const handleOffre31Change = (e) => {
-  const cleanedLibelle = libelle.replace(/\s+/g, '');
-  setOffre(e.target.checked ? 'offre31_' + cleanedLibelle : '');
+const handleAllergenesChange = (e) => {
+  setAllergenes(e.target.value);
 };
+// const handleOffre31Change = (e) => {
+//   const cleanedLibelle = libelle.replace(/\s+/g, '');
+//   setOffre(e.target.checked ? 'offre31_' + cleanedLibelle : '');
+// };
+const handleOffre31Change = (e) => {
+  const isChecked = e.target.checked;
+  const cleanedLibelle = libelle.replace(/\s+/g, ''); // Nettoyer le libellé en enlevant les espaces
+  if (isChecked) {
+    // Si la case est cochée, ajoutez 'offre31_' suivi du libellé nettoyé à la chaîne 'offre'
+    setOffre('offre31_' + cleanedLibelle);
+  } else {
+    // Si la case est décochée, réinitialisez 'offre' en supprimant toute valeur 'offre31_' précédente
+    // setOffre(previousOffre => previousOffre.replace('offre31_' + cleanedLibelle, ''));
+    setOffre('')
+  }
+};
+
+
 const handleSolanidChange = (e) => {
   setReferenceFournisseur(e.target.checked ? 'Solanid' : '');
 };
@@ -100,6 +121,7 @@ const handleSolanidChange = (e) => {
       ingredients: ingredients,
       referenceFournisseur: referenceFournisseur,
       offre:offre,
+      allergenes: allergenes,
     };
     console.log('modale updatedata', updatedData)
     if (!product) {
@@ -218,12 +240,23 @@ const handleSolanidChange = (e) => {
                     />
                 </div>
                 <div className='inputOptions'>
+                  <label htmlFor="allergenes">Allergènes :</label>
+                  <textarea
+                      id="allergenes"
+                      name="allergenes"
+                      value={allergenes}
+                      onChange={handleAllergenesChange}
+                      rows={4}
+                      cols={50}
+                    />
+                </div>
+                <div className='inputOptions'>
                   <label htmlFor="offre31">Offre 3+1:</label>
                   <input
                     type="checkbox"
                     id="offre31"
                     name="offre31"
-                    checked={offre}
+                    checked={offre.includes('offre31')}
                     onChange={handleOffre31Change}
                   />
                 </div>
