@@ -81,9 +81,16 @@ function CommandePageSimple() {
       const orders = response.data.orders;
       // console.log(orders)
 
+      // je fltre les commandes sur les users existants
+      const activeUsersResponse = await axios.get(`${baseUrl}/getAll`);
+      const activeUserIds = new Set(activeUsersResponse.data.map(user => user.userId));
+
+      // Filtrer les commandes pour les utilisateurs actifs
+      const activeOrders = orders.filter(order => activeUserIds.has(order.userId));
+
       // Fetch product details for each order
       const ordersWithDetails = await Promise.all(
-        orders.map(async (order) => {
+        activeOrders.map(async (order) => {
           const productResponse = await axios.get(
             `${baseUrl}/getOrderProducts/${order.orderId}`
           );
@@ -91,8 +98,8 @@ function CommandePageSimple() {
             `${baseUrl}/getOneStore/${order.storeId}`
           );
           const storeName = storeResponse.data.nom_magasin;
-
-          let emailUser;
+      
+          let emailUser = "Utilisateur supprimé"; // Valeur par défaut
           try {
             const emailUserId = await axios.get(
               `${baseUrl}/getEmailByUserId/${order.userId}/email`
@@ -100,12 +107,13 @@ function CommandePageSimple() {
             emailUser = emailUserId.data.email;
           } catch (emailError) {
             if (emailError.response && emailError.response.status === 404) {
-              console.error("User not found for order:", order.orderId);
-              emailUser = "Utilisateur supprimé"; // Ou tout autre message ou logique de substitution
+              console.log(`Utilisateur supprimé pour la commande ${order.orderId}`);
+              // Pas besoin de faire autre chose, emailUser a déjà une valeur par défaut
             } else {
               throw emailError; // Relancez l'erreur si ce n'est pas une erreur 404
             }
           }
+      
           return {
             ...order,
             productDetails: productResponse.data,
@@ -114,6 +122,7 @@ function CommandePageSimple() {
           };
         })
       );
+      
 
 
       const orderData = transformOrderData(ordersWithDetails);
