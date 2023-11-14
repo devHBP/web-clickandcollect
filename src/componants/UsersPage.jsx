@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table, Tag } from "antd";
+import { Table, Tag, Select } from "antd";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+const { Option } = Select;
 
 const UsersPage = () => {
 
@@ -34,6 +35,19 @@ const UsersPage = () => {
   
     fetchUsers();
   }, [baseUrl]);
+
+  //modifier le rôle de l'utilisateur
+  const handleRoleChange = async (userId, newRole) => {
+    try {
+      await axios.put(`${baseUrl}/updateRole/${userId}`, { role: newRole });
+      // Mettre à jour l'état local pour refléter le changement
+      setClients(clients.map(client => 
+        client.userId === userId ? { ...client, role: newRole } : client
+      ));
+    } catch (error) {
+      console.error("Error updating role:", error);
+    }
+  };
   
 
   const formatDate = (dateString) => {
@@ -73,8 +87,16 @@ const columns = [
   {
     title: "Statut",
     dataIndex: "role",
-    key: "role"
+    key: "role",
+    render: (role, record) => (
+      <Select defaultValue={role} style={{ width: 120 }} onChange={(newRole) => handleRoleChange(record.userId, newRole)}>
+        <Option value="client">Client</Option>
+        <Option value="SUNcollaborateur">SUNCollab</Option>
+        {/* <Option value="invite">Invité</Option> */}
+      </Select>
+    )
   },
+  
   {
     title: "Dernière commande",
     dataIndex: "lastOrder",
