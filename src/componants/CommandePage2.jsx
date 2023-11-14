@@ -175,7 +175,7 @@ function CommandePageSimple() {
         const day = date.getDate().toString().padStart(2, "0");
         const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Les mois sont indexés à partir de 0
         const year = date.getFullYear();
-        const formattedDate = `${day}-${month}-${year}`;
+        const formattedDate = `${day} / ${month} / ${year}`;
 
         acc[order.numero_commande] = {
           key: order.orderId,
@@ -190,6 +190,8 @@ function CommandePageSimple() {
           magasin: order.storeName,
           email: order.email,
           firstname: order.firstname_client,
+          paid: order.paid,
+          orderID: order.orderId
         };
         return acc;
       }, {}),
@@ -340,6 +342,8 @@ function CommandePageSimple() {
     setSearchTerm(newSearchTerm);
     console.log(newSearchTerm)
   };
+
+  console.log('tasks', commandes.tasks)
 
   return (
     <div className="commande-page">
