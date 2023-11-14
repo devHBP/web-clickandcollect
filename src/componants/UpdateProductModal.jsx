@@ -143,6 +143,7 @@ const handleSolanidChange = (e) => {
           okText="Save" 
           maskStyle={{ backgroundColor: 'lightgray' }} 
           >
+            <div className='modale_content'>
             <div className='inputOptions'>
                     <label htmlFor="libelle">Libellé:</label>
                     <Input
@@ -198,7 +199,6 @@ const handleSolanidChange = (e) => {
                 </div>
                <div className='inputCheckbox'>
                   <p>Spécificités:</p>
-                  {/* Ici, remplacez 'specificites' par un objet avec des clés correspondant aux labels exacts que vous souhaitez afficher */}
                   {Object.entries({
                     Vegetarien: specificites.Vegetarien,
                     Halal: specificites.Halal,
@@ -279,6 +279,7 @@ const handleSolanidChange = (e) => {
                     onChange={handleImageChange} />
                     
               </div>  */}
+              </div>
           </Modal> 
   );
 };
