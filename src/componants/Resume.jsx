@@ -20,7 +20,7 @@ function Resume() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(`${baseUrl}/allOrders`);
-      console.log(response.data)
+      //console.log(response.data)
       if (response.data.orders && response.data.orders.length === 0) {
         setHasOrders(false);
       } else {
@@ -79,15 +79,18 @@ function Resume() {
       dataIndex: 'status',
       key: 'status',
       filters: [
-        { text: 'Livré', value: 'livree' },
-        { text: 'Annulé', value: 'annulee' },
         { text: 'En attente', value: 'en attente' },
+        { text: 'Livrées', value: 'livree' },
+        { text: 'Prêtes', value: 'prete' },
+        { text: 'Annulées', value: 'annulee' },
+
+
       ],
       onFilter: (value, record) => record.status.indexOf(value) === 0,
       render: (status) => {
         let color = 'default';
         if (status === 'en attente') color = 'orange';
-        else if (status === 'preparation') color = 'blue';
+        // else if (status === 'preparation') color = 'blue';
         else if (status === 'prete') color = 'green';
         else if (status === 'livree') color = 'yellow';
         else if (status === 'annulee') color = 'red';
