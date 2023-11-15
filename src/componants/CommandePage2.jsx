@@ -77,9 +77,9 @@ function CommandePageSimple() {
       } else {
         setHasOrders(true);
       }
-
+      console.log(response.data)
       const orders = response.data.orders;
-      // console.log(orders)
+       console.log(orders)
 
       // je fltre les commandes sur les users existants
       const activeUsersResponse = await axios.get(`${baseUrl}/getAll`);
@@ -191,7 +191,7 @@ function CommandePageSimple() {
           email: order.email,
           firstname: order.firstname_client,
           paid: order.paid,
-          orderID: order.orderId
+          orderID: order.orderId,
         };
         return acc;
       }, {}),
