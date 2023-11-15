@@ -383,18 +383,18 @@ padding: 5px 10px;
 }
 .order_paid{
   color:#34AA55;
-  font-weight: 600;
+  font-weight: 500;
 }
 .order_unpaid{
   color:#BF2D2D;
-  font-weight: 600;
+  font-weight: 500;
 }
 .task_number, .task_total{
   color:#E9520E;
-  font-weight: 600;
+  font-weight: 500;
 }
 .task_date, .task_magasin, .task_client, .task_products, .task_total_detail{
-  font-weight: 600;
+  font-weight: 500;
 }
 hr{
   margin: 10px 0;
