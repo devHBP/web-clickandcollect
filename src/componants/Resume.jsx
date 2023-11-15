@@ -20,7 +20,7 @@ function Resume() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(`${baseUrl}/allOrders`);
-      //console.log(response.data)
+      console.log(response.data)
       if (response.data.orders && response.data.orders.length === 0) {
         setHasOrders(false);
       } else {
@@ -48,9 +48,18 @@ function Resume() {
       lastname: order.lastname_client,
       paymentMethod: order.paymentMethod,
       paid:order.paid,
-
+      createdAt: order.createdAt
     }));
   };
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const year = date.getFullYear();
+  
+    return `${day}/${month}/${year}`;
+  }
 
   const columns = [
     {
@@ -71,8 +80,10 @@ function Resume() {
     
     {
       title: 'Passée le',
-      dataIndex: 'date',
-      key: 'date',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: text => formatDate(text),
+
     },
     {
       title: 'Statut',
@@ -109,7 +120,7 @@ function Resume() {
   ];
 
   const viewOrder = async (record) => {
-    console.log('Selected order for viewing:', record);
+    // console.log('Selected order for viewing:', record);
     try {
       // Si votre backend supporte la récupération d'une commande spécifique par son ID
       const productsResponse = await axios.get(`${baseUrl}/getOrderProducts/${record.key}`);
@@ -147,6 +158,8 @@ function Resume() {
   const renderOrderDetailsModal = () => {
     // Utilisez un formatage approprié pour la date et les autres données si nécessaire
     const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit' };
+
+    
     return (
       <Modal
         title={`Détails de la commande ${selectedOrder ? selectedOrder.numero_commande : ''}`}
@@ -164,7 +177,9 @@ function Resume() {
               {selectedOrder.status}
             </Tag>
             </p>
-            <p>Date de la commande: {new Date(selectedOrder.date).toLocaleDateString(undefined, dateFormat)}</p>
+            {/* <p>Date de la commande: {new Date(selectedOrder.date).toLocaleDateString(undefined, dateFormat)}</p> */}
+            <p>Passée le : {formatDate(selectedOrder.createdAt)}</p>
+            <p>Date de la commande : {selectedOrder.date}</p>
             {/* <p>Heure de la commande: {selectedOrder.heure || 'Non spécifiée'}</p> */}
             <p>Prix total: {selectedOrder.prix_total}€</p>
             <p>Méthode de paiement: {selectedOrder.paymentMethod === 'onsite' ? 'Sur place' : "En ligne"}</p>
