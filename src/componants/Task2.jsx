@@ -3,6 +3,7 @@ import { Draggable } from "react-beautiful-dnd";
 import { AiFillCaretDown } from "react-icons/ai";
 import axios from "axios";
 import "../styles/styles.css";
+import { ProduitAntigaspi } from "../../SVG/ProduitAntigaspi";
 
 function Task({ commande, index, updateOrderStatus, socket }) {
   // const baseUrl = 'http://127.0.0.1:8080';
@@ -130,23 +131,92 @@ function Task({ commande, index, updateOrderStatus, socket }) {
                     {commande.nombre_produits === 1 ? "Produit" : "Produits"}{" "}
                   </div>
                 </div>
+                {/* s'affiche seulement si heure rempli (null pour collaborateur) */}
+                {commande.heure && <p>Heure de retrait: {commande.heure}</p>}
+
+                {/* <ul>
+                  {commande.cartString ? (
+                    commande.cartString.map((product) => (
+                      <div key={product.productId}>
+                        <div className="row_order">
+                          <p key={product}>
+                          {product.antigaspi && (
+                              <span className="antigaspi-label"><ProduitAntigaspi /> Antigaspi - </span>
+                              )}
+                            
+                            {product.qty} x {product.libelle}{" "}
+                            
+                          </p>
+                          <p key={product.productId}>{product.prix_unitaire}€ </p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>Aucun produit dans le panier.</p>
+                  )}
+                </ul> */}
 
                 <ul>
-                  {commande.productDetails.map((product) => (
-                    <div key={product.productId}>
-                      <div className="row_order">
-                        <p key={product}>
-                          {product.quantity}x {product.libelle}{" "}
-                        </p>
-                        <p key={product.productId}>{product.prix_unitaire}€ </p>
-                      </div>
-                      {/* Render other product details here */}
-                    </div>
-                  ))}
+                  {commande.cartString ? (
+                    commande.cartString.map((product) => (
+                      <div key={commande.numero_commande}>
+                        {/* <div className="row_order"> */}
+                        {product.type === "formule" ? (
+                          <>
+                            <p>
+                              <strong>
+                                {product.qty} x {product.libelle}
+                              </strong>
+                            </p>
+                            <div className="details_formule">
+                            {product.option1 && (
+                              <div className="row_order">
+                                <p> 1 x {product.option1.libelle}</p>
+                                <p>{product.option1.prix_unitaire} €</p>
+                              </div>
+                            )}
+                            {product.option2 && (
+                              <div className="row_formule">
+                                <p> 1 x {product.option2.libelle}</p>
+                                <p>{product.option2.prix_formule} €</p>
+                              </div>
+                            )}
+                            {product.option3 && (
+                              <div className="row_formule">
+                                <p> 1 x {product.option3.libelle}</p>
+                                <p>{product.option3.prix_formule} €</p>
+                              </div>
+                            )}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                          <div className="row_order">
+                            <p>
+                            {product.antigaspi && (
+                              <span className="antigaspi-label">
+                                <ProduitAntigaspi /> Antigaspi - {''}
+                              </span>
 
-                  {/* s'affiche seulement si heure rempli (null pour collaborateur) */}
-                  {commande.heure && <p>Heure de retrait: {commande.heure}</p>}
+                            )}
+                            {product.qty} x {product.libelle}
+                            </p>
+                            
+                            <p>
+                             
+                              {product.prix_unitaire}€
+                            </p>
+                            </div>
+                          </>
+                        )}
+                        
+                      </div>
+                    ))
+                  ) : (
+                    <p>Aucun produit dans le panier.</p>
+                  )}
                 </ul>
+
                 <div className="row_order">
                   <p className="task_total_detail">Total:</p>
                   <p className="task_total"> {commande.prix_total} €</p>

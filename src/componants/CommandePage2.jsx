@@ -177,6 +177,9 @@ function CommandePageSimple() {
         const year = date.getFullYear();
         const formattedDate = `${day} / ${month} / ${year}`;
 
+        const cartArray =  JSON.parse(order.cartString)
+        console.log('cartArray', cartArray)
+
         acc[order.numero_commande] = {
           key: order.orderId,
           numero_commande: order.numero_commande,
@@ -192,6 +195,7 @@ function CommandePageSimple() {
           firstname: order.firstname_client,
           paid: order.paid,
           orderID: order.orderId,
+          cartString: cartArray,
         };
         return acc;
       }, {}),

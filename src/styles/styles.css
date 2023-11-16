@@ -375,6 +375,7 @@ padding: 5px 10px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 }
 .row_total{
   display: flex;
@@ -403,6 +404,17 @@ hr{
   display: flex;
   flex-direction: column;
   gap:10px
+}
+.details_formule{
+  margin-left: 10px;
+
+}
+.row_formule{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  color: #34AA55;
 }
 
 
