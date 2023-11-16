@@ -539,6 +539,19 @@ h2{
 .ant-modal-title{
  text-align: center;
 }
+.pastilleAntigapiResume{
+  margin-right: 10px;
+}
+.item-meta-inline {
+  display: flex;
+  align-items: center;
+}
+
+.item-meta-inline .ant-list-item-meta-title,
+.item-meta-inline .ant-list-item-meta-description {
+  margin-right: 10px;  
+}
+
 
 /* page boulangerie */
 .boulangerie_content{
