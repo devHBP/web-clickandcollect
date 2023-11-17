@@ -32,7 +32,6 @@ function Task({ commande, index, updateOrderStatus, socket }) {
       //envoi de l'email de feedback
       const sendEmail = async () => {
         try {
-          // Assurez-vous que user.email et user.firstname sont accessibles à partir de cet endroit du code.
           const res = await axios.post(`${baseUrl}/feedback`, {
             email: commande.email,
             firstname: commande.firstname,
@@ -60,11 +59,6 @@ function Task({ commande, index, updateOrderStatus, socket }) {
         orderId: commande.key,
       });
       updateOrderStatus(commande.key, status);
-
-      // if (socket && socket.readyState === WebSocket.OPEN) {
-      //   const message = JSON.stringify({ type: 'updatedOrder', data: { orderId: commande.key, status } });
-      //   socket.send(message);
-      // }
     } catch (error) {
       console.error(
         "An error occurred while updating the order status:",
@@ -134,33 +128,13 @@ function Task({ commande, index, updateOrderStatus, socket }) {
                 {/* s'affiche seulement si heure rempli (null pour collaborateur) */}
                 {commande.heure && <p>Heure de retrait: {commande.heure}</p>}
 
-                {/* <ul>
-                  {commande.cartString ? (
-                    commande.cartString.map((product) => (
-                      <div key={product.productId}>
-                        <div className="row_order">
-                          <p key={product}>
-                          {product.antigaspi && (
-                              <span className="antigaspi-label"><ProduitAntigaspi /> Antigaspi - </span>
-                              )}
-                            
-                            {product.qty} x {product.libelle}{" "}
-                            
-                          </p>
-                          <p key={product.productId}>{product.prix_unitaire}€ </p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p>Aucun produit dans le panier.</p>
-                  )}
-                </ul> */}
-
                 <ul>
+                  {/* si cartString rempli */}
                   {commande.cartString ? (
                     commande.cartString.map((product) => (
                       <div key={commande.numero_commande}>
-                        {/* <div className="row_order"> */}
+                       
+                       {/* si c'est une formule */}
                         {product.type === "formule" ? (
                           <>
                             <p>
@@ -169,51 +143,58 @@ function Task({ commande, index, updateOrderStatus, socket }) {
                               </strong>
                             </p>
                             <div className="details_formule">
-                            {product.option1 && (
-                              <div className="row_order">
-                                <p> 1 x {product.option1.libelle}</p>
-                                <p>{product.option1.prix_unitaire} €</p>
-                              </div>
-                            )}
-                            {product.option2 && (
-                              <div className="row_formule">
-                                <p> 1 x {product.option2.libelle}</p>
-                                <p>{product.option2.prix_formule} €</p>
-                              </div>
-                            )}
-                            {product.option3 && (
-                              <div className="row_formule">
-                                <p> 1 x {product.option3.libelle}</p>
-                                <p>{product.option3.prix_formule} €</p>
-                              </div>
-                            )}
+                              {product.option1 && (
+                                <div className="row_order">
+                                  <p> 1 x {product.option1.libelle}</p>
+                                  <p>{product.option1.prix_unitaire} €</p>
+                                </div>
+                              )}
+                              {product.option2 && (
+                                <div className="row_formule">
+                                  <p> 1 x {product.option2.libelle}</p>
+                                  <p>{product.option2.prix_formule} €</p>
+                                </div>
+                              )}
+                              {product.option3 && (
+                                <div className="row_formule">
+                                  <p> 1 x {product.option3.libelle}</p>
+                                  <p>{product.option3.prix_formule} €</p>
+                                </div>
+                              )}
                             </div>
                           </>
                         ) : (
                           <>
-                          <div className="row_order">
-                            <p>
-                            {product.antigaspi && (
-                              <span className="antigaspi-label">
-                                <ProduitAntigaspi /> Antigaspi - {''}
-                              </span>
+                            <div className="row_order">
+                              <p>
+                                {/* si c'est un produit antigaspi */}
+                                {product.antigaspi && (
+                                  <span className="antigaspi-label">
+                                    <ProduitAntigaspi /> Antigaspi - {""}
+                                  </span>
+                                )}
+                                {product.qty} x {product.libelle}
+                              </p>
 
-                            )}
-                            {product.qty} x {product.libelle}
-                            </p>
-                            
-                            <p>
-                             
-                              {product.prix_unitaire}€
-                            </p>
+                              <p>{product.prix_unitaire}€</p>
                             </div>
                           </>
                         )}
-                        
                       </div>
                     ))
+                  ) : 
+                  // si cartstring null (si bug)
+                  commande.productDetails &&
+                    commande.productDetails.length > 0 ? (
+                    commande.productDetails.map((product, index) => (
+                      <p key={index}>
+                        {product.quantity} x {product.libelle}
+                      </p>
+                    ))
                   ) : (
-                    <p>Aucun produit dans le panier.</p>
+                    <div className="row_order">
+                      <p>Aucun détail de produit disponible.</p>
+                    </div>
                   )}
                 </ul>
 
