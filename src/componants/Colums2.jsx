@@ -8,9 +8,9 @@ function Colums({ id, title, commandes, updateOrderStatus, socket }) {
 
     <div id={id} className="column">
       <h3>{title}</h3>
-      <Droppable droppableId={id}>
+      <Droppable droppableId={id} >
         {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef} className='tasks_list'>
+          <div {...provided.droppableProps} ref={provided.innerRef} className='tasks_list' style={{ minHeight: "100px" }}>
             {commandes.map((commande, index) => (
              commande ? <Task key={commande.key} commande={commande} index={index} updateOrderStatus={updateOrderStatus}/> : null
             ))}

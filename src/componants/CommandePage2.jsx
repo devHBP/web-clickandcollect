@@ -77,7 +77,7 @@ function CommandePageSimple() {
           )
         : tasksArray.filter((order) => order.status === "en attente");
 
-      console.log("Commandes filtrées par date:", filteredOrders);
+      // console.log("Commandes filtrées par date:", filteredOrders);
     }
   }, [selectedDate, commandes.tasks]);
 
@@ -497,7 +497,7 @@ function CommandePageSimple() {
           placeholder="Filtrer par Date"
           isClearable
         />
-        <button onClick={handleExport}>Exporter</button>
+        <button onClick={handleExport} className="button">Exporter</button>
       </div>
 
       {isLoading ? (

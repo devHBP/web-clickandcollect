@@ -315,7 +315,6 @@ padding: 20px;
   flex-direction: column;
   border-radius: 5px;;
   padding:0px 1rem;
-  /* background-color: red; */
 }
 .task_item {  
   border: 1px solid #ECECEC;
@@ -516,7 +515,12 @@ h2{
 }
 #column-3 .tasks_list .task_item{
   background-color: #e8f4e2;
- 
+  min-height: 100px;
+}
+.orderSelect{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
 }
 
 /* page resumé */
