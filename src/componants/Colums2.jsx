@@ -10,7 +10,7 @@ function Colums({ id, title, commandes, updateOrderStatus, socket }) {
       <h3>{title}</h3>
       <Droppable droppableId={id} >
         {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef} className='tasks_list' style={{ minHeight: "100px" }}>
+          <div {...provided.droppableProps} ref={provided.innerRef} className='tasks_list' style={{ minHeight: "100vh" }}>
             {commandes.map((commande, index) => (
              commande ? <Task key={commande.key} commande={commande} index={index} updateOrderStatus={updateOrderStatus}/> : null
             ))}
