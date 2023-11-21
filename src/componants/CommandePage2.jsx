@@ -4,6 +4,8 @@ import Tasks from "./Tasks2";
 import { Input, Spin } from "antd";
 import "../styles/styles.css";
 const { Search } = Input;
+import * as XLSX from "xlsx";
+import Select from "react-select";
 
 function CommandePageSimple() {
   const [commandes, setCommandes] = useState([]);
@@ -12,7 +14,9 @@ function CommandePageSimple() {
   const [hasOrders, setHasOrders] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [timeoutId, setTimeoutId] = useState(null);
+  // const [timeoutId, setTimeoutId] = useState(null);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [uniqueDates, setUniqueDates] = useState([]);
 
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
@@ -22,8 +26,6 @@ function CommandePageSimple() {
   }, []);
 
   const updateOrderStatus = (orderId, status) => {
-
-  
     // Update commandes
     setCommandes((prevCommandes) => {
       const updatedCommandes = { ...prevCommandes };
@@ -45,11 +47,14 @@ function CommandePageSimple() {
 
     // Update tableData
     setTableData((prevTableData) => {
-        // Ajout d'une vérification pour s'assurer que prevTableData est un tableau
-        if (!Array.isArray(prevTableData)) {
-          console.error('Expected prevTableData to be an array, but got:', prevTableData);
-          return []; // Retourne un tableau vide ou la valeur par défaut souhaitée
-        }
+      // Ajout d'une vérification pour s'assurer que prevTableData est un tableau
+      if (!Array.isArray(prevTableData)) {
+        console.error(
+          "Expected prevTableData to be an array, but got:",
+          prevTableData
+        );
+        return []; // Retourne un tableau vide ou la valeur par défaut souhaitée
+      }
       const updatedTableData = [...prevTableData];
       const orderToUpdate = updatedTableData.find(
         (order) => order.key === orderId
@@ -59,14 +64,25 @@ function CommandePageSimple() {
       }
       return updatedTableData;
     });
-
-   
   };
 
+  useEffect(() => {
+    if (commandes.tasks) {
+      const tasksArray = Object.values(commandes.tasks);
 
+      let filteredOrders = selectedDate
+        ? tasksArray.filter(
+            (order) =>
+              order.status === "en attente" && order.date === selectedDate
+          )
+        : tasksArray.filter((order) => order.status === "en attente");
+
+      console.log("Commandes filtrées par date:", filteredOrders);
+    }
+  }, [selectedDate, commandes.tasks]);
 
   const allOrders = async () => {
-    setIsLoading(true); // Commence le chargement
+    setIsLoading(true);
 
     try {
       const response = await axios.get(`${baseUrl}/allOrders`);
@@ -77,16 +93,42 @@ function CommandePageSimple() {
       } else {
         setHasOrders(true);
       }
-      console.log(response.data)
       const orders = response.data.orders;
-       console.log(orders)
+
+      //filtrer les commandes en attente
+      let ordersEnAttente = orders.filter(
+        (order) => order.status === "en attente"
+      );
+
+      let datesArray = [];
+      ordersEnAttente.forEach((order) => {
+        if (order.date) {
+          datesArray.push(order.date);
+        }
+      });
+
+      // je filtre les doublons
+      const uniqueDatesArray = datesArray.filter((date, index, self) => {
+        return self.indexOf(date) === index;
+      });
+
+      const selectOptions = uniqueDatesArray.map((date) => ({
+        value: date,
+        label: new Date(date).toLocaleDateString("fr-FR"),
+      }));
+
+      setUniqueDates(selectOptions);
 
       // je fltre les commandes sur les users existants
       const activeUsersResponse = await axios.get(`${baseUrl}/getAll`);
-      const activeUserIds = new Set(activeUsersResponse.data.map(user => user.userId));
+      const activeUserIds = new Set(
+        activeUsersResponse.data.map((user) => user.userId)
+      );
 
       // Filtrer les commandes pour les utilisateurs actifs
-      const activeOrders = orders.filter(order => activeUserIds.has(order.userId));
+      const activeOrders = orders.filter((order) =>
+        activeUserIds.has(order.userId)
+      );
 
       // Fetch product details for each order
       const ordersWithDetails = await Promise.all(
@@ -98,7 +140,7 @@ function CommandePageSimple() {
             `${baseUrl}/getOneStore/${order.storeId}`
           );
           const storeName = storeResponse.data.nom_magasin;
-      
+
           let emailUser = "Utilisateur supprimé"; // Valeur par défaut
           try {
             const emailUserId = await axios.get(
@@ -107,13 +149,15 @@ function CommandePageSimple() {
             emailUser = emailUserId.data.email;
           } catch (emailError) {
             if (emailError.response && emailError.response.status === 404) {
-              console.log(`Utilisateur supprimé pour la commande ${order.orderId}`);
+              console.log(
+                `Utilisateur supprimé pour la commande ${order.orderId}`
+              );
               // Pas besoin de faire autre chose, emailUser a déjà une valeur par défaut
             } else {
               throw emailError; // Relancez l'erreur si ce n'est pas une erreur 404
             }
           }
-      
+
           return {
             ...order,
             productDetails: productResponse.data,
@@ -122,8 +166,6 @@ function CommandePageSimple() {
           };
         })
       );
-      
-
 
       const orderData = transformOrderData(ordersWithDetails);
 
@@ -175,10 +217,10 @@ function CommandePageSimple() {
         const day = date.getDate().toString().padStart(2, "0");
         const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Les mois sont indexés à partir de 0
         const year = date.getFullYear();
-        const formattedDate = `${day} / ${month} / ${year}`;
+        const formattedDate = `${day}/${month}/${year}`;
 
-        const cartArray =  JSON.parse(order.cartString)
-        console.log('cartArray', cartArray)
+        const cartArray = JSON.parse(order.cartString);
+        // console.log('cartArray', cartArray)
 
         acc[order.numero_commande] = {
           key: order.orderId,
@@ -219,6 +261,8 @@ function CommandePageSimple() {
       columnOrder: ["column-1", "column-3"],
     };
   };
+
+  //fonction draganddrop
   const onDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
 
@@ -344,13 +388,118 @@ function CommandePageSimple() {
   const handleSearch = (e) => {
     const newSearchTerm = normalizeText(e.target.value);
     setSearchTerm(newSearchTerm);
-    console.log(newSearchTerm)
+    console.log(newSearchTerm);
   };
 
-  console.log('tasks', commandes.tasks)
+  // console.log("tasks", commandes.tasks);
 
+  const handleExport = () => {
+    function updateProductInfo(libelle, orderId, qty, isAntiGaspi, date) {
+      if (!productInfo[libelle]) {
+        productInfo[libelle] = {
+          orderIds: new Set(),
+          totalQty: 0,
+          antiGaspiQty: 0,
+          dates: [],
+        };
+      }
+      productInfo[libelle].orderIds.add(orderId);
+      productInfo[libelle].totalQty += qty;
+      if (isAntiGaspi) {
+        productInfo[libelle].antiGaspiQty += qty;
+      }
+      productInfo[libelle].dates.push(date); 
+    }
+
+    let productInfo = {};
+
+    let ordersToExport = [];
+    if (selectedDate) {
+      ordersToExport = Object.values(commandes.tasks).filter(
+        (order) => order.date === selectedDate && order.status === "en attente"
+      );
+    } else {
+      ordersToExport = Object.values(commandes.tasks).filter(
+        (order) => order.status === "en attente"
+      );
+    }
+
+    ordersToExport.forEach((order) => {
+
+      order.cartString.forEach((item) => {
+        let qty = item.qty;
+        let libelle = item.libelle;
+        if (item.type === "formule") {
+          // Traiter chaque option de la formule
+          ["option1", "option2", "option3"].forEach((optionKey) => {
+            const option = item[optionKey];
+            if (option && option.libelle) {
+              updateProductInfo(
+                option.libelle,
+                order.orderID,
+                item.qty,
+                item.antigaspi,
+                order.date
+              );
+            }
+          });
+        } else {
+          // Traitement pour les produits non-formule
+          updateProductInfo(
+            item.libelle,
+            order.orderID,
+            qty,
+            item.antigaspi,
+            order.date
+          );
+        }
+      });
+    });
+
+    // Transformer l'objet de suivi en tableau pour l'exportation
+    const dataForExport = Object.entries(productInfo).map(
+      ([libelle, info]) => ({
+        "Nom produit": libelle,
+        "Numéros de commande": Array.from(info.orderIds).join(", "),
+        Quantité: info.totalQty,
+        AntiGaspi: info.antiGaspiQty,
+        Dates: info.dates.join(", "),
+      })
+    );
+
+    console.log("dataForExport", dataForExport);
+
+    const ws = XLSX.utils.json_to_sheet(dataForExport);
+
+    // Créer un nouveau classeur et ajouter la feuille
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "CommandesEnAttente");
+
+    // Exporter le classeur
+    XLSX.writeFile(wb, `Export des commandes ${selectedDate}.xlsx`);
+  };
+
+  const handleDateChange = (selectedOption) => {
+    if (selectedOption) {
+      setSelectedDate(selectedOption.label);
+    } else {
+      setSelectedDate("");
+    }
+  };
   return (
     <div className="commande-page">
+      <div className="orderSelect">
+        <Select
+          options={uniqueDates}
+          onChange={handleDateChange}
+          value={selectedDate.label}
+          // value={uniqueDates.find((option) => option.value === selectedDate)}
+          placeholder="Filtrer par Date"
+          isClearable
+        />
+        <button onClick={handleExport}>Exporter</button>
+      </div>
+
       {isLoading ? (
         <div
           style={{
