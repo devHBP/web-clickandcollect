@@ -17,6 +17,8 @@ function CommandePageSimple() {
   // const [timeoutId, setTimeoutId] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [uniqueDates, setUniqueDates] = useState([]);
+  const [filteredCommandes, setFilteredCommandes] = useState([]);
+
 
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
@@ -66,21 +68,89 @@ function CommandePageSimple() {
     });
   };
 
+  // useEffect(() => {
+  //   if (commandes.tasks) {
+  //     const tasksArray = Object.values(commandes.tasks);
+
+  //     let filteredOrders = selectedDate
+  //       ? tasksArray.filter(
+  //           (order) =>
+  //             order.status === "en attente" && order.date === selectedDate
+  //         )
+  //       : tasksArray.filter((order) => order.status === "en attente");
+
+  //     // console.log("Commandes filtrées par date:", filteredOrders);
+  //   }
+  // }, [selectedDate, commandes.tasks]);
+
+  // useEffect(() => {
+  //   if (commandes.tasks) {
+  //     const tasksArray = Object.values(commandes.tasks);
+  //     console.log(tasksArray);
+  
+  //     if (Array.isArray(tasksArray)) {
+  //       const libelles = tasksArray.map((item) => {
+  //         if (Array.isArray(item.cartString) && item.cartString.length > 0) {
+  //           return item.cartString[0].libelle; 
+  //         }
+  //         return null; 
+  //       });
+  
+  //       // console.log('libelles', libelles);
+
+  //       // Filtrer les libellés en fonction de searchTerm
+  //     const filterLibelle = libelles.filter((libelle) => {
+  //       return (
+  //         libelle &&
+  //         normalizeText(libelle).includes(normalizeText(searchTerm))
+  //       );
+  //     });
+
+  //     console.log('filter libelle', filterLibelle);
+
+  //        // Filtrer les commandes en fonction de searchTerm
+  //        const filteredOrders = tasksArray.filter((order, index) => {
+  //         return (
+  //           filterLibelle[index] &&
+  //           filterLibelle[index].toLowerCase().includes(searchTerm.toLowerCase())
+  //         );
+  //       });
+  
+  //       console.log('filt', filteredOrders)
+  //       setFilteredCommandes(filteredOrders)
+  //       // je veux mettre à jour mon tableau de commandes avec ce résultats
+  //     }
+  //   }
+  // }, [searchTerm, commandes.tasks]);
+
   useEffect(() => {
     if (commandes.tasks) {
-      const tasksArray = Object.values(commandes.tasks);
-
-      let filteredOrders = selectedDate
-        ? tasksArray.filter(
-            (order) =>
-              order.status === "en attente" && order.date === selectedDate
-          )
-        : tasksArray.filter((order) => order.status === "en attente");
-
-      // console.log("Commandes filtrées par date:", filteredOrders);
+      let tasksArray = Object.values(commandes.tasks);
+  
+      // Filtrer par date si une date est sélectionnée
+      if (selectedDate) {
+        tasksArray = tasksArray.filter((order) => order.date === selectedDate);
+      }
+  
+      // Filtrer par terme de recherche
+      if (searchTerm) {
+        const filterLibelle = tasksArray.map((order) => {
+          return order.cartString.some((item) => 
+            normalizeText(item.libelle).includes(normalizeText(searchTerm))
+          );
+        });
+  
+        tasksArray = tasksArray.filter((order, index) => filterLibelle[index]);
+      }
+  
+      // Mettre à jour les commandes filtrées
+      setFilteredCommandes(tasksArray);
     }
-  }, [selectedDate, commandes.tasks]);
-
+  }, [selectedDate, searchTerm, commandes.tasks]);
+  
+  
+  
+  
   const allOrders = async () => {
     setIsLoading(true);
 
@@ -385,11 +455,11 @@ function CommandePageSimple() {
       .toLowerCase(); // Convertit en minuscules
   };
 
-  const handleSearch = (e) => {
-    const newSearchTerm = normalizeText(e.target.value);
-    setSearchTerm(newSearchTerm);
-    console.log(newSearchTerm);
-  };
+  // const handleSearch = (e) => {
+  //   const newSearchTerm = normalizeText(e.target.value);
+  //   setSearchTerm(newSearchTerm);
+  //   console.log(newSearchTerm);
+  // };
 
   // console.log("tasks", commandes.tasks);
 
@@ -493,11 +563,16 @@ function CommandePageSimple() {
           options={uniqueDates}
           onChange={handleDateChange}
           value={selectedDate.label}
-          // value={uniqueDates.find((option) => option.value === selectedDate)}
-          placeholder="Filtrer par Date"
+          placeholder="Filtrer par Date pour Exporter"
           isClearable
         />
         <button onClick={handleExport} className="button">Exporter</button>
+        {/* <Search
+              placeholder="Rechercher un produit"
+              size="medium"
+              style={{ width: 200 }}
+              onChange={handleSearch}
+            /> */}
       </div>
 
       {isLoading ? (
@@ -524,15 +599,10 @@ function CommandePageSimple() {
               width: "100%",
             }}
           >
-            {/* <Search
-              placeholder="Rechercher un produit"
-              size="medium"
-              style={{ width: 200 }}
-              onChange={handleSearch}
-            /> */}
+           
             <div style={{ width: "100%" }}>
               <Tasks
-                commandes={commandes}
+                commandes={commandes} 
                 onDragEnd={onDragEnd}
                 updateOrderStatus={updateOrderStatus}
                 socket={socket}
