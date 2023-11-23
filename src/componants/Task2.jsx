@@ -5,7 +5,7 @@ import axios from "axios";
 import "../styles/styles.css";
 import { ProduitAntigaspi } from "../../SVG/ProduitAntigaspi";
 
-function Task({ commande, index, updateOrderStatus, socket }) {
+function Task({ commande, index, updateOrderStatus }) {
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [showDetails, setShowDetails] = useState(false);
@@ -128,11 +128,11 @@ function Task({ commande, index, updateOrderStatus, socket }) {
                 {/* s'affiche seulement si heure rempli (null pour collaborateur) */}
                 {commande.heure && <p>Heure de retrait: {commande.heure}</p>}
 
-                <ul>
+                <ul >
                   {/* si cartString rempli */}
                   {commande.cartString ? (
-                    commande.cartString.map((product) => (
-                      <div key={commande.numero_commande}>
+                    commande.cartString.map((product, index) => (
+                      <div key={product.id || index}>
                        
                        {/* si c'est une formule */}
                         {product.type === "formule" ? (

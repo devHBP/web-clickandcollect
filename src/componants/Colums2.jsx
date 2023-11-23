@@ -2,7 +2,7 @@ import React from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 import Task from './Task2';
 
-function Colums({ id, title, commandes, updateOrderStatus, socket }) {
+function Colums({ id, title, commandes, updateOrderStatus}) {
   return (
     <div className="flex-container">
 

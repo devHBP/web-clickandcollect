@@ -10,7 +10,6 @@ import Select from "react-select";
 function CommandePageSimple() {
   const [commandes, setCommandes] = useState([]);
   const [tableData, setTableData] = useState([]);
-  const [socket, setSocket] = useState(null);
   const [hasOrders, setHasOrders] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -461,7 +460,7 @@ function CommandePageSimple() {
   //   console.log(newSearchTerm);
   // };
 
-  // console.log("tasks", commandes.tasks);
+  console.log("tasks", commandes.tasks);
 
   const handleExport = () => {
     function updateProductInfo(libelle, orderId, qty, isAntiGaspi, date) {
@@ -605,7 +604,6 @@ function CommandePageSimple() {
                 commandes={commandes} 
                 onDragEnd={onDragEnd}
                 updateOrderStatus={updateOrderStatus}
-                socket={socket}
               />
             </div>
           </div>
