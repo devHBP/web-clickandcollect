@@ -314,7 +314,7 @@ padding: 20px;
   display: flex;
   flex-direction: column;
   border-radius: 5px;;
-  padding:0px 1rem;
+  padding:10px;
 }
 .task_item {  
   border: 1px solid #ECECEC;
@@ -522,6 +522,22 @@ h2{
   flex-direction: row;
   gap: 20px;
 }
+.warning-badge {
+  background-color: red;
+  color: white;
+  padding: 5px; 
+  border-radius: 50%; 
+  font-size: 0.8em;
+  position: absolute;
+  top: -10px; 
+  right: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 15px; 
+  height: 15px; 
+}
+
 
 /* page resumé */
 .resume-page{

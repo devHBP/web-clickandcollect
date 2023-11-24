@@ -17,7 +17,9 @@ function CommandePageSimple() {
   const [selectedDate, setSelectedDate] = useState("");
   const [uniqueDates, setUniqueDates] = useState([]);
   const [filteredCommandes, setFilteredCommandes] = useState([]);
-
+  const [currentOrders, setCurrentOrders] = useState([]);
+  const [newOrdersLength, setNewOrdersLength] = useState(0);
+  const [newOrderIds, setNewOrderIds] = useState(new Set());
 
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
@@ -67,89 +69,31 @@ function CommandePageSimple() {
     });
   };
 
-  // useEffect(() => {
-  //   if (commandes.tasks) {
-  //     const tasksArray = Object.values(commandes.tasks);
-
-  //     let filteredOrders = selectedDate
-  //       ? tasksArray.filter(
-  //           (order) =>
-  //             order.status === "en attente" && order.date === selectedDate
-  //         )
-  //       : tasksArray.filter((order) => order.status === "en attente");
-
-  //     // console.log("Commandes filtrées par date:", filteredOrders);
-  //   }
-  // }, [selectedDate, commandes.tasks]);
-
-  // useEffect(() => {
-  //   if (commandes.tasks) {
-  //     const tasksArray = Object.values(commandes.tasks);
-  //     console.log(tasksArray);
-  
-  //     if (Array.isArray(tasksArray)) {
-  //       const libelles = tasksArray.map((item) => {
-  //         if (Array.isArray(item.cartString) && item.cartString.length > 0) {
-  //           return item.cartString[0].libelle; 
-  //         }
-  //         return null; 
-  //       });
-  
-  //       // console.log('libelles', libelles);
-
-  //       // Filtrer les libellés en fonction de searchTerm
-  //     const filterLibelle = libelles.filter((libelle) => {
-  //       return (
-  //         libelle &&
-  //         normalizeText(libelle).includes(normalizeText(searchTerm))
-  //       );
-  //     });
-
-  //     console.log('filter libelle', filterLibelle);
-
-  //        // Filtrer les commandes en fonction de searchTerm
-  //        const filteredOrders = tasksArray.filter((order, index) => {
-  //         return (
-  //           filterLibelle[index] &&
-  //           filterLibelle[index].toLowerCase().includes(searchTerm.toLowerCase())
-  //         );
-  //       });
-  
-  //       console.log('filt', filteredOrders)
-  //       setFilteredCommandes(filteredOrders)
-  //       // je veux mettre à jour mon tableau de commandes avec ce résultats
-  //     }
-  //   }
-  // }, [searchTerm, commandes.tasks]);
-
   useEffect(() => {
     if (commandes.tasks) {
       let tasksArray = Object.values(commandes.tasks);
-  
+
       // Filtrer par date si une date est sélectionnée
       if (selectedDate) {
         tasksArray = tasksArray.filter((order) => order.date === selectedDate);
       }
-  
+
       // Filtrer par terme de recherche
       if (searchTerm) {
         const filterLibelle = tasksArray.map((order) => {
-          return order.cartString.some((item) => 
+          return order.cartString.some((item) =>
             normalizeText(item.libelle).includes(normalizeText(searchTerm))
           );
         });
-  
+
         tasksArray = tasksArray.filter((order, index) => filterLibelle[index]);
       }
-  
+
       // Mettre à jour les commandes filtrées
       setFilteredCommandes(tasksArray);
     }
   }, [selectedDate, searchTerm, commandes.tasks]);
-  
-  
-  
-  
+
   const allOrders = async () => {
     setIsLoading(true);
 
@@ -262,6 +206,9 @@ function CommandePageSimple() {
           // console.log('Libelle:', libelle);
         }
       }
+
+      //ajout ici
+      return Object.values(orderData.tasks);
     } catch (error) {
       if (error.response && error.response.status === 404) {
         console.error("No orders found.");
@@ -273,7 +220,13 @@ function CommandePageSimple() {
       setIsLoading(false);
     }
   };
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     allOrders();
+  //   }, 60000);
 
+  //   return () => clearInterval(intervalId);
+  // }, []);
   //mise en forme data
   const transformOrderData = (orders) => {
     const orderArray = Object.values(orders);
@@ -460,7 +413,7 @@ function CommandePageSimple() {
   //   console.log(newSearchTerm);
   // };
 
-  console.log("tasks", commandes.tasks);
+  // console.log("tasks", commandes.tasks);
 
   const handleExport = () => {
     function updateProductInfo(libelle, orderId, qty, isAntiGaspi, date) {
@@ -477,7 +430,7 @@ function CommandePageSimple() {
       if (isAntiGaspi) {
         productInfo[libelle].antiGaspiQty += qty;
       }
-      productInfo[libelle].dates.push(date); 
+      productInfo[libelle].dates.push(date);
     }
 
     let productInfo = {};
@@ -494,7 +447,6 @@ function CommandePageSimple() {
     }
 
     ordersToExport.forEach((order) => {
-
       order.cartString.forEach((item) => {
         let qty = item.qty;
         let libelle = item.libelle;
@@ -555,9 +507,87 @@ function CommandePageSimple() {
       setSelectedDate("");
     }
   };
+
+  //rafraichissement et visu des nouvelels commandes
+  const refreshOrders = async () => {
+    const newOrders = await allOrders(); 
+    if (Array.isArray(newOrders) && Array.isArray(currentOrders)) {
+      // Vérifiez les deux tableaux
+      compareOrders(currentOrders, newOrders);
+      setCurrentOrders(newOrders);
+    } else {
+      console.error(
+        "Expected newOrders and currentOrders to be arrays, received:",
+        newOrders,
+        currentOrders
+      );
+    }
+  };
+
+  const compareOrders = (currentOrders, newOrders) => {
+    // Supprimez les logs si vous avez confirmé que les données sont correctes
+    console.log("Current orders:", currentOrders);
+    console.log("New orders:", newOrders);
+
+    // Assurez-vous que les deux variables sont des tableaux
+    if (!Array.isArray(currentOrders) || !Array.isArray(newOrders)) {
+      console.error("Invalid orders data");
+      return;
+    }
+
+    // Utilisez 'numero_commande' ou l'identifiant unique approprié de vos commandes
+    const newOrderNumbers = new Set(
+      newOrders.map((order) => order.numero_commande)
+    );
+    const currentOrderNumbers = new Set(
+      currentOrders.map((order) => order.numero_commande)
+    );
+
+    // Détectez les nouvelles commandes en vérifiant leur présence dans l'ensemble des commandes actuelles
+    const addedOrders = newOrders.filter(
+      (order) => !currentOrderNumbers.has(order.numero_commande)
+    );
+
+    if (addedOrders.length > 0) {
+      console.log("Nouvelles commandes:", addedOrders);
+      setNewOrdersLength(addedOrders.length);
+      setNewOrderIds(new Set(addedOrders.map(order => order.numero_commande)));
+
+    } else {
+      console.log("pas de nouvelles commandes");
+      console.log(addedOrders.length + ' commandes')
+      setNewOrdersLength(0)
+      setNewOrderIds(new Set()); // Réinitialiser si aucune nouvelle commande n'est trouvée
+
+    }
+  };
+
+  useEffect(() => {
+    refreshOrders(); // Rafraîchissement initial
+    const intervalId = setInterval(refreshOrders, 60000); // 60 secondes
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const markAsSeen = (commandeId) => {
+    // Ajouter l'ID de la commande aux commandes déjà vues dans le stockage local
+    let seenOrders = new Set(JSON.parse(localStorage.getItem('seenOrders') || '[]'));
+    seenOrders.add(commandeId);
+    localStorage.setItem('seenOrders', JSON.stringify([...seenOrders]));
+  
+    // Mettre à jour l'état local
+    setNewOrderIds(prevNewOrderIds => {
+      const updatedNewOrderIds = new Set(prevNewOrderIds);
+      updatedNewOrderIds.delete(commandeId);
+      return updatedNewOrderIds;
+    });
+    setNewOrdersLength(prevLength => prevLength - 1);
+  };
+
   return (
     <div className="commande-page">
       <div className="orderSelect">
+        <p> Il y a {newOrdersLength} nouvelles commandes</p>
         <Select
           options={uniqueDates}
           onChange={handleDateChange}
@@ -565,7 +595,9 @@ function CommandePageSimple() {
           placeholder="Filtrer par Date pour Exporter"
           isClearable
         />
-        <button onClick={handleExport} className="button">Exporter</button>
+        <button onClick={handleExport} className="button">
+          Exporter
+        </button>
         {/* <Search
               placeholder="Rechercher un produit"
               size="medium"
@@ -598,12 +630,13 @@ function CommandePageSimple() {
               width: "100%",
             }}
           >
-           
             <div style={{ width: "100%" }}>
               <Tasks
-                commandes={commandes} 
+                commandes={commandes}
                 onDragEnd={onDragEnd}
                 updateOrderStatus={updateOrderStatus}
+                newOrderIds={newOrderIds}
+                markAsSeen={markAsSeen}
               />
             </div>
           </div>

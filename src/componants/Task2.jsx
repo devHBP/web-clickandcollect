@@ -5,7 +5,7 @@ import axios from "axios";
 import "../styles/styles.css";
 import { ProduitAntigaspi } from "../../SVG/ProduitAntigaspi";
 
-function Task({ commande, index, updateOrderStatus }) {
+function Task({ commande, index, updateOrderStatus, isNewOrder, markAsSeen }) {
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [showDetails, setShowDetails] = useState(false);
@@ -67,6 +67,12 @@ function Task({ commande, index, updateOrderStatus }) {
     }
   };
 
+  const handleView = () => {
+    console.log('commande vue')
+    markAsSeen(commande.numero_commande);
+
+  }
+
   return (
     <Draggable draggableId={commande.numero_commande} index={index}>
       {(provided) => (
@@ -76,6 +82,7 @@ function Task({ commande, index, updateOrderStatus }) {
           ref={provided.innerRef}
           className="task_item"
         >
+          {isNewOrder && <div className="warning-badge" onClick={handleView}>!</div>}
           <AiFillCaretDown className="details_order" onClick={toggleDetails} />
           {/* <div className="task-number">{commande.numero_commande}</div> */}
           {/* <div className="task-client">Email: {commande.email}</div> */}
@@ -128,13 +135,12 @@ function Task({ commande, index, updateOrderStatus }) {
                 {/* s'affiche seulement si heure rempli (null pour collaborateur) */}
                 {commande.heure && <p>Heure de retrait: {commande.heure}</p>}
 
-                <ul >
+                <ul>
                   {/* si cartString rempli */}
                   {commande.cartString ? (
                     commande.cartString.map((product, index) => (
                       <div key={product.id || index}>
-                       
-                       {/* si c'est une formule */}
+                        {/* si c'est une formule */}
                         {product.type === "formule" ? (
                           <>
                             <p>
@@ -182,8 +188,7 @@ function Task({ commande, index, updateOrderStatus }) {
                         )}
                       </div>
                     ))
-                  ) : 
-                  // si cartstring null (si bug)
+                  ) : // si cartstring null (si bug)
                   commande.productDetails &&
                     commande.productDetails.length > 0 ? (
                     commande.productDetails.map((product, index) => (
