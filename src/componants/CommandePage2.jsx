@@ -220,14 +220,14 @@ function CommandePageSimple() {
       setIsLoading(false);
     }
   };
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     allOrders();
-  //   }, 60000);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      allOrders();
+    }, 60000);
 
-  //   return () => clearInterval(intervalId);
-  // }, []);
-  //mise en forme data
+    return () => clearInterval(intervalId);
+  }, []);
+  // mise en forme data
   const transformOrderData = (orders) => {
     const orderArray = Object.values(orders);
 
@@ -508,86 +508,13 @@ function CommandePageSimple() {
     }
   };
 
-  //rafraichissement et visu des nouvelels commandes
-  const refreshOrders = async () => {
-    const newOrders = await allOrders(); 
-    if (Array.isArray(newOrders) && Array.isArray(currentOrders)) {
-      // Vérifiez les deux tableaux
-      compareOrders(currentOrders, newOrders);
-      setCurrentOrders(newOrders);
-    } else {
-      console.error(
-        "Expected newOrders and currentOrders to be arrays, received:",
-        newOrders,
-        currentOrders
-      );
-    }
-  };
 
-  const compareOrders = (currentOrders, newOrders) => {
-    // Supprimez les logs si vous avez confirmé que les données sont correctes
-    console.log("Current orders:", currentOrders);
-    console.log("New orders:", newOrders);
 
-    // Assurez-vous que les deux variables sont des tableaux
-    if (!Array.isArray(currentOrders) || !Array.isArray(newOrders)) {
-      console.error("Invalid orders data");
-      return;
-    }
-
-    // Utilisez 'numero_commande' ou l'identifiant unique approprié de vos commandes
-    const newOrderNumbers = new Set(
-      newOrders.map((order) => order.numero_commande)
-    );
-    const currentOrderNumbers = new Set(
-      currentOrders.map((order) => order.numero_commande)
-    );
-
-    // Détectez les nouvelles commandes en vérifiant leur présence dans l'ensemble des commandes actuelles
-    const addedOrders = newOrders.filter(
-      (order) => !currentOrderNumbers.has(order.numero_commande)
-    );
-
-    if (addedOrders.length > 0) {
-      console.log("Nouvelles commandes:", addedOrders);
-      setNewOrdersLength(addedOrders.length);
-      setNewOrderIds(new Set(addedOrders.map(order => order.numero_commande)));
-
-    } else {
-      console.log("pas de nouvelles commandes");
-      console.log(addedOrders.length + ' commandes')
-      setNewOrdersLength(0)
-      setNewOrderIds(new Set()); // Réinitialiser si aucune nouvelle commande n'est trouvée
-
-    }
-  };
-
-  useEffect(() => {
-    refreshOrders(); // Rafraîchissement initial
-    const intervalId = setInterval(refreshOrders, 60000); // 60 secondes
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const markAsSeen = (commandeId) => {
-    // Ajouter l'ID de la commande aux commandes déjà vues dans le stockage local
-    let seenOrders = new Set(JSON.parse(localStorage.getItem('seenOrders') || '[]'));
-    seenOrders.add(commandeId);
-    localStorage.setItem('seenOrders', JSON.stringify([...seenOrders]));
-  
-    // Mettre à jour l'état local
-    setNewOrderIds(prevNewOrderIds => {
-      const updatedNewOrderIds = new Set(prevNewOrderIds);
-      updatedNewOrderIds.delete(commandeId);
-      return updatedNewOrderIds;
-    });
-    setNewOrdersLength(prevLength => prevLength - 1);
-  };
 
   return (
     <div className="commande-page">
       <div className="orderSelect">
-        <p> Il y a {newOrdersLength} nouvelles commandes</p>
+        <p> Il y a  nouvelles commandes</p>
         <Select
           options={uniqueDates}
           onChange={handleDateChange}
@@ -635,8 +562,6 @@ function CommandePageSimple() {
                 commandes={commandes}
                 onDragEnd={onDragEnd}
                 updateOrderStatus={updateOrderStatus}
-                newOrderIds={newOrderIds}
-                markAsSeen={markAsSeen}
               />
             </div>
           </div>

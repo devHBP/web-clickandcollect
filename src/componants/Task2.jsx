@@ -5,7 +5,7 @@ import axios from "axios";
 import "../styles/styles.css";
 import { ProduitAntigaspi } from "../../SVG/ProduitAntigaspi";
 
-function Task({ commande, index, updateOrderStatus, isNewOrder, markAsSeen }) {
+function Task({ commande, index, updateOrderStatu}) {
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [showDetails, setShowDetails] = useState(false);
@@ -69,7 +69,6 @@ function Task({ commande, index, updateOrderStatus, isNewOrder, markAsSeen }) {
 
   const handleView = () => {
     console.log('commande vue')
-    markAsSeen(commande.numero_commande);
 
   }
 
@@ -82,7 +81,7 @@ function Task({ commande, index, updateOrderStatus, isNewOrder, markAsSeen }) {
           ref={provided.innerRef}
           className="task_item"
         >
-          {isNewOrder && <div className="warning-badge" onClick={handleView}>!</div>}
+          { <div className="warning-badge" onClick={handleView}>!</div>}
           <AiFillCaretDown className="details_order" onClick={toggleDetails} />
           {/* <div className="task-number">{commande.numero_commande}</div> */}
           {/* <div className="task-client">Email: {commande.email}</div> */}
