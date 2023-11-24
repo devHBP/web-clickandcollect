@@ -12,7 +12,7 @@ function Colums({ id, title, commandes, updateOrderStatus}) {
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef} className='tasks_list' style={{ minHeight: "100vh" }}>
             {commandes.map((commande, index) => (
-             commande ? <Task key={commande.key} commande={commande} index={index} updateOrderStatus={updateOrderStatus}/> : null
+             commande ? <Task key={commande.key} commande={commande} index={index} updateOrderStatus={updateOrderStatus} /> : null
             ))}
             {provided.placeholder}
           </div>

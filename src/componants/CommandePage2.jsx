@@ -182,6 +182,9 @@ function CommandePageSimple() {
 
       const orderData = transformOrderData(ordersWithDetails);
 
+      const newOrdersCount = ordersWithDetails.filter(order => !order.view).length;
+      setNewOrdersLength(newOrdersCount);
+
       setCommandes(orderData);
       // Update status in commandes and tableData
       Object.values(orderData.tasks).forEach((order) => {
@@ -260,6 +263,7 @@ function CommandePageSimple() {
           paid: order.paid,
           orderID: order.orderId,
           cartString: cartArray,
+          view: order.view,
         };
         return acc;
       }, {}),
@@ -507,14 +511,14 @@ function CommandePageSimple() {
       setSelectedDate("");
     }
   };
-
+ 
 
 
 
   return (
     <div className="commande-page">
       <div className="orderSelect">
-        <p> Il y a  nouvelles commandes</p>
+        <p> Il y a {newOrdersLength} nouvelles commandes</p>
         <Select
           options={uniqueDates}
           onChange={handleDateChange}

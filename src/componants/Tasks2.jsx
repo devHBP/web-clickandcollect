@@ -11,7 +11,7 @@ function Tasks({ commandes, onDragEnd, updateOrderStatus}) {
     <div className='tasks'>
         <DragDropContext onDragEnd={onDragEnd}>
         
-          <Colums id="column-1"  title="En Attente " commandes={commandes && commandes.columns && commandes.columns['column-1'] ? commandes.columns['column-1'].taskIds.map(id => commandes.tasks[id]) : []} updateOrderStatus={updateOrderStatus}/>
+          <Colums id="column-1"  title="En Attente " commandes={commandes && commandes.columns && commandes.columns['column-1'] ? commandes.columns['column-1'].taskIds.map(id => commandes.tasks[id]) : []} updateOrderStatus={updateOrderStatus} />
           {/* <Colums id="column-1"  title="En Attente " commandes={filteredCommandes} updateOrderStatus={updateOrderStatus} socket={socket}/> */}
 
 

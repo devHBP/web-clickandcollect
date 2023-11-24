@@ -5,15 +5,21 @@ import axios from "axios";
 import "../styles/styles.css";
 import { ProduitAntigaspi } from "../../SVG/ProduitAntigaspi";
 
-function Task({ commande, index, updateOrderStatu}) {
+function Task({ commande, index, updateOrderStatus}) {
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [showDetails, setShowDetails] = useState(false);
   const [isTaskReady, setIsTaskReady] = useState(commande.status === "attente");
+  const [isViewed, setIsViewed] = useState(commande.view);
+
 
   useEffect(() => {
     setIsTaskReady(commande.status === "prete");
   }, [commande.status]);
+
+  useEffect(() => {
+    setIsViewed(commande.view);
+  }, [commande.view]);
 
   const toggleDetails = () => {
     setShowDetails(!showDetails);
@@ -67,10 +73,22 @@ function Task({ commande, index, updateOrderStatu}) {
     }
   };
 
-  const handleView = () => {
-    console.log('commande vue')
+  const handleView = async () => {
+    console.log(commande)
+    try {
+      // Faites une requête PUT pour mettre à jour le statut 'view'
+      const response = await axios.put(`${baseUrl}/updateViewStatus/${commande.orderID}`);
+      console.log('Statut de vue de la commande mis à jour', response.data);
+      console.log('commande vue')
+      setIsViewed(true);
 
-  }
+      // Vous pouvez également mettre à jour l'état local si nécessaire
+      // Par exemple, en modifiant l'état de la commande dans la liste des commandes
+      // Cela dépend de comment vous gérez l'état des commandes dans votre application
+    } catch (error) {
+      console.error("Une erreur s'est produite lors de la mise à jour du statut de vue :", error);
+    }
+  };
 
   return (
     <Draggable draggableId={commande.numero_commande} index={index}>
@@ -81,7 +99,7 @@ function Task({ commande, index, updateOrderStatu}) {
           ref={provided.innerRef}
           className="task_item"
         >
-          { <div className="warning-badge" onClick={handleView}>!</div>}
+          { !isViewed &&  <div className="warning-badge" onClick={handleView}>!</div>}
           <AiFillCaretDown className="details_order" onClick={toggleDetails} />
           {/* <div className="task-number">{commande.numero_commande}</div> */}
           {/* <div className="task-client">Email: {commande.email}</div> */}
