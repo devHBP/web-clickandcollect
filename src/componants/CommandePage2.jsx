@@ -7,7 +7,7 @@ const { Search } = Input;
 import * as XLSX from "xlsx";
 import Select from "react-select";
 
-function CommandePageSimple() {
+function CommandePageSimple({updateNewOrdersCount}) {
   const [commandes, setCommandes] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [hasOrders, setHasOrders] = useState(true);
@@ -18,7 +18,11 @@ function CommandePageSimple() {
   const [uniqueDates, setUniqueDates] = useState([]);
   const [filteredCommandes, setFilteredCommandes] = useState([]);
   // const [currentOrders, setCurrentOrders] = useState([]);
-  const [newOrdersLength, setNewOrdersLength] = useState(0);
+  // const [ newOrdersCount, setNewOrdersCount] = useState(0);
+  // const [newOrdersCount, setNewOrdersCountLocal] = useState(0);
+    // const [ newOrdersLength, setNewOrdersLength] = useState(0);
+
+
   // const [newOrderIds, setNewOrderIds] = useState(new Set());
 
   // const baseUrl = 'http://127.0.0.1:8080';
@@ -27,6 +31,11 @@ function CommandePageSimple() {
   useEffect(() => {
     allOrders();
   }, []);
+
+  // useEffect(() => {
+  //   // Lorsque vous calculez newOrdersLength, mettez également à jour le compteur dans le composant Home
+  //   setNewOrdersLength(newOrdersLength);
+  // }, [newOrdersLength]);
 
   const updateOrderStatus = (orderId, status) => {
     // Update commandes
@@ -183,7 +192,11 @@ function CommandePageSimple() {
       const orderData = transformOrderData(ordersWithDetails);
 
       const newOrdersCount = ordersWithDetails.filter(order => !order.view).length;
-      setNewOrdersLength(newOrdersCount);
+      updateNewOrdersCount(newOrdersCount); // Mise à jour du compteur dans Home
+
+      // setNewOrdersLength(newOrdersCount);
+      // setNewOrdersCountLocal(newOrdersCount); // Met à jour l'état local
+      // setNewOrdersCount(newOrdersCount); 
 
       setCommandes(orderData);
       // Update status in commandes and tableData
@@ -230,6 +243,7 @@ function CommandePageSimple() {
 
     return () => clearInterval(intervalId);
   }, []);
+
   // mise en forme data
   const transformOrderData = (orders) => {
     const orderArray = Object.values(orders);
@@ -522,7 +536,7 @@ function CommandePageSimple() {
   return (
     <div className="commande-page">
       <div className="orderSelect">
-        <p> Il y a {newOrdersLength} nouvelles commandes</p>
+        {/* <p> Il y a {newOrdersCount} nouvelles commandes</p> */}
         <Select
           options={uniqueDates}
           onChange={handleDateChange}

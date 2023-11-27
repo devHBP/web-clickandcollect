@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../reducers/authSlice";
@@ -13,14 +13,40 @@ import AntiGaspi from "../componants/AntiGaspi";
 import "../styles/styles.css";
 import logo from "../assets/logo_menu.png";
 import  Resume  from "../componants/Resume";
+import axios from "axios";
+
 
 const Home = () => {
   const [currentPage, setCurrentPage] = useState("produits");
-
+  const [newOrdersCount, setNewOrdersCount] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
 
+
+  // Fonction pour récupérer le compteur de nouvelles commandes
+  const fetchNewOrdersCount = async () => {
+    const baseUrl = import.meta.env.VITE_REACT_API_URL;
+    try {
+      const response = await axios.get(`${baseUrl}/allOrders`);
+      const orders = response.data.orders;
+      const newOrdersCount = orders.filter(order => order.status === "en attente" && !order.view).length;
+      setNewOrdersCount(newOrdersCount);
+    } catch (error) {
+      console.error("Erreur lors du chargement des nouvelles commandes", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNewOrdersCount(); // Appel initial
+    const intervalId = setInterval(fetchNewOrdersCount, 60000); // Rafraîchir toutes les minutes
+
+    return () => clearInterval(intervalId); // Nettoyage
+  }, []);
+
+  const updateNewOrdersCount = (count) => {
+    setNewOrdersCount(count);
+  };
   //selection page visible suivant le bouton cliqué
   const handleContentSelection = (page) => {
     setCurrentPage(page);
@@ -130,7 +156,7 @@ const Home = () => {
           >
             Clients
           </button>
-          <button
+          {/* <button
             onClick={() => handleContentSelection("commandes")}
             className={
               currentPage === "commandes"
@@ -139,6 +165,19 @@ const Home = () => {
             }
           >
             Commandes
+          </button> */}
+         <button
+            onClick={() => handleContentSelection("commandes")}
+            className={
+              currentPage === "commandes"
+                ? "button_menu_clicked"
+                : "button_menu"
+            }
+          >
+
+            Commandes  <span className="badge">{newOrdersCount}</span>
+            {/* Commandes {<span className="badge">X</span>} */}
+
           </button>
           <button
             onClick={() => handleContentSelection("recapitulatif")}
@@ -173,7 +212,8 @@ const Home = () => {
           {currentPage === "clickandcollect" && <ClickandCollect />}
           {currentPage === "antigaspi" && <AntiGaspi />}
           {currentPage === "users" && <UsersPage />}
-          {currentPage === "commandes" && <CommandePageSimple />}
+          {/* {currentPage === "commandes" && <CommandePageSimple />} */}
+          {currentPage === "commandes" &&  <CommandePageSimple updateNewOrdersCount={updateNewOrdersCount} />}
           {currentPage === "recapitulatif" && <Resume />}
           {currentPage === "promos" && <Promos />}
           {currentPage === "boulangerie" && <MaBoulangerie />}

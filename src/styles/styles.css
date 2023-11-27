@@ -133,6 +133,7 @@ margin-right: 50px;
   border: none;
   padding: 6px;
   border-radius: 5px;
+  position:relative;
 }
 .button_menu_clicked{
   color:#E9520E;
@@ -141,6 +142,7 @@ margin-right: 50px;
   border: none;
   padding: 6px;
   border-radius: 5px;
+  position: relative;
 }
 .button_add{
   display:flex;
@@ -415,6 +417,20 @@ hr{
   align-items: center;
   color: #34AA55;
 }
+.badge {
+  background-color: #E9520E ; 
+  color: white; 
+  font-size: 6px; 
+  padding: 6px; 
+  border-radius: 50%; 
+  position: absolute; 
+  top: -10px; 
+  right: -10px; 
+  display: inline-block; 
+  min-width: 8px;
+  min-height: 6px;
+  text-align: center; 
+}
 
 
 
@@ -523,7 +539,7 @@ h2{
   gap: 20px;
 }
 .warning-badge {
-  background-color: red;
+  background-color: #E9520E ;
   color: white;
   padding: 5px; 
   border-radius: 50%; 
