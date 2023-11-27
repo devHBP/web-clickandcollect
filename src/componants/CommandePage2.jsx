@@ -11,15 +11,15 @@ function CommandePageSimple() {
   const [commandes, setCommandes] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [hasOrders, setHasOrders] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  // const [searchTerm, setSearchTerm] = useState("");
   // const [timeoutId, setTimeoutId] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [uniqueDates, setUniqueDates] = useState([]);
   const [filteredCommandes, setFilteredCommandes] = useState([]);
-  const [currentOrders, setCurrentOrders] = useState([]);
+  // const [currentOrders, setCurrentOrders] = useState([]);
   const [newOrdersLength, setNewOrdersLength] = useState(0);
-  const [newOrderIds, setNewOrderIds] = useState(new Set());
+  // const [newOrderIds, setNewOrderIds] = useState(new Set());
 
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
@@ -79,20 +79,20 @@ function CommandePageSimple() {
       }
 
       // Filtrer par terme de recherche
-      if (searchTerm) {
-        const filterLibelle = tasksArray.map((order) => {
-          return order.cartString.some((item) =>
-            normalizeText(item.libelle).includes(normalizeText(searchTerm))
-          );
-        });
+      // if (searchTerm) {
+      //   const filterLibelle = tasksArray.map((order) => {
+      //     return order.cartString.some((item) =>
+      //       normalizeText(item.libelle).includes(normalizeText(searchTerm))
+      //     );
+      //   });
 
-        tasksArray = tasksArray.filter((order, index) => filterLibelle[index]);
-      }
+      //   tasksArray = tasksArray.filter((order, index) => filterLibelle[index]);
+      // }
 
       // Mettre à jour les commandes filtrées
       setFilteredCommandes(tasksArray);
     }
-  }, [selectedDate, searchTerm, commandes.tasks]);
+  }, [selectedDate, commandes.tasks]);
 
   const allOrders = async () => {
     setIsLoading(true);
@@ -154,7 +154,7 @@ function CommandePageSimple() {
           );
           const storeName = storeResponse.data.nom_magasin;
 
-          let emailUser = "Utilisateur supprimé"; // Valeur par défaut
+          let emailUser = "Utilisateur supprimé"; 
           try {
             const emailUserId = await axios.get(
               `${baseUrl}/getEmailByUserId/${order.userId}/email`
@@ -513,6 +513,10 @@ function CommandePageSimple() {
   };
  
 
+  const decrementNewOrders = () => {
+    setNewOrdersLength(prevLength => prevLength - 1);
+  };
+
 
 
   return (
@@ -566,6 +570,8 @@ function CommandePageSimple() {
                 commandes={commandes}
                 onDragEnd={onDragEnd}
                 updateOrderStatus={updateOrderStatus}
+                decrementNewOrders={decrementNewOrders}
+
               />
             </div>
           </div>

@@ -5,7 +5,7 @@ import axios from "axios";
 import "../styles/styles.css";
 import { ProduitAntigaspi } from "../../SVG/ProduitAntigaspi";
 
-function Task({ commande, index, updateOrderStatus}) {
+function Task({ commande, index, updateOrderStatus, decrementNewOrders}) {
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [showDetails, setShowDetails] = useState(false);
@@ -76,15 +76,13 @@ function Task({ commande, index, updateOrderStatus}) {
   const handleView = async () => {
     console.log(commande)
     try {
-      // Faites une requête PUT pour mettre à jour le statut 'view'
+      // Mets à jour le status "view" 
       const response = await axios.put(`${baseUrl}/updateViewStatus/${commande.orderID}`);
       console.log('Statut de vue de la commande mis à jour', response.data);
       console.log('commande vue')
       setIsViewed(true);
-
-      // Vous pouvez également mettre à jour l'état local si nécessaire
-      // Par exemple, en modifiant l'état de la commande dans la liste des commandes
-      // Cela dépend de comment vous gérez l'état des commandes dans votre application
+      decrementNewOrders();
+     
     } catch (error) {
       console.error("Une erreur s'est produite lors de la mise à jour du statut de vue :", error);
     }
