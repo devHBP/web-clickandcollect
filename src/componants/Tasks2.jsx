@@ -7,7 +7,7 @@ function Tasks({
   commandes,
   onDragEnd,
   updateOrderStatus,
-  decrementNewOrders,
+  updateNewOrdersCount
 }) {
   return (
     <div className="tasks">
@@ -23,7 +23,7 @@ function Tasks({
               : []
           }
           updateOrderStatus={updateOrderStatus}
-          decrementNewOrders={decrementNewOrders}
+          updateNewOrdersCount={updateNewOrdersCount}
         />
 
         {/* <Colums id="column-2" title="Préparation" commandes={commandes && commandes.columns && commandes.columns['column-2'] ? commandes.columns['column-2'].taskIds.map(id => commandes.tasks[id]) : []} updateOrderStatus={updateOrderStatus} socket={socket}/> */}
@@ -39,6 +39,7 @@ function Tasks({
               : []
           }
           updateOrderStatus={updateOrderStatus}
+         
         />
       </DragDropContext>
     </div>

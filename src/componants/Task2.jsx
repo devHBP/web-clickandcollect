@@ -5,7 +5,7 @@ import axios from "axios";
 import "../styles/styles.css";
 import { ProduitAntigaspi } from "../../SVG/ProduitAntigaspi";
 
-function Task({ commande, index, updateOrderStatus, decrementNewOrders}) {
+function Task({ commande, index, updateOrderStatus, updateNewOrdersCount}) {
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [showDetails, setShowDetails] = useState(false);
@@ -78,10 +78,10 @@ function Task({ commande, index, updateOrderStatus, decrementNewOrders}) {
     try {
       // Mets à jour le status "view" 
       const response = await axios.put(`${baseUrl}/updateViewStatus/${commande.orderID}`);
-      console.log('Statut de vue de la commande mis à jour', response.data);
-      console.log('commande vue')
+      // console.log('Statut de vue de la commande mis à jour', response.data);
       setIsViewed(true);
-      decrementNewOrders();
+      updateNewOrdersCount(prevCount => prevCount > 0 ? prevCount - 1 : 0); 
+
      
     } catch (error) {
       console.error("Une erreur s'est produite lors de la mise à jour du statut de vue :", error);

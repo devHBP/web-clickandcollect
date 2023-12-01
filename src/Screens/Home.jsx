@@ -23,7 +23,6 @@ const Home = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
 
-
   // Fonction pour récupérer le compteur de nouvelles commandes
   const fetchNewOrdersCount = async () => {
     const baseUrl = import.meta.env.VITE_REACT_API_URL;
@@ -38,10 +37,10 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchNewOrdersCount(); // Appel initial
-    const intervalId = setInterval(fetchNewOrdersCount, 60000); // Rafraîchir toutes les minutes
+    fetchNewOrdersCount(); 
+    const intervalId = setInterval(fetchNewOrdersCount, 60000); 
 
-    return () => clearInterval(intervalId); // Nettoyage
+    return () => clearInterval(intervalId); 
   }, []);
 
   const updateNewOrdersCount = (count) => {

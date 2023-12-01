@@ -20,7 +20,7 @@ function CommandePageSimple({updateNewOrdersCount}) {
   // const [currentOrders, setCurrentOrders] = useState([]);
   // const [ newOrdersCount, setNewOrdersCount] = useState(0);
   // const [newOrdersCount, setNewOrdersCountLocal] = useState(0);
-    // const [ newOrdersLength, setNewOrdersLength] = useState(0);
+    const [ newOrdersLength, setNewOrdersLength] = useState(0);
 
 
   // const [newOrderIds, setNewOrderIds] = useState(new Set());
@@ -527,10 +527,14 @@ function CommandePageSimple({updateNewOrdersCount}) {
   };
  
 
+  // const decrementNewOrders = () => {
+  //   setNewOrdersLength(prevLength => prevLength - 1);
+  //   updateNewOrdersCount(prevLength);
+  // };
   const decrementNewOrders = () => {
-    setNewOrdersLength(prevLength => prevLength - 1);
-  };
-
+    console.log('je diminue de 1')
+    updateNewOrdersCount(prevCount => prevCount - 1);
+};
 
 
   return (
@@ -584,7 +588,7 @@ function CommandePageSimple({updateNewOrdersCount}) {
                 commandes={commandes}
                 onDragEnd={onDragEnd}
                 updateOrderStatus={updateOrderStatus}
-                decrementNewOrders={decrementNewOrders}
+                updateNewOrdersCount={updateNewOrdersCount} 
 
               />
             </div>

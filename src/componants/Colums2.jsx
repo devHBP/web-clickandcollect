@@ -2,7 +2,7 @@ import React from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 import Task from './Task2';
 
-function Colums({ id, title, commandes, updateOrderStatus, decrementNewOrders}) {
+function Colums({ id, title, commandes, updateOrderStatus, updateNewOrdersCount}) {
   return (
     <div className="flex-container">
 
@@ -12,7 +12,7 @@ function Colums({ id, title, commandes, updateOrderStatus, decrementNewOrders}) 
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef} className='tasks_list' style={{ minHeight: "100vh" }}>
             {commandes.map((commande, index) => (
-             commande ? <Task key={commande.key} commande={commande} index={index} updateOrderStatus={updateOrderStatus} decrementNewOrders={decrementNewOrders}
+             commande ? <Task key={commande.key} commande={commande} index={index} updateOrderStatus={updateOrderStatus} updateNewOrdersCount={updateNewOrdersCount} 
              /> : null
             ))}
             {provided.placeholder}
