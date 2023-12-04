@@ -431,6 +431,12 @@ hr{
   min-height: 6px;
   text-align: center; 
 }
+.noOrder{
+  display: flex;
+  flex-direction: row;
+  height:100%;
+  align-items: center;
+}
 
 
 

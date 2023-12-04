@@ -595,7 +595,7 @@ function CommandePageSimple({updateNewOrdersCount}) {
           </div>
         </>
       ) : (
-        <p>Pas de commandes</p>
+        <div className="noOrder"><p>Pas de commandes</p></div>
       )}
     </div>
   );
