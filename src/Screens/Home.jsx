@@ -17,11 +17,16 @@ import axios from "axios";
 
 
 const Home = () => {
-  const [currentPage, setCurrentPage] = useState("produits");
   const [newOrdersCount, setNewOrdersCount] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+  const userRole = user.role
+  // const [currentPage, setCurrentPage] = useState("produits");
+  //acces restreint pour les employée
+  const [currentPage, setCurrentPage] = useState(userRole === "gestionnaire" ? "produits" : "antigaspi");
+
+
 
   // Fonction pour récupérer le compteur de nouvelles commandes
   const fetchNewOrdersCount = async () => {

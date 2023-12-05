@@ -201,7 +201,7 @@ const handleToggleClickandCollect = async (productId) => {
     // basculer la valeur de clickandcollect
     const updatedClickAndCollectValue = !product.clickandcollect;
 
-    const response = await axios.put(`${baseUrl}/updateProduct/${productId}`, { clickandcollect: updatedClickAndCollectValue });
+    const response = await axios.put(`${baseUrl}/updateStatusProduct/${productId}`, { clickandcollect: updatedClickAndCollectValue });
 
     if (response.status !== 200) {
       throw new Error('Network response was not ok');
@@ -235,7 +235,7 @@ const handleToggleAntigaspi = async (productId) => {
     // basculer la valeur de clickandcollect
     const updatedAntigaspiValue = !product.antigaspi;
 
-    const response = await axios.put(`${baseUrl}/updateProduct/${productId}`, { antigaspi: updatedAntigaspiValue });
+    const response = await axios.put(`${baseUrl}/updateStatusProduct/${productId}`, { antigaspi: updatedAntigaspiValue });
 
     if (response.status !== 200) {
       throw new Error('Network response was not ok');
@@ -396,7 +396,7 @@ const handleToggleAntigaspi = async (productId) => {
             const updatedValue = stockValue[productId];
             if (updatedValue && updatedValue !== record.stockantigaspi) {
               try {
-                const response = await axios.put(`${baseUrl}/updateProduct/${productId}`, { stockantigaspi: updatedValue });
+                const response = await axios.put(`${baseUrl}/updateStatusProduct/${productId}`, { stockantigaspi: updatedValue });
       
                 if (response.status !== 200) {
                   throw new Error('Network response was not ok');

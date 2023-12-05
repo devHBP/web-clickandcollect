@@ -233,7 +233,6 @@ const ProduitsPage = () => {
     try {
       // Trouvez le produit actuel avec productId (en supposant que vous avez une liste de produits dans un état ou une variable)
       const product = elements.find((p) => p.productId === productId); // Remplacez `products` par le nom de votre état ou variable
-
       if (!product) {
         throw new Error("Product not found");
       }
@@ -242,7 +241,7 @@ const ProduitsPage = () => {
       const updatedClickAndCollectValue = !product.clickandcollect;
 
       const response = await axios.put(
-        `${baseUrl}/updateProduct/${productId}`,
+        `${baseUrl}/updateStatusProduct/${productId}`,
         { clickandcollect: updatedClickAndCollectValue }
       );
 
@@ -278,7 +277,7 @@ const ProduitsPage = () => {
       const updatedAntigaspiValue = !product.antigaspi;
 
       const response = await axios.put(
-        `${baseUrl}/updateProduct/${productId}`,
+        `${baseUrl}/updateStatusProduct/${productId}`,
         { antigaspi: updatedAntigaspiValue }
       );
 
@@ -393,7 +392,7 @@ const ProduitsPage = () => {
           if (updatedValue && updatedValue !== record.stockantigaspi) {
             try {
               const response = await axios.put(
-                `${baseUrl}/updateProduct/${productId}`,
+                `${baseUrl}/updateStatusProduct/${productId}`,
                 { stockantigaspi: updatedValue }
               );
 

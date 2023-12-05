@@ -146,7 +146,7 @@ const AntiGaspi = () => {
             const updatedValue = stockValue[productId];
             if (updatedValue && updatedValue !== record.stockantigaspi) {
               try {
-                const response = await axios.put(`${baseUrl}/updateProduct/${productId}`, { stockantigaspi: updatedValue });
+                const response = await axios.put(`${baseUrl}/updateStatusProduct/${productId}`, { stockantigaspi: updatedValue });
       
                 if (response.status !== 200) {
                   throw new Error('Network response was not ok');
