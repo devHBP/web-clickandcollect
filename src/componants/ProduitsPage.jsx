@@ -122,9 +122,12 @@ const ProduitsPage = () => {
       );
       formData.append("offre", updatedData.offre);
 
-      for (const pair of formData.entries()) {
-        console.log(`${pair[0]}, ${pair[1]}`);
+      if (updatedData.image) {
+        formData.append("image", updatedData.image);
       }
+      // for (const pair of formData.entries()) {
+      //   console.log(`${pair[0]}, ${pair[1]}`);
+      // }
 
       // if (image) {
       //     formData.append('image', image);
@@ -139,6 +142,8 @@ const ProduitsPage = () => {
           },
         }
       );
+      // console.log(response.data.image) //ok
+      const updatedImageUrl = response.data.image; // Assurez-vous que cela correspond au champ renvoyé par votre serveur
 
       if (response.status !== 200) {
         throw new Error("Network response was not ok");
@@ -146,7 +151,7 @@ const ProduitsPage = () => {
 
       const updatedElements = elements.map((element) => {
         if (element.productId === productId) {
-          return { ...element, ...updatedData }; // supposant que votre API renvoie la nouvelle URL de l'image
+          return { ...element, ...updatedData, image: updatedImageUrl }; 
         }
         return element;
       });
@@ -280,6 +285,7 @@ const ProduitsPage = () => {
       if (response.status !== 200) {
         throw new Error("Network response was not ok");
       }
+
 
       // Mettre à jour votre état local pour refléter la nouvelle valeur de clickandcollect
       setElements((prevElements) => {
