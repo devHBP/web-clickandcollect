@@ -20,8 +20,8 @@ const UpdateProductModal = ({
     Vegan: "",
   });
   const [descriptionProduit, setDescriptionProduit] = useState("");
-  const [ingredients, setIngredients] = useState("");
-  const [allergenes, setAllergenes] = useState("");
+  const [ingredients, setIngredients] = useState(null);
+  const [allergenes, setAllergenes] = useState(null);
 
   const [offre, setOffre] = useState("");
   const [referenceFournisseur, setReferenceFournisseur] = useState("");
@@ -116,6 +116,9 @@ const UpdateProductModal = ({
       .map(([key]) => key);
     const description = descriptionArray.join(", ");
 
+    // Convertir la chaîne vide en null pour allergenes
+  const allergenesValue = allergenes ? allergenes : null;
+
     const updatedData = {
       libelle,
       categorie: selectedCategorie,
@@ -127,8 +130,10 @@ const UpdateProductModal = ({
       ingredients: ingredients,
       referenceFournisseur: referenceFournisseur,
       offre: offre,
-      allergenes: allergenes,
-      image:image,
+      allergenes: allergenesValue,
+      // image:image,
+      //que si l'image est odifié
+      ...(image && { image }),
     };
     // console.log("modale updatedata", updatedData);
     if (!product) {

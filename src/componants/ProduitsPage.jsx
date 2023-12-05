@@ -100,7 +100,7 @@ const ProduitsPage = () => {
   };
 
   const handleProductUpdate = async (productId, updatedData) => {
-    // console.log(updatedData)
+    console.log(updatedData)
     try {
       const formData = new FormData();
 
