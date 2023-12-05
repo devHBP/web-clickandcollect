@@ -119,9 +119,9 @@ function Resume() {
   ];
 
   const viewOrder = async (record) => {
-    // console.log('Selected order for viewing:', record);
+    // console.log('UserId:', record.userId);
     try {
-      // Si votre backend supporte la récupération d'une commande spécifique par son ID
+     
       const productsResponse = await axios.get(
         `${baseUrl}/getOrderProducts/${record.key}`
       );
@@ -164,6 +164,7 @@ function Resume() {
       try {
         // Si cartString est une chaîne JSON, convertissez-la en objet JavaScript
         productsInCart = JSON.parse(selectedOrder.cartString);
+        console.log('json', productsInCart)
       } catch (error) {
         console.error(
           "Erreur lors de la conversion de cartString en JSON",
@@ -220,8 +221,8 @@ function Resume() {
               <List.Item.Meta
                 title={ 
                 <>
-                  {item.antigaspi && <span className="pastilleAntigapiResume"><ProduitAntigaspi /></span>  }
-                  {item.libelle}
+                  {/* {item.antigaspi && <span className="pastilleAntigapiResume"><ProduitAntigaspi /></span>  } */}
+                  {item.quantity} x {item.libelle}
                 </>
                 }
                 // description={`X ${item.quantity}`}
