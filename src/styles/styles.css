@@ -32,7 +32,6 @@ display:flex;
 .inputOptions{
   display:flex;
   flex-direction: column;
-  width:50vw;
 }
 input {
   padding: 10px;
