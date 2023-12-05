@@ -21,7 +21,7 @@ function Resume() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(`${baseUrl}/allOrders`);
-      console.log(response.data);
+      // console.log(response.data);
       if (response.data.orders && response.data.orders.length === 0) {
         setHasOrders(false);
       } else {
@@ -125,7 +125,7 @@ function Resume() {
       const productsResponse = await axios.get(
         `${baseUrl}/getOrderProducts/${record.key}`
       );
-      console.log("Order products:", productsResponse.data);
+      // console.log("Order products:", productsResponse.data);
       setOrderProducts(productsResponse.data); // Mettre à jour l'état avec les produits de la commande
       setSelectedOrder({ ...record, products: productsResponse.data }); // Mettre à jour l'état avec les détails de la commande et les produits
       setIsModalVisible(true);
@@ -164,7 +164,7 @@ function Resume() {
       try {
         // Si cartString est une chaîne JSON, convertissez-la en objet JavaScript
         productsInCart = JSON.parse(selectedOrder.cartString);
-        console.log('json', productsInCart)
+        // console.log('json', productsInCart)
       } catch (error) {
         console.error(
           "Erreur lors de la conversion de cartString en JSON",
