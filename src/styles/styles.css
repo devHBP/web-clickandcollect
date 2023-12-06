@@ -150,12 +150,14 @@ margin-right: 50px;
   align-items: center;
   justify-content: space-around;
   width: 200px;
+  height:50px;
   background-color: #E9520E;
   border: none;
   border-radius: 5px;
   color:#E5E5E5;
-  padding:10px 5px;
-  margin:10px;
+  /* padding:10px 5px; */
+  /* margin:10px; */
+  cursor: pointer;
 }
 /* Close Button Style */
 .button_close {

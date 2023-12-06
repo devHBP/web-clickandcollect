@@ -26,6 +26,8 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
     });
     const [descriptionProduit, setDescriptionProduit] = useState('');
     const [ingredients, setIngredients] = useState('');
+    const [allergenes, setAllergenes] = useState('');
+
 
     // const categories = ['Viennoiseries', 'Pâtisseries', 'Sandwichs', 'Boissons',
     // 'Desserts', 'Salades et Bowls', 'Boules et Pains spéciaux', 'Baguettes'];
@@ -77,6 +79,11 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
     const handleIngredientsChange = (e) => {
       setIngredients(e.target.value);
     };
+    //allergenes
+    const handleAllergenesChange = (e) => {
+      setAllergenes(e.target.value);
+    };
+
 
     //enleve les espaces des offres
     const handleOffre31Change = (e) => {
@@ -111,6 +118,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
         formData.append('description', description);
         formData.append('descriptionProduit', descriptionProduit);
         formData.append('ingredients', ingredients);
+        formData.append('allergenes', allergenes);
         formData.append('offre', offre);
         formData.append('reference_fournisseur', referenceFournisseur);
 
@@ -245,6 +253,17 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                     name="ingredients"
                     value={ingredients}
                     onChange={handleIngredientsChange}
+                    rows={4}
+                    cols={50}
+                  />
+              </div>
+              <div className='inputOptions'>
+                <label htmlFor="ingredients">Allergenes :</label>
+                <textarea
+                    id="ingredients"
+                    name="ingredients"
+                    value={allergenes}
+                    onChange={handleAllergenesChange}
                     rows={4}
                     cols={50}
                   />
