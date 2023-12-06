@@ -59,11 +59,16 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
     const handlePrixUnitaire = (e) => {
         const value = e.target.value;
         setPrix(value.replace(',','.'))
+
+        //le prix collab est automatiquement calculé à 20%
+        if (value && !isNaN(value)) {
+          const discountedPrice = (parseFloat(value) * 0.8).toFixed(2);
+          setPrixRemiseCollaborateur(discountedPrice);
+        } else {
+          setPrixRemiseCollaborateur('');
+        }
     }
-    const handlePrixCollaborateur = (e) => {
-        const value = e.target.value;
-        setPrixRemiseCollaborateur(value.replace(',','.'))
-    }
+
     //choix des options spécifiques
     const handleSpecificiteChange = (option, value) => {
       setSpecificites((prevSpecificites) => ({
@@ -83,7 +88,6 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
     const handleAllergenesChange = (e) => {
       setAllergenes(e.target.value);
     };
-
 
     //enleve les espaces des offres
     const handleOffre31Change = (e) => {
@@ -131,8 +135,6 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
     }
 
 
-    
-
   return (
     <div className='modale_container'>
          <div className='modale'>
@@ -145,12 +147,12 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
             <form onSubmit={handleAdd}>
                 
                 <div className="">
-                <label htmlFor="image">Image:</label>
+                <label htmlFor="image">Image * :</label>
                 <input type="file" id="image" onChange={handleImageChange} name="image" />
                 </div>
 
                 <div className=''>
-                    <label htmlFor="libelle">Libellé:</label>
+                    <label htmlFor="libelle">Libellé * :</label>
                     <input
                     type="text"
                     id="libelle"
@@ -161,7 +163,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                 </div>
 
                 <div className="">
-                    <label htmlFor="categorie">Sélectionner une catégorie:</label>
+                    <label htmlFor="categorie">Sélectionner une catégorie * :</label>
                     <select id="categorie" value={selectedCategorie} onChange={(e) => setSelectedCategorie(e.target.value)} name="categorie">
                     <option value="">Catégorie</option>
                     {categories.map((category) => (
@@ -173,7 +175,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                 </div>
 
                 <div className=''>
-                    <label htmlFor="prix_unitaire">Prix:</label>
+                    <label htmlFor="prix_unitaire">Prix * :</label>
                     <input
                     type="text"
                     id="prix_unitaire"
@@ -190,7 +192,8 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                     id="prix_remise_collaborateur"
                     name="prix_remise_collaborateur"
                     value={prixRemiseCollaborateur}
-                    onChange={handlePrixCollaborateur}
+                    readOnly
+                    // onChange={handlePrixCollaborateur}
                     />
                 </div>
 
@@ -206,7 +209,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
                 </div>
 
                 <div className=''>
-                    <label htmlFor="stock">Stock:</label>
+                    <label htmlFor="stock">Stock *:</label>
                     <input
                     type="number"
                     id="stock"
