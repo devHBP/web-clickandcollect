@@ -57,6 +57,7 @@ const UpdateProductModal = ({
       setReferenceFournisseur(product.reference_fournisseur || false);
       setAllergenes(product.allergenes || "");
       setOffre(product.offre || "");
+      setImage(product.image);
     }
   }, [product]);
 
@@ -105,7 +106,10 @@ const UpdateProductModal = ({
   };
 
   const handleImageChange = (e) => {
+    // Mettre à jour l'état uniquement si un nouveau fichier est sélectionné
+  if (e.target.files && e.target.files[0]) {
     setImage(e.target.files[0]);
+  }
   };
 
   // Gérer la soumission du formulaire
@@ -132,7 +136,7 @@ const UpdateProductModal = ({
       offre: offre,
       allergenes: allergenesValue,
       // image:image,
-      //que si l'image est odifié
+      //que si l'image est modifié
       ...(image && { image }),
     };
     // console.log("modale updatedata", updatedData);
