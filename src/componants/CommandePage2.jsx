@@ -278,6 +278,7 @@ function CommandePageSimple({updateNewOrdersCount}) {
           orderID: order.orderId,
           cartString: cartArray,
           view: order.view,
+          userId: order.userId
         };
         return acc;
       }, {}),
@@ -403,6 +404,7 @@ function CommandePageSimple({updateNewOrdersCount}) {
               date: order.date,
               point_de_vente: order.magasin,
               firstname: order.firstname,
+              userId: order.userId
             });
           } catch (error) {
             console.error("An error occurred while sending the email:", error);
@@ -431,7 +433,7 @@ function CommandePageSimple({updateNewOrdersCount}) {
   //   console.log(newSearchTerm);
   // };
 
-  // console.log("tasks", commandes.tasks);
+  console.log("tasks", commandes.tasks);
 
   const handleExport = () => {
     function updateProductInfo(libelle, orderId, qty, isAntiGaspi, date) {
