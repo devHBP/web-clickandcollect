@@ -7,23 +7,16 @@ const { Search } = Input;
 import * as XLSX from "xlsx";
 import Select from "react-select";
 
-function CommandePageSimple({updateNewOrdersCount}) {
+function CommandePageSimple({ updateNewOrdersCount }) {
   const [commandes, setCommandes] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [hasOrders, setHasOrders] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  // const [searchTerm, setSearchTerm] = useState("");
-  // const [timeoutId, setTimeoutId] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [uniqueDates, setUniqueDates] = useState([]);
   const [filteredCommandes, setFilteredCommandes] = useState([]);
-  // const [currentOrders, setCurrentOrders] = useState([]);
-  // const [ newOrdersCount, setNewOrdersCount] = useState(0);
-  // const [newOrdersCount, setNewOrdersCountLocal] = useState(0);
-    const [ newOrdersLength, setNewOrdersLength] = useState(0);
+  const [newOrdersLength, setNewOrdersLength] = useState(0);
 
-
-  // const [newOrderIds, setNewOrderIds] = useState(new Set());
 
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
@@ -32,10 +25,6 @@ function CommandePageSimple({updateNewOrdersCount}) {
     allOrders();
   }, []);
 
-  // useEffect(() => {
-  //   // Lorsque vous calculez newOrdersLength, mettez également à jour le compteur dans le composant Home
-  //   setNewOrdersLength(newOrdersLength);
-  // }, [newOrdersLength]);
 
   const updateOrderStatus = (orderId, status) => {
     // Update commandes
@@ -103,38 +92,30 @@ function CommandePageSimple({updateNewOrdersCount}) {
     }
   }, [selectedDate, commandes.tasks]);
 
+
+
   const allOrders = async () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.get(`${baseUrl}/allOrders`);
+      const response = await axios.get(`${baseUrl}/allOrders`, {
+        params: { status: ["en attente", "prete"] }
+      });
 
       if (!response.data.orders || response.data.orders.length === 0) {
         setHasOrders(false);
+        setIsLoading(false);
         return;
-      } else {
-        setHasOrders(true);
       }
+
+      setHasOrders(true);
       const orders = response.data.orders;
 
-      //filtrer les commandes en attente
-      let ordersEnAttente = orders.filter(
-        (order) => order.status === "en attente"
-      );
+      let datesArray = orders
+        .map((order) => order.date)
+        .filter((date, index, self) => self.indexOf(date) === index);
 
-      let datesArray = [];
-      ordersEnAttente.forEach((order) => {
-        if (order.date) {
-          datesArray.push(order.date);
-        }
-      });
-
-      // je filtre les doublons
-      const uniqueDatesArray = datesArray.filter((date, index, self) => {
-        return self.indexOf(date) === index;
-      });
-
-      const selectOptions = uniqueDatesArray.map((date) => ({
+      const selectOptions = datesArray.map((date) => ({
         value: date,
         label: new Date(date).toLocaleDateString("fr-FR"),
       }));
@@ -155,15 +136,13 @@ function CommandePageSimple({updateNewOrdersCount}) {
       // Fetch product details for each order
       const ordersWithDetails = await Promise.all(
         activeOrders.map(async (order) => {
-          const productResponse = await axios.get(
-            `${baseUrl}/getOrderProducts/${order.orderId}`
-          );
+          
           const storeResponse = await axios.get(
             `${baseUrl}/getOneStore/${order.storeId}`
           );
           const storeName = storeResponse.data.nom_magasin;
 
-          let emailUser = "Utilisateur supprimé"; 
+          let emailUser = "Utilisateur supprimé";
           try {
             const emailUserId = await axios.get(
               `${baseUrl}/getEmailByUserId/${order.userId}/email`
@@ -182,52 +161,29 @@ function CommandePageSimple({updateNewOrdersCount}) {
 
           return {
             ...order,
-            productDetails: productResponse.data,
             storeName: storeName,
             email: emailUser,
           };
         })
       );
 
+
       const orderData = transformOrderData(ordersWithDetails);
-
-      const newOrdersCount = ordersWithDetails.filter(order => !order.view).length;
-      updateNewOrdersCount(newOrdersCount); // Mise à jour du compteur dans Home
-
-      // setNewOrdersLength(newOrdersCount);
-      // setNewOrdersCountLocal(newOrdersCount); // Met à jour l'état local
-      // setNewOrdersCount(newOrdersCount); 
-
+      // const orderData = transformOrderData(orders);
       setCommandes(orderData);
-      // Update status in commandes and tableData
-      Object.values(orderData.tasks).forEach((order) => {
-        updateOrderStatus(order.key, order.status);
-      });
-      setTableData(Object.values(orderData.tasks));
+    setTableData(Object.values(orderData.tasks));
 
-      // Itérer sur les commandes
-      for (const order of orders) {
-        const orderId = order.orderId;
-        // Appel à l'API pour récupérer les détails de la commande
-        const orderResponse = await axios.get(
-          `${baseUrl}/getOrderProducts/${orderId}`
-        );
-        const orderData = orderResponse.data;
+    // Calcul du nombre de nouvelles commandes
+    const newOrdersCount = Object.values(orderData.tasks).filter(
+      (task) => !task.view
+    ).length;
+    updateNewOrdersCount(newOrdersCount);
 
-        for (const product of orderData) {
-          // Accéder à la propriété 'libelle'
-          const libelle = product.libelle;
-          // Utilisez les données de la commande comme souhaité
-          // console.log('Commande', orderId, ':', product);
-          // console.log('Libelle:', libelle);
-        }
-      }
 
-      //ajout ici
+
       return Object.values(orderData.tasks);
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        console.error("No orders found.");
         setHasOrders(false);
       } else {
         console.error(error);
@@ -236,6 +192,8 @@ function CommandePageSimple({updateNewOrdersCount}) {
       setIsLoading(false);
     }
   };
+
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       allOrders();
@@ -278,7 +236,7 @@ function CommandePageSimple({updateNewOrdersCount}) {
           orderID: order.orderId,
           cartString: cartArray,
           view: order.view,
-          userId: order.userId
+          userId: order.userId,
         };
         return acc;
       }, {}),
@@ -404,13 +362,14 @@ function CommandePageSimple({updateNewOrdersCount}) {
               date: order.date,
               point_de_vente: order.magasin,
               firstname: order.firstname,
-              userId: order.userId
+              userId: order.userId,
             });
           } catch (error) {
             console.error("An error occurred while sending the email:", error);
           }
         };
         sendEmail();
+        // console.log("email et notif envoyés");
       }
     } catch (error) {
       console.error(
@@ -433,7 +392,7 @@ function CommandePageSimple({updateNewOrdersCount}) {
   //   console.log(newSearchTerm);
   // };
 
-  console.log("tasks", commandes.tasks);
+  // console.log("tasks", commandes.tasks);
 
   const handleExport = () => {
     function updateProductInfo(libelle, orderId, qty, isAntiGaspi, date) {
@@ -527,17 +486,15 @@ function CommandePageSimple({updateNewOrdersCount}) {
       setSelectedDate("");
     }
   };
- 
 
   // const decrementNewOrders = () => {
   //   setNewOrdersLength(prevLength => prevLength - 1);
   //   updateNewOrdersCount(prevLength);
   // };
   const decrementNewOrders = () => {
-    console.log('je diminue de 1')
-    updateNewOrdersCount(prevCount => prevCount - 1);
-};
-
+    console.log("je diminue de 1");
+    updateNewOrdersCount((prevCount) => prevCount - 1);
+  };
 
   return (
     <div className="commande-page">
@@ -590,14 +547,15 @@ function CommandePageSimple({updateNewOrdersCount}) {
                 commandes={commandes}
                 onDragEnd={onDragEnd}
                 updateOrderStatus={updateOrderStatus}
-                updateNewOrdersCount={updateNewOrdersCount} 
-
+                updateNewOrdersCount={updateNewOrdersCount}
               />
             </div>
           </div>
         </>
       ) : (
-        <div className="noOrder"><p>Pas de commandes</p></div>
+        <div className="noOrder">
+          <p>Pas de commandes</p>
+        </div>
       )}
     </div>
   );

@@ -20,10 +20,22 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount}) {
   useEffect(() => {
     setIsViewed(commande.view);
   }, [commande.view]);
-
-  const toggleDetails = () => {
+  
+  const toggleDetails = async () => {
     setShowDetails(!showDetails);
-    //console.log(commande)
+    if (!showDetails) {
+      try {
+        // Charger les détails du produit
+        const productResponse = await axios.get(`${baseUrl}/getOrderProducts/${commande.orderID}`);
+  
+        // Mise à jour des détails de la commande
+        commande.productDetails = productResponse.data;
+  
+        // console.log('Détails chargés:', commande);
+      } catch (error) {
+        console.error("Erreur lors du chargement des détails de la commande", error);
+      }
+    }
   };
   const handleDelivery = async () => {
     const status = "livree";
@@ -131,9 +143,14 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount}) {
             </div>
           </div>
 
-          <div className="row_total">
+                <div className="row_order">
+                <div>Total: </div>
+                <div className="row_total">
+           
             <div className="task_total">{commande.prix_total} €</div>
           </div>
+                </div>
+          
 
           {showDetails && (
             <div className="second_part_order">
