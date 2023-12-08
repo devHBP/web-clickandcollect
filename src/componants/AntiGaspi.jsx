@@ -174,6 +174,7 @@ const AntiGaspi = () => {
                 onChange={(e) => handleInputChange(e, record.productId)}
                 onBlur={() => handleSave(record.productId)}
               />
+             
             </div>
           );
         }
@@ -181,16 +182,49 @@ const AntiGaspi = () => {
     
   ];
 
+  const handleReset = () => {
+
+    // Préparer un nouvel état pour stockValue
+    const newStockValue = {};
+
+    // Mettre à jour l'état local pour refléter les stocks à 0
+    const updatedElements = elements.map(element => {
+        newStockValue[element.productId] = 0; 
+        return { ...element, stockantigaspi: 0 };
+    });
+
+    // Mettre à jour les états
+    setElements(updatedElements);
+    setStockValue(newStockValue);
+
+    // Mettre à jour la base de données en arrière-plan
+    updatedElements.forEach(element => {
+        axios.put(`${baseUrl}/updateStatusProduct/${element.productId}`, { stockantigaspi: '0' })
+            .then(response => {
+                // console.log(`Stock updated for product ${element.productId}`);
+            })
+            .catch(error => {
+                console.error('Error updating stock:', error);
+            });
+    });
+};
+
+
+
+
   return (
     <>
     <div className='page_produits_container'>
         
-        <div style={{display:'flex', justifyContent:'space-around'}}>
+        <div style={{display:'flex', justifyContent:'center', gap: "50px", alignItems:'center'}}>
           <Search 
             placeholder='Rechercher un produit' 
-            size="medium" 
-            style={{width: 200}}
+            size="large" 
+            style={{width: 250}}
             onChange={handleSearch}/>
+             <button onClick={handleReset} className="button_add">
+            Reset Stock AntiGaspi
+          </button>
         </div>
         
               <div className='Tableau'>

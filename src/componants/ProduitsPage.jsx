@@ -567,8 +567,8 @@ const ProduitsPage = () => {
 
           <Search
             placeholder="Rechercher un produit"
-            size="medium"
-            style={{ width: 200 }}
+            size="large"
+            style={{ width: 250 }}
             onChange={handleSearch}
           />
         </div>
