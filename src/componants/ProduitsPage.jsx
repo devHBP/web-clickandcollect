@@ -46,7 +46,6 @@ const ProduitsPage = () => {
       try {
         const response = await axios.get(`${baseUrl}/getAllProducts`);
         let products = response.data;
-        //console.log(response.data)
 
         setElements(products);
       } catch (error) {
@@ -99,7 +98,7 @@ const ProduitsPage = () => {
     }
   };
 
-  const handleProductUpdate = async (productId, updatedData) => {
+  const handleProductUpdate = async (productId, updatedData, currentImage) => {
     console.log(updatedData)
     try {
       const formData = new FormData();
@@ -123,8 +122,12 @@ const ProduitsPage = () => {
       formData.append("offre", updatedData.offre);
 
       if (updatedData.image) {
+        console.log("Adding image to formData:", updatedData.image);
+
         formData.append("image", updatedData.image);
       }
+      // formData.append("image", updatedData.image);
+
       // for (const pair of formData.entries()) {
       //   console.log(`${pair[0]}, ${pair[1]}`);
       // }
@@ -136,15 +139,19 @@ const ProduitsPage = () => {
       const response = await axios.put(
         `${baseUrl}/updateProduct/${productId}`,
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        // {
+        //   headers: {
+        //     "Content-Type": "multipart/form-data",
+        //   },
+        // }
       );
-      // console.log(response.data.image) //ok
-      const updatedImageUrl = response.data.image; // Assurez-vous que cela correspond au champ renvoyé par votre serveur
+      console.log("Response data:", response.data);
 
+      console.log(response.data.image) //ok
+      // const updatedImageUrl = response.data.image; // Assurez-vous que cela correspond au champ renvoyé par votre serveur
+      const updatedImageUrl = response.data.image ? response.data.image : currentImage;
+
+      console.log('updatedImageUrl', updatedImageUrl  )
       if (response.status !== 200) {
         throw new Error("Network response was not ok");
       }
@@ -152,6 +159,7 @@ const ProduitsPage = () => {
       const updatedElements = elements.map((element) => {
         if (element.productId === productId) {
           return { ...element, ...updatedData, image: updatedImageUrl }; 
+
         }
         return element;
       });
@@ -311,7 +319,6 @@ const ProduitsPage = () => {
   };
 
   const Update = (record) => {
-    //  console.log('produciId page produit',record.productId)
     setSelectedProductToUpdate(record);
     setUpdateModalVisible(true);
   };
@@ -338,9 +345,19 @@ const ProduitsPage = () => {
       title: "Photo",
       dataIndex: "image",
       key: "image",
-      render: (image) => (
-        <img src={`${baseUrl}/${image}`} alt="Produit" width="50" />
-      ),
+      // render: (image) => (
+      //   <img src={`${baseUrl}/${image}`} alt="Produit" width="50" />
+      // ),
+      render: (image) => {
+        // console.log("Base URL:", baseUrl);
+        // console.log("Image path:", image);
+        // Vérifiez si l'image et baseUrl sont définis avant d'essayer de les utiliser
+        if (baseUrl && image) {
+          return <img src={`${baseUrl}/${image}`} alt="Produit" width="50" />;
+        }
+        // Si image n'est pas défini ou si baseUrl est absent, affichez une image par défaut ou un placeholder
+        return <p>no image</p>;
+      },
     },
     {
       title: "Stock",

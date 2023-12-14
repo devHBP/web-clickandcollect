@@ -20,15 +20,14 @@ const UpdateProductModal = ({
     Vegan: "",
   });
   const [descriptionProduit, setDescriptionProduit] = useState("");
-  const [ingredients, setIngredients] = useState(null);
-  const [allergenes, setAllergenes] = useState(null);
+  const [ingredients, setIngredients] = useState("");
+  const [allergenes, setAllergenes] = useState("");
 
   const [offre, setOffre] = useState("");
-  const [referenceFournisseur, setReferenceFournisseur] = useState("");
+  const [referenceFournisseur, setReferenceFournisseur] = useState(false)
   const [image, setImage] = useState(null);
 
   useEffect(() => {
-    // console.log('Produit à mettre à jour :', product);
 
     if (product) {
       setLibelle(product.libelle || "");
@@ -55,7 +54,7 @@ const UpdateProductModal = ({
       setDescriptionProduit(product.descriptionProduit || "");
       setIngredients(product.ingredients || "");
       setReferenceFournisseur(product.reference_fournisseur || false);
-      setAllergenes(product.allergenes || "");
+      setAllergenes(product.allergenes || null);
       setOffre(product.offre || "");
       setImage(product.image);
     }
@@ -102,14 +101,17 @@ const UpdateProductModal = ({
   };
 
   const handleSolanidChange = (e) => {
-    setReferenceFournisseur(e.target.checked ? "Solanid" : "");
+    // setReferenceFournisseur(e.target.checked ? "Solanid" : "");
+    // setReferenceFournisseur(e.target.value);
+    setReferenceFournisseur(e.target.checked ? e.target.value : false);
+
   };
 
   const handleImageChange = (e) => {
     // Mettre à jour l'état uniquement si un nouveau fichier est sélectionné
-  if (e.target.files && e.target.files[0]) {
-    setImage(e.target.files[0]);
-  }
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
   };
 
   // Gérer la soumission du formulaire
@@ -121,7 +123,7 @@ const UpdateProductModal = ({
     const description = descriptionArray.join(", ");
 
     // Convertir la chaîne vide en null pour allergenes
-  const allergenesValue = allergenes ? allergenes : null;
+    const allergenesValue = allergenes ? allergenes : null;
 
     const updatedData = {
       libelle,
@@ -137,9 +139,10 @@ const UpdateProductModal = ({
       allergenes: allergenesValue,
       // image:image,
       //que si l'image est modifié
-      ...(image && { image }),
+      // ...(image && { image }),
+      ...(image instanceof File && { image }), // Envoyez 'image' uniquement si c'est un fichier
     };
-    // console.log("modale updatedata", updatedData);
+    console.log("modale updatedata", updatedData);
     if (!product) {
       console.error("Erreur : aucun produit sélectionné pour la mise à jour.");
       return;
@@ -160,7 +163,7 @@ const UpdateProductModal = ({
     >
       <div className="modale_content">
         <div className="inputOptions">
-          <label htmlFor="libelle">Libellé:</label>
+          <label htmlFor="libelle" className="label">Libellé:</label>
           <Input
             type="text"
             id="libelle"
@@ -271,7 +274,7 @@ const UpdateProductModal = ({
             cols={50}
           />
         </div>
-        <div className="inputOptions">
+        <div className="categorie">
           <label htmlFor="offre31">Offre 3+1:</label>
           <input
             type="checkbox"
@@ -281,7 +284,7 @@ const UpdateProductModal = ({
             onChange={handleOffre31Change}
           />
         </div>
-        <div className="inputOptions">
+        {/* <div className="inputOptions">
           <label htmlFor="solanid">Solanid:</label>
           <input
             type="checkbox"
@@ -290,6 +293,31 @@ const UpdateProductModal = ({
             checked={referenceFournisseur === "Solanid"}
             onChange={handleSolanidChange}
           />
+        </div> */}
+        <div className="categorie">
+          <p>Catégorie: </p>
+          <div>
+            <input
+              type="checkbox"
+              id="solanid"
+              name="referenceFournisseur"
+              value="Solanid"
+              checked={referenceFournisseur === "Solanid"}
+              onChange={handleSolanidChange}
+            />
+            <label htmlFor="solanid" className="labelCheckbox">Solanid</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              id="noel"
+              name="referenceFournisseur"
+              value="Noel"
+              checked={referenceFournisseur === "Noel"}
+              onChange={handleSolanidChange}
+            />
+            <label htmlFor="noel" className="labelCheckbox">Noel</label>
+          </div>
         </div>
 
         {/* <div className='inputOptions'>
