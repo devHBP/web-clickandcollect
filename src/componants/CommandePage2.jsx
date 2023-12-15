@@ -171,15 +171,13 @@ function CommandePageSimple({ updateNewOrdersCount }) {
       const orderData = transformOrderData(ordersWithDetails);
       // const orderData = transformOrderData(orders);
       setCommandes(orderData);
-    setTableData(Object.values(orderData.tasks));
+      setTableData(Object.values(orderData.tasks));
 
-    // Calcul du nombre de nouvelles commandes
-    const newOrdersCount = Object.values(orderData.tasks).filter(
-      (task) => !task.view
-    ).length;
-    updateNewOrdersCount(newOrdersCount);
-
-
+      // Calcul du nombre de nouvelles commandes
+      const newOrdersCount = Object.values(orderData.tasks).filter(
+        (task) => !task.view
+      ).length;
+      updateNewOrdersCount(newOrdersCount);
 
       return Object.values(orderData.tasks);
     } catch (error) {
@@ -192,7 +190,6 @@ function CommandePageSimple({ updateNewOrdersCount }) {
       setIsLoading(false);
     }
   };
-
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -395,15 +392,21 @@ function CommandePageSimple({ updateNewOrdersCount }) {
   // console.log("tasks", commandes.tasks);
 
   const handleExport = () => {
-    function updateProductInfo(libelle, orderId, qty, isAntiGaspi, date, storeName) {
-   
+    function updateProductInfo(
+      libelle,
+      orderId,
+      qty,
+      isAntiGaspi,
+      date,
+      storeName
+    ) {
       if (!productInfo[libelle]) {
         productInfo[libelle] = {
           orderIds: new Set(),
           totalQty: 0,
           antiGaspiQty: 0,
           dates: [],
-          magasin:[]
+          magasin: [],
         };
       }
       productInfo[libelle].orderIds.add(orderId);
@@ -414,7 +417,6 @@ function CommandePageSimple({ updateNewOrdersCount }) {
       productInfo[libelle].dates.push(date);
 
       productInfo[libelle].magasin.push(storeName);
-    
     }
 
     let productInfo = {};
@@ -429,7 +431,6 @@ function CommandePageSimple({ updateNewOrdersCount }) {
         (order) => order.status === "en attente"
       );
     }
-
 
     ordersToExport.forEach((order) => {
       order.cartString.forEach((item) => {
@@ -459,58 +460,52 @@ function CommandePageSimple({ updateNewOrdersCount }) {
             item.antigaspi,
             order.date,
             order.magasin
-            );
+          );
         }
       });
-      
     });
-    console.log(productInfo)
+    // console.log(productInfo);
 
     // Transformer l'objet de suivi en tableau pour l'exportation
-    const dataForExport = Object.entries(productInfo).map(
-      ([libelle, info]) => {
-        // "Nom produit": libelle,
-        // "Numéros de commande": Array.from(info.orderIds).join(", "),
-        // Quantité: info.totalQty,
-        // AntiGaspi: info.antiGaspiQty,
-        // Dates: info.dates.join(", "),
-        // Magasin: Array.from(info.magasin).join(", ") 
+    const dataForExport = Object.entries(productInfo).map(([libelle, info]) => {
+      // "Nom produit": libelle,
+      // "Numéros de commande": Array.from(info.orderIds).join(", "),
+      // Quantité: info.totalQty,
+      // AntiGaspi: info.antiGaspiQty,
+      // Dates: info.dates.join(", "),
+      // Magasin: Array.from(info.magasin).join(", ")
 
-        //pour eviter les doublons de dates 
-        const dateCounts = Array.from(info.dates).reduce((counts, date) => {
-          counts[date] = (counts[date] || 0) + 1;
-          return counts;
-        }, {});
-  
-        // Formattez la date avec le nombre d'occurrences
-        const datesFormatted = Object.entries(dateCounts).map(
-          ([date, count]) => `${date}${count > 1 ? ` (${count})` : ''}`
-        ).join(", ");
+      //pour eviter les doublons de dates
+      const dateCounts = Array.from(info.dates).reduce((counts, date) => {
+        counts[date] = (counts[date] || 0) + 1;
+        return counts;
+      }, {});
 
+      // Formattez la date avec le nombre d'occurrences
+      const datesFormatted = Object.entries(dateCounts)
+        .map(([date, count]) => `${date}${count > 1 ? ` (${count})` : ""}`)
+        .join(", ");
 
-        //pour eviter les doublons de magasins
-        const magasinCounts = Array.from(info.magasin).reduce((counts, name) => {
-          counts[name] = (counts[name] || 0) + 1;
-          return counts;
-        }, {});
-  
-        // Formattez le nom du magasin avec le nombre d'occurrences
-        const magasinsFormatted = Object.entries(magasinCounts).map(
-          ([name, count]) => `${name}${count > 1 ? ` (${count})` : ''}`
-        ).join(", ");
-  
-        return {
-          "Nom produit": libelle,
-          "Numéros de commande": Array.from(info.orderIds).join(", "),
-          Quantité: info.totalQty,
-          AntiGaspi: info.antiGaspiQty,
-          Dates: datesFormatted,
-          Magasin: magasinsFormatted
-        };
-      }
-    );
+      //pour eviter les doublons de magasins
+      const magasinCounts = Array.from(info.magasin).reduce((counts, name) => {
+        counts[name] = (counts[name] || 0) + 1;
+        return counts;
+      }, {});
 
-    // console.log("dataForExport", dataForExport);
+      // Formattez le nom du magasin avec le nombre d'occurrences
+      const magasinsFormatted = Object.entries(magasinCounts)
+        .map(([name, count]) => `${name}${count > 1 ? ` (${count})` : ""}`)
+        .join(", ");
+
+      return {
+        "Nom produit": libelle,
+        "Numéros de commande": Array.from(info.orderIds).join(", "),
+        Quantité: info.totalQty,
+        AntiGaspi: info.antiGaspiQty,
+        Dates: datesFormatted,
+        Magasin: magasinsFormatted,
+      };
+    });
 
     const ws = XLSX.utils.json_to_sheet(dataForExport);
 
