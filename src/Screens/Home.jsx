@@ -12,21 +12,20 @@ import ClickandCollect from "../componants/ClickandCollect";
 import AntiGaspi from "../componants/AntiGaspi";
 import "../styles/styles.css";
 import logo from "../assets/logo_menu.png";
-import  Resume  from "../componants/Resume";
+import Resume from "../componants/Resume";
 import axios from "axios";
-
 
 const Home = () => {
   const [newOrdersCount, setNewOrdersCount] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
-  const userRole = user.role
+  const userRole = user.role;
   // const [currentPage, setCurrentPage] = useState("produits");
   //acces restreint pour les employée
-  const [currentPage, setCurrentPage] = useState(userRole === "gestionnaire" ? "produits" : "antigaspi");
-
-
+  const [currentPage, setCurrentPage] = useState(
+    userRole === "gestionnaire" ? "produits" : "antigaspi"
+  );
 
   // Fonction pour récupérer le compteur de nouvelles commandes
   const fetchNewOrdersCount = async () => {
@@ -34,7 +33,9 @@ const Home = () => {
     try {
       const response = await axios.get(`${baseUrl}/allOrders`);
       const orders = response.data.orders;
-      const newOrdersCount = orders.filter(order => order.status === "en attente" && !order.view).length;
+      const newOrdersCount = orders.filter(
+        (order) => order.status === "en attente" && !order.view
+      ).length;
       setNewOrdersCount(newOrdersCount);
     } catch (error) {
       console.error("Erreur lors du chargement des nouvelles commandes", error);
@@ -42,10 +43,10 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchNewOrdersCount(); 
-    const intervalId = setInterval(fetchNewOrdersCount, 60000); 
+    fetchNewOrdersCount();
+    const intervalId = setInterval(fetchNewOrdersCount, 60000);
 
-    return () => clearInterval(intervalId); 
+    return () => clearInterval(intervalId);
   }, []);
 
   const updateNewOrdersCount = (count) => {
@@ -94,14 +95,7 @@ const Home = () => {
             <div className="breadcrumbs">
               Accueil {">"} {pageNames[currentPage]}
             </div>
-
-            
           </div>
-        </div>
-        <div className="button_logout">
-            <button onClick={handleLogout} className="button_menu">
-              Déconnexion
-            </button>
         </div>
       </div>
       <div className="dashboard_container">
@@ -170,7 +164,7 @@ const Home = () => {
           >
             Commandes
           </button> */}
-         <button
+          <button
             onClick={() => handleContentSelection("commandes")}
             className={
               currentPage === "commandes"
@@ -178,18 +172,18 @@ const Home = () => {
                 : "button_menu"
             }
           >
-
-            Commandes  <span className="badge">{newOrdersCount}</span>
+            Commandes <span className="badge">{newOrdersCount}</span>
             {/* Commandes {<span className="badge">X</span>} */}
-
           </button>
           <button
             onClick={() => handleContentSelection("recapitulatif")}
             className={
-              currentPage === "recapitulatif" ? "button_menu_clicked" : "button_menu"
+              currentPage === "recapitulatif"
+                ? "button_menu_clicked"
+                : "button_menu"
             }
           >
-            Résumé 
+            Résumé
           </button>
           <button
             onClick={() => handleContentSelection("promos")}
@@ -209,6 +203,9 @@ const Home = () => {
           >
             Ma boulangerie
           </button>
+          <button onClick={handleLogout} className="button_menu">
+            Déconnexion
+          </button>
         </div>
         <div className="dashboard_content">
           {currentPage === "dashboard" && <DashboardPage />}
@@ -217,7 +214,9 @@ const Home = () => {
           {currentPage === "antigaspi" && <AntiGaspi />}
           {currentPage === "users" && <UsersPage />}
           {/* {currentPage === "commandes" && <CommandePageSimple />} */}
-          {currentPage === "commandes" &&  <CommandePageSimple updateNewOrdersCount={updateNewOrdersCount} />}
+          {currentPage === "commandes" && (
+            <CommandePageSimple updateNewOrdersCount={updateNewOrdersCount} />
+          )}
           {currentPage === "recapitulatif" && <Resume />}
           {currentPage === "promos" && <Promos />}
           {currentPage === "boulangerie" && <MaBoulangerie />}

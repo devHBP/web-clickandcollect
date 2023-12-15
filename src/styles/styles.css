@@ -473,7 +473,8 @@ hr{
   justify-content: center;
   align-items: center;
   border-radius: 10px;
-  max-height: 600px; /* Ajustez cette valeur à la hauteur souhaitée */
+  /* max-height: 600px;  */
+  height: 100%;
   overflow-y: auto;
 }
 .first_part,.second_part,.third_part, .fourth_part  {
@@ -491,7 +492,7 @@ hr{
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-width: 140px;
+  width: 250px;
   flex-grow: 1;
   margin: 10px;
   text-align: center;
@@ -507,6 +508,21 @@ h2{
   margin: 20px 0;
   font-family: 'Montserrat';
 }
+.calendarRow{
+  display:flex;
+  align-items: center;
+  gap: 10px
+}
+/* .calendar-container{
+  position: relative;
+} */
+.react-calendar{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 
 /* page orders */
 .commande-page{
