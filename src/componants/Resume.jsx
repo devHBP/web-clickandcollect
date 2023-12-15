@@ -51,6 +51,7 @@ function Resume() {
       paid: order.paid,
       createdAt: order.createdAt,
       cartString: order.cartString,
+      date: order.date,
     }));
   };
 
@@ -85,6 +86,13 @@ function Resume() {
       dataIndex: "createdAt",
       key: "createdAt",
       render: (text) => formatDate(text),
+    },
+    {
+      title: "Pour le",
+      dataIndex: "date",
+      key: "date",
+      render: (text) => formatDate(text),
+      sorter: (a, b) => new Date(a.date) - new Date(b.date),
     },
     {
       title: "Statut",
