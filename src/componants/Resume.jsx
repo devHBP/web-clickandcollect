@@ -18,6 +18,16 @@ function Resume() {
     fetchOrders();
   }, []);
 
+  
+  const fetchStoreDetails = async (storeId) => {
+    try {
+      const response = await axios.get(`${baseUrl}/getOneStore/${storeId}`);
+       return response.data.nom_magasin; 
+    } catch (error) {
+      console.error("Error fetching store details:", error);
+      return null;
+    }
+  };
   const fetchOrders = async () => {
     try {
       const response = await axios.get(`${baseUrl}/allOrders`);
@@ -25,14 +35,21 @@ function Resume() {
       if (response.data.orders && response.data.orders.length === 0) {
         setHasOrders(false);
       } else {
+        const ordersWithStoreNames = await Promise.all(response.data.orders.map(async (order) => {
+          const nom_magasin = await fetchStoreDetails(order.storeId);
+          return { ...order, nom_magasin }; 
+        }));
         setHasOrders(true);
-        setTableData(transformOrderData(response.data.orders));
+        // setTableData(transformOrderData(response.data.orders));
+        setTableData(transformOrderData(ordersWithStoreNames));
+
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
       setHasOrders(false);
     }
   };
+  
 
   const transformOrderData = (orders) => {
     return orders.map((order) => ({
@@ -41,8 +58,8 @@ function Resume() {
       client: `${order.firstname_client} ${order.lastname_client}`,
       prix_total: order.prix_total,
       status: order.status,
-      magasin: order.storeName,
-      date: new Date(order.date).toLocaleDateString(),
+      magasin: order.storeId,
+      // date: new Date(order.date).toLocaleDateString(),
       email: order.email,
       userId: order.userId,
       firstname: order.firstname_client,
@@ -52,9 +69,10 @@ function Resume() {
       createdAt: order.createdAt,
       cartString: order.cartString,
       date: order.date,
+      nom_magasin: order.nom_magasin,
+
     }));
   };
-
   function formatDate(dateString) {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, "0");
@@ -64,9 +82,36 @@ function Resume() {
     return `${day}/${month}/${year}`;
   }
 
+  const generateStoreFilters = (orders) => {
+    const uniqueStores = new Set(orders.map(order => order.nom_magasin));
+    return Array.from(uniqueStores).map(store => ({
+      text: store,
+      value: store,
+    }));
+  };
+  const normalizeDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+  
+  const generateDateOrderFilters = (orders) => {
+    const uniqueDates = new Set(orders.map(order => normalizeDate(order.createdAt)));
+    return Array.from(uniqueDates).map(date => ({
+      text: formatDate(date),
+      value: date,
+    }));
+  };
+  const generateDateLivraisonFilters = (orders) => {
+    const dateLivraison = new Set(orders.map(order => order.date));
+    return Array.from(dateLivraison).map(date => ({
+      text: formatDate(date),
+      value: date ,
+    }));
+  };
+
   const columns = [
     {
-      title: "N° de commande",
+      title: "N° Commande",
       dataIndex: "numero_commande",
       key: "numero_commande",
     },
@@ -74,6 +119,13 @@ function Resume() {
       title: "Client",
       dataIndex: "client",
       key: "client",
+    },
+    {
+      title: "Magasin",
+      dataIndex: "nom_magasin",
+      key: "nom_magasin",
+      filters: generateStoreFilters(tableData),
+      onFilter: (value, record) => record.nom_magasin === value,  
     },
     {
       title: "Prix total",
@@ -86,13 +138,17 @@ function Resume() {
       dataIndex: "createdAt",
       key: "createdAt",
       render: (text) => formatDate(text),
+      filters: generateDateOrderFilters(tableData),
+      onFilter: (value, record) => normalizeDate(record.createdAt) === value,  
     },
     {
       title: "Pour le",
       dataIndex: "date",
       key: "date",
       render: (text) => formatDate(text),
-      sorter: (a, b) => new Date(a.date) - new Date(b.date),
+      // sorter: (a, b) => new Date(a.date) - new Date(b.date),
+      filters: generateDateLivraisonFilters(tableData),
+      onFilter: (value, record) => record.date === value,  
     },
     {
       title: "Statut",
@@ -206,9 +262,9 @@ function Resume() {
                 {selectedOrder.status}
               </Tag>
             </p>
-            {/* <p>Date de la commande: {new Date(selectedOrder.date).toLocaleDateString(undefined, dateFormat)}</p> */}
+            <p>Date de la commande: {new Date(selectedOrder.date).toLocaleDateString(undefined, dateFormat)}</p>
             <p>Passée le : {formatDate(selectedOrder.createdAt)}</p>
-            <p>Date de la commande : {selectedOrder.date}</p>
+            {/* <p>Date de la commande : {selectedOrder.date}</p> */}
             {/* <p>Heure de la commande: {selectedOrder.heure || 'Non spécifiée'}</p> */}
             <p>Prix total: {selectedOrder.prix_total}€</p>
             <p>
@@ -248,7 +304,7 @@ function Resume() {
         <Table
           dataSource={tableData}
           columns={columns}
-          pagination={{ position: ["bottomCenter"], pageSize: 6 }}
+          pagination={{ position: ["bottomCenter"], pageSize: 8 }}
         />
       </div>
       {renderOrderDetailsModal()}
