@@ -19,9 +19,9 @@ function Resume() {
     fetchOrders();
   }, []);
 
+  // Mets à jour le compte des commandes filtrées
   const handleTableChange = (pagination, filters, sorter, extra) => {
     if (extra.action === "filter") {
-      // Mettre à jour le compte des commandes filtrées
       setFilteredOrderCount(extra.currentDataSource.length);
     }
   };
@@ -51,7 +51,7 @@ function Resume() {
         setHasOrders(true);
         // setTableData(transformOrderData(response.data.orders));
         setTableData(transformOrderData(ordersWithStoreNames));
-        setFilteredOrderCount(ordersWithStoreNames.length); // Initialiser l'état avec le total des commandes
+        setFilteredOrderCount(ordersWithStoreNames.length); 
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -89,6 +89,7 @@ function Resume() {
     return `${day}/${month}/${year}`;
   }
 
+  // filtre par magasin
   const generateStoreFilters = (orders) => {
     const uniqueStores = new Set(orders.map((order) => order.nom_magasin));
     return Array.from(uniqueStores).map((store) => ({
@@ -101,6 +102,7 @@ function Resume() {
     return date.toISOString().split("T")[0];
   };
 
+  // filtre par date de commande passée
   const generateDateOrderFilters = (orders) => {
     const uniqueDates = new Set(
       orders.map((order) => normalizeDate(order.createdAt))
@@ -110,6 +112,8 @@ function Resume() {
       value: date,
     }));
   };
+
+  //filtre par date de commande livrée
   const generateDateLivraisonFilters = (orders) => {
     const dateLivraison = new Set(orders.map((order) => order.date));
     return Array.from(dateLivraison).map((date) => ({
@@ -141,7 +145,6 @@ function Resume() {
       dataIndex: "prix_total",
       key: "prix_total",
     },
-
     {
       title: "Passée le",
       dataIndex: "createdAt",
@@ -155,7 +158,6 @@ function Resume() {
       dataIndex: "date",
       key: "date",
       render: (text) => formatDate(text),
-      // sorter: (a, b) => new Date(a.date) - new Date(b.date),
       filters: generateDateLivraisonFilters(tableData),
       onFilter: (value, record) => record.date === value,
     },
@@ -198,8 +200,8 @@ function Resume() {
         `${baseUrl}/getOrderProducts/${record.key}`
       );
       // console.log("Order products:", productsResponse.data);
-      setOrderProducts(productsResponse.data); // Mettre à jour l'état avec les produits de la commande
-      setSelectedOrder({ ...record, products: productsResponse.data }); // Mettre à jour l'état avec les détails de la commande et les produits
+      setOrderProducts(productsResponse.data); 
+      setSelectedOrder({ ...record, products: productsResponse.data }); 
       setIsModalVisible(true);
     } catch (error) {
       console.error("Error fetching order details:", error);
@@ -242,7 +244,6 @@ function Resume() {
           "Erreur lors de la conversion de cartString en JSON",
           error
         );
-        // Gérer l'erreur ou utiliser une valeur par défaut
       }
     }
     return (
@@ -302,7 +303,6 @@ function Resume() {
                     {item.quantity} x {item.libelle}
                   </>
                 }
-                // description={`X ${item.quantity}`}
               />
             </List.Item>
           )}
