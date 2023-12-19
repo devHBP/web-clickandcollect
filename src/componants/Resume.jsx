@@ -11,6 +11,7 @@ function Resume() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [orderProducts, setOrderProducts] = useState([]);
+  const [filteredOrderCount, setFilteredOrderCount] = useState(0);
 
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
 
@@ -18,11 +19,17 @@ function Resume() {
     fetchOrders();
   }, []);
 
-  
+  const handleTableChange = (pagination, filters, sorter, extra) => {
+    if (extra.action === "filter") {
+      // Mettre à jour le compte des commandes filtrées
+      setFilteredOrderCount(extra.currentDataSource.length);
+    }
+  };
+
   const fetchStoreDetails = async (storeId) => {
     try {
       const response = await axios.get(`${baseUrl}/getOneStore/${storeId}`);
-       return response.data.nom_magasin; 
+      return response.data.nom_magasin;
     } catch (error) {
       console.error("Error fetching store details:", error);
       return null;
@@ -35,21 +42,22 @@ function Resume() {
       if (response.data.orders && response.data.orders.length === 0) {
         setHasOrders(false);
       } else {
-        const ordersWithStoreNames = await Promise.all(response.data.orders.map(async (order) => {
-          const nom_magasin = await fetchStoreDetails(order.storeId);
-          return { ...order, nom_magasin }; 
-        }));
+        const ordersWithStoreNames = await Promise.all(
+          response.data.orders.map(async (order) => {
+            const nom_magasin = await fetchStoreDetails(order.storeId);
+            return { ...order, nom_magasin };
+          })
+        );
         setHasOrders(true);
         // setTableData(transformOrderData(response.data.orders));
         setTableData(transformOrderData(ordersWithStoreNames));
-
+        setFilteredOrderCount(ordersWithStoreNames.length); // Initialiser l'état avec le total des commandes
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
       setHasOrders(false);
     }
   };
-  
 
   const transformOrderData = (orders) => {
     return orders.map((order) => ({
@@ -70,7 +78,6 @@ function Resume() {
       cartString: order.cartString,
       date: order.date,
       nom_magasin: order.nom_magasin,
-
     }));
   };
   function formatDate(dateString) {
@@ -83,29 +90,31 @@ function Resume() {
   }
 
   const generateStoreFilters = (orders) => {
-    const uniqueStores = new Set(orders.map(order => order.nom_magasin));
-    return Array.from(uniqueStores).map(store => ({
+    const uniqueStores = new Set(orders.map((order) => order.nom_magasin));
+    return Array.from(uniqueStores).map((store) => ({
       text: store,
       value: store,
     }));
   };
   const normalizeDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   };
-  
+
   const generateDateOrderFilters = (orders) => {
-    const uniqueDates = new Set(orders.map(order => normalizeDate(order.createdAt)));
-    return Array.from(uniqueDates).map(date => ({
+    const uniqueDates = new Set(
+      orders.map((order) => normalizeDate(order.createdAt))
+    );
+    return Array.from(uniqueDates).map((date) => ({
       text: formatDate(date),
       value: date,
     }));
   };
   const generateDateLivraisonFilters = (orders) => {
-    const dateLivraison = new Set(orders.map(order => order.date));
-    return Array.from(dateLivraison).map(date => ({
+    const dateLivraison = new Set(orders.map((order) => order.date));
+    return Array.from(dateLivraison).map((date) => ({
       text: formatDate(date),
-      value: date ,
+      value: date,
     }));
   };
 
@@ -125,7 +134,7 @@ function Resume() {
       dataIndex: "nom_magasin",
       key: "nom_magasin",
       filters: generateStoreFilters(tableData),
-      onFilter: (value, record) => record.nom_magasin === value,  
+      onFilter: (value, record) => record.nom_magasin === value,
     },
     {
       title: "Prix total",
@@ -139,7 +148,7 @@ function Resume() {
       key: "createdAt",
       render: (text) => formatDate(text),
       filters: generateDateOrderFilters(tableData),
-      onFilter: (value, record) => normalizeDate(record.createdAt) === value,  
+      onFilter: (value, record) => normalizeDate(record.createdAt) === value,
     },
     {
       title: "Pour le",
@@ -148,7 +157,7 @@ function Resume() {
       render: (text) => formatDate(text),
       // sorter: (a, b) => new Date(a.date) - new Date(b.date),
       filters: generateDateLivraisonFilters(tableData),
-      onFilter: (value, record) => record.date === value,  
+      onFilter: (value, record) => record.date === value,
     },
     {
       title: "Statut",
@@ -185,7 +194,6 @@ function Resume() {
   const viewOrder = async (record) => {
     // console.log('UserId:', record.userId);
     try {
-     
       const productsResponse = await axios.get(
         `${baseUrl}/getOrderProducts/${record.key}`
       );
@@ -262,7 +270,13 @@ function Resume() {
                 {selectedOrder.status}
               </Tag>
             </p>
-            <p>Date de la commande: {new Date(selectedOrder.date).toLocaleDateString(undefined, dateFormat)}</p>
+            <p>
+              Date de la commande:{" "}
+              {new Date(selectedOrder.date).toLocaleDateString(
+                undefined,
+                dateFormat
+              )}
+            </p>
             <p>Passée le : {formatDate(selectedOrder.createdAt)}</p>
             {/* <p>Date de la commande : {selectedOrder.date}</p> */}
             {/* <p>Heure de la commande: {selectedOrder.heure || 'Non spécifiée'}</p> */}
@@ -274,7 +288,6 @@ function Resume() {
                 : "En ligne"}
             </p>
             <p>Commande payée: {selectedOrder.paid ? "Oui" : "Non"}</p>
-            
           </div>
         )}
         <List
@@ -283,11 +296,11 @@ function Resume() {
           renderItem={(item) => (
             <List.Item>
               <List.Item.Meta
-                title={ 
-                <>
-                  {/* {item.antigaspi && <span className="pastilleAntigapiResume"><ProduitAntigaspi /></span>  } */}
-                  {item.quantity} x {item.libelle}
-                </>
+                title={
+                  <>
+                    {/* {item.antigaspi && <span className="pastilleAntigapiResume"><ProduitAntigaspi /></span>  } */}
+                    {item.quantity} x {item.libelle}
+                  </>
                 }
                 // description={`X ${item.quantity}`}
               />
@@ -305,7 +318,11 @@ function Resume() {
           dataSource={tableData}
           columns={columns}
           pagination={{ position: ["bottomCenter"], pageSize: 8 }}
+          onChange={handleTableChange} 
         />
+        <div className="totalFiltered">
+          <p>Total : <span className="spanFiltered">{filteredOrderCount}</span></p>
+        </div>
       </div>
       {renderOrderDetailsModal()}
     </>
