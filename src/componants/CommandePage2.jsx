@@ -194,7 +194,7 @@ function CommandePageSimple({ updateNewOrdersCount }) {
   useEffect(() => {
     const intervalId = setInterval(() => {
       allOrders();
-    }, 60000);
+    }, 600000);
 
     return () => clearInterval(intervalId);
   }, []);
