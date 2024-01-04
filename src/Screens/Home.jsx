@@ -185,6 +185,7 @@ const Home = () => {
           >
             Résumé
           </button>
+          {user.role === "gestionnaire" && (
           <button
             onClick={() => handleContentSelection("promos")}
             className={
@@ -193,6 +194,7 @@ const Home = () => {
           >
             Promotions
           </button>
+          )}
           <button
             onClick={() => handleContentSelection("boulangerie")}
             className={
