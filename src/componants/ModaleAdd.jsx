@@ -138,10 +138,11 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
   return (
     <div className='modale_container'>
          <div className='modale'>
-            < AiFillCloseCircle className='button_close' onClick={() => setOpenModaleAdd(false)}/>
             <div className='modale_content'>
               <div className='title_modale'>
               <p>Ajouter un produit</p>
+              < AiFillCloseCircle className='button_close' onClick={() => setOpenModaleAdd(false)}/>
+
               </div>
            
             <form onSubmit={handleAdd}>

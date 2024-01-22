@@ -4,13 +4,17 @@ import { AiFillCaretDown } from "react-icons/ai";
 import axios from "axios";
 import "../styles/styles.css";
 import { ProduitAntigaspi } from "../../SVG/ProduitAntigaspi";
+import ModaleInfo from "./ModaleInfo";
 
-function Task({ commande, index, updateOrderStatus, updateNewOrdersCount}) {
+function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [showDetails, setShowDetails] = useState(false);
   const [isTaskReady, setIsTaskReady] = useState(commande.status === "attente");
   const [isViewed, setIsViewed] = useState(commande.view);
+  const [openModaleInfo, setOpenModaleInfo] = useState(false);
+  const [prefAlim, setPrefAlim] = useState([]);
+  const [allergies, setAllergies] = useState([]);
 
 
   useEffect(() => {
@@ -20,20 +24,25 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount}) {
   useEffect(() => {
     setIsViewed(commande.view);
   }, [commande.view]);
-  
+
   const toggleDetails = async () => {
     setShowDetails(!showDetails);
     if (!showDetails) {
       try {
         // Charger les détails du produit
-        const productResponse = await axios.get(`${baseUrl}/getOrderProducts/${commande.orderID}`);
-  
+        const productResponse = await axios.get(
+          `${baseUrl}/getOrderProducts/${commande.orderID}`
+        );
+
         // Mise à jour des détails de la commande
         commande.productDetails = productResponse.data;
-  
+
         // console.log('Détails chargés:', commande);
       } catch (error) {
-        console.error("Erreur lors du chargement des détails de la commande", error);
+        console.error(
+          "Erreur lors du chargement des détails de la commande",
+          error
+        );
       }
     }
   };
@@ -86,20 +95,38 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount}) {
   };
 
   const handleView = async () => {
-    console.log(commande)
+    console.log(commande);
     try {
-      // Mets à jour le status "view" 
-      const response = await axios.put(`${baseUrl}/updateViewStatus/${commande.orderID}`);
+      // Mets à jour le status "view"
+      const response = await axios.put(
+        `${baseUrl}/updateViewStatus/${commande.orderID}`
+      );
       // console.log('Statut de vue de la commande mis à jour', response.data);
       setIsViewed(true);
-      updateNewOrdersCount(prevCount => prevCount > 0 ? prevCount - 1 : 0); 
-
-     
+      updateNewOrdersCount((prevCount) => (prevCount > 0 ? prevCount - 1 : 0));
     } catch (error) {
-      console.error("Une erreur s'est produite lors de la mise à jour du statut de vue :", error);
+      console.error(
+        "Une erreur s'est produite lors de la mise à jour du statut de vue :",
+        error
+      );
     }
   };
 
+  const handleMoreInfo = async () => {
+    setOpenModaleInfo(true);
+    try{
+      const getInfo = await axios.get(`${baseUrl}/getInfoAlimentaire/${commande.userId}`)
+      const reponse = getInfo.data
+      setPrefAlim(reponse.preferencesAlimentaires)
+      setAllergies(reponse.allergies)
+    }
+    catch (error) {
+      console.error(
+        "Une erreur s'est produite lors de la recupération des infos du user :",
+        error
+      );
+    }
+  };
   return (
     <Draggable draggableId={commande.numero_commande} index={index}>
       {(provided) => (
@@ -109,13 +136,25 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount}) {
           ref={provided.innerRef}
           className="task_item"
         >
-          { !isViewed &&  <div className="warning-badge" onClick={handleView}>!</div>}
+          {!isViewed && (
+            <div className="warning-badge" onClick={handleView}>
+              !
+            </div>
+          )}
           <AiFillCaretDown className="details_order" onClick={toggleDetails} />
           {/* <div className="task-number">{commande.numero_commande}</div> */}
           {/* <div className="task-client">Email: {commande.email}</div> */}
 
           <div className="row_order">
-            <div className="task_number">{commande.orderID}</div>
+            <div className="divMoreInfo">
+              <div className="task_number">{commande.orderID}</div>
+              <p className="iconInfo" onClick={handleMoreInfo}>
+                ℹ
+              </p>
+              {openModaleInfo && (
+                <ModaleInfo setOpenModaleInfo={setOpenModaleInfo} userName={commande.client} prefAlim={prefAlim} allergies={allergies}/>
+              )}
+            </div>
             <p>
               {commande.paid ? (
                 <span className="order_paid"> Payée</span>
@@ -143,14 +182,12 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount}) {
             </div>
           </div>
 
-                <div className="row_order">
-                <div>Total: </div>
-                <div className="row_total">
-           
-            <div className="task_total">{commande.prix_total} €</div>
+          <div className="row_order">
+            <div>Total: </div>
+            <div className="row_total">
+              <div className="task_total">{commande.prix_total} €</div>
+            </div>
           </div>
-                </div>
-          
 
           {showDetails && (
             <div className="second_part_order">
