@@ -539,6 +539,9 @@ h2{
   overflow-y: auto;
   flex: 1; 
   max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .tasks_list {
   overflow-y: auto;
