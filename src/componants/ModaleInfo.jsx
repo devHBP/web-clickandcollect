@@ -1,12 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
-import { FaCheckSquare, FaRegSquare } from "react-icons/fa"; // Icônes pour l'état coché/non-coché
+import { FaCheckSquare, FaRegSquare } from "react-icons/fa"; 
+import axios from "axios";
+const baseUrl = import.meta.env.VITE_REACT_API_URL;
 
-const ModaleInfo = ({ setOpenModaleInfo, userName, prefAlim, allergies }) => {
+const ModaleInfo = ({
+  setOpenModaleInfo,
+  userName,
+  prefAlim,
+  allergies,
+  userId,
+}) => {
+  const [prefCommande, setPrefCommande] = useState(null);
 
-    // revoir les etats avec une requete pour recuperer les infos sur le profil du user
-  const [productReplacement, setProductReplacement] = useState(false);
-  const [discount, setDiscount] = useState(false);
+  useEffect(() => {
+    getInfoUser();
+  }, []);
+
+  const getInfoUser = async () => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}/getInfoPrefCommande/${userId}`
+      );
+      // console.log('response', response.data.preference_commande)
+      setPrefCommande(response.data.preference_commande);
+    } catch (error) {
+      console.error(
+        "An error occurred while updating the order status:",
+        error
+      );
+    }
+  };
+
   return (
     <div className="modale_container">
       <div className="modale">
@@ -32,15 +57,21 @@ const ModaleInfo = ({ setOpenModaleInfo, userName, prefAlim, allergies }) => {
         <div className="listAlimentaire">
           <ul className="ulModaleInfo">
             <li className="liModaleInfo">
-              {productReplacement ? <FaCheckSquare /> : <FaRegSquare />}
+              {prefCommande === "remplacement" ? (
+                <FaCheckSquare />
+              ) : (
+                <FaRegSquare />
+              )}
               <span> Produit de remplacement</span>
             </li>
             <li className="liModaleInfo">
-              {discount ? <FaCheckSquare /> : <FaRegSquare />}
-              <span> Avoir - Réduction</span>
+              {prefCommande === "remboursement" ? (
+                <FaCheckSquare />
+              ) : (
+                <FaRegSquare />
+              )}
+              <span> Remboursement</span>
             </li>
-              
-       
           </ul>
         </div>
       </div>

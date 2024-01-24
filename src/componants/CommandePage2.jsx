@@ -16,6 +16,7 @@ function CommandePageSimple({ updateNewOrdersCount }) {
   const [uniqueDates, setUniqueDates] = useState([]);
   const [filteredCommandes, setFilteredCommandes] = useState([]);
   const [newOrdersLength, setNewOrdersLength] = useState(0);
+  const [stores, setStores] = useState([]);
 
 
   // const baseUrl = 'http://127.0.0.1:8080';
@@ -24,7 +25,6 @@ function CommandePageSimple({ updateNewOrdersCount }) {
   useEffect(() => {
     allOrders();
   }, []);
-
 
   const updateOrderStatus = (orderId, status) => {
     // Update commandes
@@ -92,15 +92,26 @@ function CommandePageSimple({ updateNewOrdersCount }) {
     }
   }, [selectedDate, commandes.tasks]);
 
-
-
   const allOrders = async () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.get(`${baseUrl}/allOrders`, {
-        params: { status: ["en attente", "prete"] }
+      const response = await axios.get(`${baseUrl}/ordersInWebApp`);
+      // console.log("response", response.data.orders);
+      let orders = response.data.orders;
+
+      const ordersWaiting = await axios.get(`${baseUrl}/ordersInWaiting`);
+      // requete pour commande en attente
+      const storeIds = [...new Set(ordersWaiting.data.orders.map(order => order.storeId))];
+
+      const storesResponse = await axios.get(`${baseUrl}/getStores`, {
+        params: { ids: storeIds.join(',') }
       });
+      const storeNames = storesResponse.data; 
+      // console.log('storeName',storeNames )
+      setStores(storeNames);
+
+   
 
       if (!response.data.orders || response.data.orders.length === 0) {
         setHasOrders(false);
@@ -109,7 +120,6 @@ function CommandePageSimple({ updateNewOrdersCount }) {
       }
 
       setHasOrders(true);
-      const orders = response.data.orders;
 
       let datesArray = orders
         .map((order) => order.date)
@@ -136,7 +146,6 @@ function CommandePageSimple({ updateNewOrdersCount }) {
       // Fetch product details for each order
       const ordersWithDetails = await Promise.all(
         activeOrders.map(async (order) => {
-          
           const storeResponse = await axios.get(
             `${baseUrl}/getOneStore/${order.storeId}`
           );
@@ -166,7 +175,6 @@ function CommandePageSimple({ updateNewOrdersCount }) {
           };
         })
       );
-
 
       const orderData = transformOrderData(ordersWithDetails);
       // const orderData = transformOrderData(orders);
@@ -525,10 +533,6 @@ function CommandePageSimple({ updateNewOrdersCount }) {
     }
   };
 
-  // const decrementNewOrders = () => {
-  //   setNewOrdersLength(prevLength => prevLength - 1);
-  //   updateNewOrdersCount(prevLength);
-  // };
   const decrementNewOrders = () => {
     console.log("je diminue de 1");
     updateNewOrdersCount((prevCount) => prevCount - 1);
@@ -537,7 +541,6 @@ function CommandePageSimple({ updateNewOrdersCount }) {
   return (
     <div className="commande-page">
       <div className="orderSelect">
-        {/* <p> Il y a {newOrdersCount} nouvelles commandes</p> */}
         <Select
           options={uniqueDates}
           onChange={handleDateChange}
@@ -548,6 +551,7 @@ function CommandePageSimple({ updateNewOrdersCount }) {
         <button onClick={handleExport} className="button">
           Exporter
         </button>
+        
         {/* <Search
               placeholder="Rechercher un produit"
               size="medium"
@@ -581,11 +585,12 @@ function CommandePageSimple({ updateNewOrdersCount }) {
             }}
           >
             <div style={{ width: "100%" }}>
+             
               <Tasks
                 commandes={commandes}
                 onDragEnd={onDragEnd}
                 updateOrderStatus={updateOrderStatus}
-                updateNewOrdersCount={updateNewOrdersCount}
+                stores={stores}
               />
             </div>
           </div>

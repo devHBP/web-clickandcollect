@@ -93,7 +93,6 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
       );
     }
   };
-
   const handleView = async () => {
     console.log(commande);
     try {
@@ -111,7 +110,6 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
       );
     }
   };
-
   const handleMoreInfo = async () => {
     setOpenModaleInfo(true);
     try{
@@ -152,7 +150,7 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
                 ℹ
               </p>
               {openModaleInfo && (
-                <ModaleInfo setOpenModaleInfo={setOpenModaleInfo} userName={commande.client} prefAlim={prefAlim} allergies={allergies}/>
+                <ModaleInfo setOpenModaleInfo={setOpenModaleInfo} userName={commande.client} prefAlim={prefAlim} allergies={allergies} userId={commande.userId}/>
               )}
             </div>
             <p>
