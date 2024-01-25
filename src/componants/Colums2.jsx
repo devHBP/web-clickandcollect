@@ -38,7 +38,8 @@ function Colums({
     <div className="flex-container">
       <div id={id} className="column">
         <h3>{title}</h3>
-        <div style={{width:"250px", textAlign:'center'}}>
+        <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>
+        <div style={{width:"200px"}}>
         <Select
           options={storeOptions}
           onChange={handleStoreChange}
@@ -47,6 +48,8 @@ function Colums({
           isClearable
         />
         </div>
+        </div>
+       
         
 
         {/* <Droppable droppableId={id} >
