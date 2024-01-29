@@ -13,6 +13,17 @@ function Resume() {
   const [orderProducts, setOrderProducts] = useState([]);
   const [filteredOrderCount, setFilteredOrderCount] = useState(0);
 
+  const getCurrentDate = () => {
+    const today = new Date();
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(today.getDate()).padStart(2, "0")}`;
+  };
+
+  const [startDate, setStartDate] = useState(getCurrentDate());
+  const [endDate, setEndDate] = useState(getCurrentDate());
+
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
 
   useEffect(() => {
@@ -36,11 +47,14 @@ function Resume() {
     }
   };
   const fetchOrders = async () => {
+    const query = `?startDate=${startDate}&endDate=${endDate}`;
     try {
-      const response = await axios.get(`${baseUrl}/allOrders`);
+      // const response = await axios.get(`${baseUrl}/allOrders`);
+      const response = await axios.get(`${baseUrl}/ordersByDate${query}`);
       // console.log(response.data);
       if (response.data.orders && response.data.orders.length === 0) {
         setHasOrders(false);
+        setTableData([]);
       } else {
         const ordersWithStoreNames = await Promise.all(
           response.data.orders.map(async (order) => {
@@ -51,7 +65,7 @@ function Resume() {
         setHasOrders(true);
         // setTableData(transformOrderData(response.data.orders));
         setTableData(transformOrderData(ordersWithStoreNames));
-        setFilteredOrderCount(ordersWithStoreNames.length); 
+        setFilteredOrderCount(ordersWithStoreNames.length);
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -200,8 +214,8 @@ function Resume() {
         `${baseUrl}/getOrderProducts/${record.key}`
       );
       // console.log("Order products:", productsResponse.data);
-      setOrderProducts(productsResponse.data); 
-      setSelectedOrder({ ...record, products: productsResponse.data }); 
+      setOrderProducts(productsResponse.data);
+      setSelectedOrder({ ...record, products: productsResponse.data });
       setIsModalVisible(true);
     } catch (error) {
       console.error("Error fetching order details:", error);
@@ -299,7 +313,6 @@ function Resume() {
               <List.Item.Meta
                 title={
                   <>
-                    {/* {item.antigaspi && <span className="pastilleAntigapiResume"><ProduitAntigaspi /></span>  } */}
                     {item.quantity} x {item.libelle}
                   </>
                 }
@@ -311,23 +324,37 @@ function Resume() {
     );
   };
 
-  return hasOrders ? (
+  return (
     <>
       <div className="resume-page">
+        <div className="inputSearch">
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+          <button onClick={fetchOrders} className="button">Rechercher</button>
+        </div>
+
         <Table
           dataSource={tableData}
           columns={columns}
-          pagination={{ position: ["bottomCenter"], pageSize: 8 }}
-          onChange={handleTableChange} 
+          pagination={{ position: ["bottomCenter"], pageSize: 6 }}
+          onChange={handleTableChange}
         />
         <div className="totalFiltered">
-          <p>Total : <span className="spanFiltered">{filteredOrderCount}</span></p>
+          <p>
+            Total : <span className="spanFiltered">{filteredOrderCount}</span>
+          </p>
         </div>
       </div>
       {renderOrderDetailsModal()}
     </>
-  ) : (
-    <p>Pas de commandes</p>
   );
 }
 
