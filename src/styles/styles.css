@@ -462,6 +462,14 @@ hr{
   max-height: 200px; 
   /* overflow-y: auto;  */
 }
+.modaleUserContent{
+  margin:40px 0;
+  text-align:center;
+}
+.spanUser{
+  font-weight: bold;
+  font-size: 24px;
+}
 
 
 /* page dashboard */
