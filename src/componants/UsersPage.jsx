@@ -3,10 +3,14 @@ import axios from "axios";
 import { Table, Tag, Select } from "antd";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 const { Option } = Select;
+import { AiOutlineReload } from "react-icons/ai";
+import ModaleEditProfile from "./ModaleEditProfile";
 
 const UsersPage = () => {
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [clients, setClients] = useState([]);
+  const [isOpen, setOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -68,6 +72,52 @@ const UsersPage = () => {
     return `${day}-${month}-${year}`;
   };
 
+  const handleProfile = async (record) => {
+    setOpen(true);
+    setSelectedUser(record);
+  };
+  const handleClose = async (record) => {
+    setOpen(false);
+  };
+
+  const handleUpdateUser = async (userId, updateData) => {
+    console.log("update page user", updateData);
+
+    try {
+      const token = localStorage.getItem("userToken");
+      const tokenString = JSON.parse(token);
+      console.log("token", tokenString);
+
+      // const formData = new FormData();
+
+      // formData.append("lastname", updateData.lastname);
+      // formData.append("firstname", updateData.firstname);
+      // formData.append("email", updateData.email);
+      // formData.append("phone", updateData.telephone);
+
+      const config = {
+        headers: {
+          'x-access-token': tokenString 
+        }
+      };
+      const response = await axios.patch(
+        `${baseUrl}/modifyUser/${userId}`,
+        updateData,
+       config
+      );
+
+      console.log("response", response.data);
+
+      setClients(
+        clients.map((client) => 
+          client.userId === userId ? { ...client, ...updateData } : client
+        )
+      );
+    } catch (error) {
+      console.error("erreur modification du user:", error);
+    }
+  };
+
   //tableau
   const columns = [
     {
@@ -114,16 +164,35 @@ const UsersPage = () => {
       key: "lastOrder",
       render: (lastOrder) => formatDate(lastOrder),
     },
+    {
+      key: "actions",
+      title: "Actions",
+      render: (record) => (
+        <>
+          <AiOutlineReload onClick={() => handleProfile(record)} />
+        </>
+      ),
+    },
   ];
   return (
-    <div className="content_client">
-      <Table
-        dataSource={clients}
-        columns={columns}
-        rowKey="userId"
-        pagination={{ position: ["bottomCenter"], pageSize: 6 }}
-      />
-    </div>
+    <>
+      <div className="content_client">
+        <Table
+          dataSource={clients}
+          columns={columns}
+          rowKey="userId"
+          pagination={{ position: ["bottomCenter"], pageSize: 6 }}
+        />
+      </div>
+      {isOpen && (
+        <ModaleEditProfile
+          isOpen={isOpen}
+          handleClose={handleClose}
+          user={selectedUser}
+          onUpdateUser={handleUpdateUser}
+        />
+      )}
+    </>
   );
 };
 
