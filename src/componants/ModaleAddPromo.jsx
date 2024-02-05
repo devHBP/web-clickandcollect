@@ -17,7 +17,7 @@ const ModaleAddPromo = ({ setOpenModaleAddPromo, handleAddPromo }) => {
             percentage,
             durationInDays,
         }
-        console.log(newCode)
+        // console.log(newCode)
         handleAddPromo(newCode)
     }
     

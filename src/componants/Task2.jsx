@@ -94,7 +94,7 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
     }
   };
   const handleView = async () => {
-    console.log(commande);
+    // console.log(commande);
     try {
       // Mets à jour le status "view"
       const response = await axios.put(

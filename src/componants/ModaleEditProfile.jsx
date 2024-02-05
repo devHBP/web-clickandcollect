@@ -33,7 +33,6 @@ const ModaleEditProfile = ({ isOpen, handleClose, user, onUpdateUser }) => {
     handleClose();
   };
   const closeModale = async (e) => {
-    console.log("close");
     handleClose();
   };
 

@@ -51,7 +51,7 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
       }, []);
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        console.log(file)
+        // console.log(file)
         setImage(file);
       };
 
@@ -127,10 +127,9 @@ const ModaleAdd = ({ setOpenModaleAdd, handleAddProduct, }) => {
         formData.append('reference_fournisseur', referenceFournisseur);
 
         //console.log comme ceci pour voir formData
-        for (const pair of formData.entries()) {
-            console.log(`${pair[0]}, ${pair[1]}`);
-          }
-          //nouveau produit ajouté
+        // for (const pair of formData.entries()) {
+        //     console.log(`${pair[0]}, ${pair[1]}`);
+        //   }
         handleAddProduct(formData);
     }
 

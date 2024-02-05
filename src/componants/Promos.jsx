@@ -39,10 +39,10 @@ export default function Promos() {
     
           const response = await axios.get(`${baseUrl}/promocodes`);
           const allPromosUpdates = response.data;
-          console.log('allPromosUpdates', allPromosUpdates)
+          // console.log('allPromosUpdates', allPromosUpdates)
           updatePromo(allPromosUpdates);
           setOpenModaleAddPromo(false);
-          console.log('promo ajouté')
+          // console.log('promo ajouté')
         } catch (error) {
           console.error('There has been a problem with your Axios request:', error);
         }
@@ -58,7 +58,6 @@ export default function Promos() {
           // Actualisez votre état ici pour refléter la suppression du produit
           const updatedPromos = elements.filter((promo) => promo.id !== id)
           setElements(updatedPromos)
-          console.log('promo supprimé')
   
         } catch (error) {
           console.error('There has been a problem with your Axios request:', error);
@@ -66,7 +65,7 @@ export default function Promos() {
     }
 
       const Delete = (record) => { 
-        console.log(record.code)
+        // console.log(record.code)
         Modal.confirm({
           title: `Etes vous sur de supprimer cette promotion : ${record.code} ?`,
           onOk:  () => {

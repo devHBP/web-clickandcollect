@@ -82,8 +82,6 @@ const ClickandCollect = () => {
         // Actualisez votre état ici pour refléter la suppression du produit
         const updatedProduits = elements.filter((produit) => produit.productId !== productId)
         setElements(updatedProduits)
-        console.log('produit supprimé')
-
       } catch (error) {
         console.error('There has been a problem with your Axios request:', error);
       }
@@ -136,7 +134,6 @@ const ClickandCollect = () => {
       await axios.post(`${baseUrl}/addProduct`, formData);
       const response = await axios.get(`${baseUrl}/getAllProducts`);
       const allProductsUpdated = response.data;
-      console.log('allProductsUpdated', allProductsUpdated)
       updateProduits(allProductsUpdated);
       setOpenModaleAdd(false);
     } catch (error) {

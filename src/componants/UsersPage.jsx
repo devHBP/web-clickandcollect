@@ -81,19 +81,10 @@ const UsersPage = () => {
   };
 
   const handleUpdateUser = async (userId, updateData) => {
-    console.log("update page user", updateData);
 
     try {
       const token = localStorage.getItem("userToken");
       const tokenString = JSON.parse(token);
-      console.log("token", tokenString);
-
-      // const formData = new FormData();
-
-      // formData.append("lastname", updateData.lastname);
-      // formData.append("firstname", updateData.firstname);
-      // formData.append("email", updateData.email);
-      // formData.append("phone", updateData.telephone);
 
       const config = {
         headers: {
@@ -106,7 +97,6 @@ const UsersPage = () => {
        config
       );
 
-      console.log("response", response.data);
 
       setClients(
         clients.map((client) => 

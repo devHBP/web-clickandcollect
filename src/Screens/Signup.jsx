@@ -28,12 +28,12 @@ export const Signup = () => {
       //modif ici id_magasin:null au lieu de vide ('')
        storeId:null
   }
-  console.log('signup web', clientData)
+  // console.log('signup web', clientData)
   try{
     //appel axios pour se loger
     const res = await axios.post('http://localhost:8080/signup', clientData)
-    console.log("user créé : ", res.config.data)
-    console.log('client data créé', clientData)
+    // console.log("user créé : ", res.config.data)
+    // console.log('client data créé', clientData)
     const user = { firstname, lastname, email, password}
     dispatch(registerUser(user))
     navigate('/')

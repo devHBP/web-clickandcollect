@@ -142,7 +142,7 @@ const UpdateProductModal = ({
       // ...(image && { image }),
       ...(image instanceof File && { image }), // Envoyez 'image' uniquement si c'est un fichier
     };
-    console.log("modale updatedata", updatedData);
+    // console.log("modale updatedata", updatedData);
     if (!product) {
       console.error("Erreur : aucun produit sélectionné pour la mise à jour.");
       return;

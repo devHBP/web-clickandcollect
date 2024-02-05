@@ -92,14 +92,13 @@ const ProduitsPage = () => {
         (produit) => produit.productId !== productId
       );
       setElements(updatedProduits);
-      console.log("produit supprimé");
     } catch (error) {
       console.error("There has been a problem with your Axios request:", error);
     }
   };
 
   const handleProductUpdate = async (productId, updatedData, currentImage) => {
-    console.log(updatedData)
+    // console.log(updatedData)
     try {
       const formData = new FormData();
 
@@ -122,7 +121,7 @@ const ProduitsPage = () => {
       formData.append("offre", updatedData.offre);
 
       if (updatedData.image) {
-        console.log("Adding image to formData:", updatedData.image);
+        // console.log("Adding image to formData:", updatedData.image);
 
         formData.append("image", updatedData.image);
       }
@@ -145,13 +144,13 @@ const ProduitsPage = () => {
         //   },
         // }
       );
-      console.log("Response data:", response.data);
+      // console.log("Response data:", response.data);
 
-      console.log(response.data.image) //ok
+      // console.log(response.data.image) //ok
       // const updatedImageUrl = response.data.image; // Assurez-vous que cela correspond au champ renvoyé par votre serveur
       const updatedImageUrl = response.data.image ? response.data.image : currentImage;
 
-      console.log('updatedImageUrl', updatedImageUrl  )
+      // console.log('updatedImageUrl', updatedImageUrl  )
       if (response.status !== 200) {
         throw new Error("Network response was not ok");
       }
@@ -179,7 +178,7 @@ const ProduitsPage = () => {
       await axios.post(`${baseUrl}/addProduct`, formData);
       const response = await axios.get(`${baseUrl}/getAllProducts`);
       const allProductsUpdated = response.data;
-      console.log("allProductsUpdated", allProductsUpdated);
+      // console.log("allProductsUpdated", allProductsUpdated);
       updateProduits(allProductsUpdated);
       setOpenModaleAdd(false);
     } catch (error) {
@@ -330,7 +329,7 @@ const ProduitsPage = () => {
   };
 
   const DecreaseStock = (record) => {
-    console.log(record.stock);
+    // console.log(record.stock);
     setVisibleDecreaseStock(true);
     setSelectedProductId(record.productId);
     setSelectedProduct(record);

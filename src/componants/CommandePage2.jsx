@@ -534,7 +534,6 @@ function CommandePageSimple({ updateNewOrdersCount }) {
   };
 
   const decrementNewOrders = () => {
-    console.log("je diminue de 1");
     updateNewOrdersCount((prevCount) => prevCount - 1);
   };
 
