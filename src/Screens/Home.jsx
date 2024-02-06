@@ -31,7 +31,7 @@ const Home = () => {
   const fetchNewOrdersCount = async () => {
     const baseUrl = import.meta.env.VITE_REACT_API_URL;
     try {
-      const response = await axios.get(`${baseUrl}/allOrders`);
+      const response = await axios.get(`${baseUrl}/ordersInWebApp`);
       const orders = response.data.orders;
       const newOrdersCount = orders.filter(
         (order) => order.status === "en attente" && !order.view
