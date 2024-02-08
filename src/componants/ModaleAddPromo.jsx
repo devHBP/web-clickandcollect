@@ -7,14 +7,25 @@ const ModaleAddPromo = ({ setOpenModaleAddPromo, handleAddPromo }) => {
     
     const [code, setCode] = useState('')
     const [percentage, setPercentage] = useState('')
+    const [fixedAmount, setFixedAmount] = useState('')
     const [durationInDays, setDurationInDays] = useState('')
 
+    const handleFixedAmountChange = (e) => {
+        const value = e.target.value.replace(",", ".");
+        setFixedAmount(value);
+    };    
+
+    const handlePercentageChange = (e) => {
+        const value = e.target.value.replace(",", ".");
+        setPercentage(value);
+    }; 
     
     const handleAdd = async (e) => {
         e.preventDefault();
         const newCode = {
             code, 
-            percentage,
+            percentage: percentage !== '' ? parseFloat(percentage) : null,
+            fixedAmount: fixedAmount !== '' ? parseFloat(fixedAmount) : null,
             durationInDays,
         }
         // console.log(newCode)
@@ -25,9 +36,13 @@ const ModaleAddPromo = ({ setOpenModaleAddPromo, handleAddPromo }) => {
   return (
     <div className='modale_container'>
          <div className='modale'>
-            < AiFillCloseCircle className='button_close' onClick={() => setOpenModaleAddPromo(false)}/>
+            <div className='title_modale'>
+                <p>Ajouter un code promotionnel</p>
+                < AiFillCloseCircle className='button_close' onClick={() => setOpenModaleAddPromo(false)}/>
+                </div>
             <div className='modale_content'>
-            <p>Ajouter un produit</p>
+          
+           
             <form onSubmit={handleAdd}>
                 
                 
@@ -50,7 +65,18 @@ const ModaleAddPromo = ({ setOpenModaleAddPromo, handleAddPromo }) => {
                     id="percentage"
                     name="percentage"
                     value={percentage}
-                    onChange={(e) => setPercentage(e.target.value)}
+                    onChange={handlePercentageChange}
+                    />
+                </div>
+
+                <div className='inputOptions'>
+                    <label htmlFor="percentage">Montant Fixe:</label>
+                    <input
+                    type="text"
+                    id="fixedAmount"
+                    name="fixedAmount"
+                    value={fixedAmount}
+                    onChange={handleFixedAmountChange}
                     />
                 </div>
 
