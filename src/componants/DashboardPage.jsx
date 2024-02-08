@@ -16,7 +16,7 @@ const DashboardPage = () => {
   const [ordersFilterPeriod, setOrdersFilterPeriod] = useState("daily");
   const [salesFilterPeriod, setSalesFilterPeriod] = useState("daily");
   const [showCalendar, setShowCalendar] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null); 
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const options = [
     { value: "daily", label: "Ce jour" },
@@ -131,8 +131,6 @@ const DashboardPage = () => {
     }
   };
 
-
-
   const handleSalesFilterChange = (selectedOption) => {
     setSalesFilterPeriod(selectedOption.value);
   };
@@ -142,16 +140,18 @@ const DashboardPage = () => {
   };
 
   const handleDateSelect = (date) => {
-    setShowCalendar(false);  
+    setShowCalendar(false);
     // console.log(date.toISOString())
-    const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const utcDate = new Date(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    );
     const format = utcDate.toISOString();
     // console.log(utcDate.toISOString())
 
     setSelectedDate(format);
 
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // +1 car les mois commencent à 0
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // +1 car les mois commencent à 0
     const year = date.getFullYear();
     const dateStr = `${day}-${month}-${year}`;
 
@@ -159,12 +159,11 @@ const DashboardPage = () => {
     // setSelectedDate(formattedDate); // Mettez à jour l'état selectedDate avec la date formatée
     setSelectedDate(date.toISOString()); // Mettez à jour l'état selectedDate avec la date formatée
 
-    // console.log('date JJ-MM-YYYY', dateStr); 
+    // console.log('date JJ-MM-YYYY', dateStr);
     const newOption = { value: "selectedDate", label: dateStr };
-    setSelectOptions([...options, newOption]); 
+    setSelectOptions([...options, newOption]);
     setSelectValue(newOption);
     filterOrdersByPeriod(orders, "selectedDate", format);
-
   };
 
   const handleOrdersFilterChange = (selectedOption) => {
@@ -182,9 +181,6 @@ const DashboardPage = () => {
     }
   };
 
-  
-
-
   return (
     <div className="content_dashboard">
       {/* 1ere partie */}
@@ -192,7 +188,11 @@ const DashboardPage = () => {
         <div className="highlight-box">
           <p>Commandes "En attente" : </p>
           <span>
-            {orders.filter((order) => order.status === "en attente").length}
+            {
+              orders.filter(
+                (order) => order.status === "en attente" && order.paid === true
+              ).length
+            }
           </span>
         </div>
         <div className="highlight-box">
@@ -215,7 +215,7 @@ const DashboardPage = () => {
           <span>{totalVentes.toFixed(2)}€</span>
         </div>
         <div className="highlight-box">
-          <p>Nb de commandes  Pour: </p>
+          <p>Nb de commandes Pour: </p>
 
           <div className="calendarRow">
             <Select
@@ -230,7 +230,7 @@ const DashboardPage = () => {
             />
             <AiOutlineCalendar size={22} onClick={toggleCalendar} />
             <div className="calendar-container">
-              {showCalendar && <Calendar  onChange={handleDateSelect}/>}
+              {showCalendar && <Calendar onChange={handleDateSelect} />}
             </div>
           </div>
 
