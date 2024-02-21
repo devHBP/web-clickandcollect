@@ -33,9 +33,11 @@ const Home = () => {
     try {
       const response = await axios.get(`${baseUrl}/ordersInWebApp`);
       const orders = response.data.orders;
+    
       const newOrdersCount = orders.filter(
-        (order) => order.status === "en attente" && !order.view
+        (order) => !order.view 
       ).length;
+      // console.log('orders', orders)
       setNewOrdersCount(newOrdersCount);
     } catch (error) {
       console.error("Erreur lors du chargement des nouvelles commandes", error);
