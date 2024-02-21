@@ -9,6 +9,7 @@ import { AiOutlineCalendar } from "react-icons/ai";
 const DashboardPage = () => {
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [orders, setOrders] = useState([]);
+  const [ordersFiltered, setOrdersFiltered] = useState([]);
   const [average, setAverage] = useState(0);
   const [totalVentes, setTotalVentes] = useState(0);
   const [filteredOrdersCount, setFilteredOrdersCount] = useState(0);
@@ -48,6 +49,7 @@ const DashboardPage = () => {
     };
 
     fetchOrders();
+    ordersInWaiting();
   }, [baseUrl]);
 
   useEffect(() => {
@@ -181,6 +183,18 @@ const DashboardPage = () => {
     }
   };
 
+  const ordersInWaiting = async () => {
+
+    try {
+      const response = await axios.get(`${baseUrl}/ordersInWebApp`);
+      let orders = response.data.orders;
+      setOrdersFiltered(orders.length)
+    }
+    catch(error){
+      console.log(error)
+    }
+  }
+
   return (
     <div className="content_dashboard">
       {/* 1ere partie */}
@@ -189,9 +203,7 @@ const DashboardPage = () => {
           <p>Commandes "En attente" : </p>
           <span>
             {
-              orders.filter(
-                (order) => order.status === "en attente" && order.paid === true
-              ).length
+              ordersFiltered
             }
           </span>
         </div>
