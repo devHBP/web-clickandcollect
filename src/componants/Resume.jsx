@@ -74,6 +74,7 @@ function Resume() {
   };
 
   const transformOrderData = (orders) => {
+    //console.log(orders)
     return orders.map((order) => ({
       key: order.orderId,
       numero_commande: order.orderId,
@@ -92,6 +93,7 @@ function Resume() {
       cartString: order.cartString,
       date: order.date,
       nom_magasin: order.nom_magasin,
+      promotionId:order.promotionId
     }));
   };
   function formatDate(dateString) {
@@ -303,6 +305,10 @@ function Resume() {
                 : "En ligne"}
             </p>
             <p>Commande payée: {selectedOrder.paid ? "Oui" : "Non"}</p>
+            {
+              selectedOrder.promotionId && 
+              <p>Promotion utilisée: {selectedOrder.promotionId}</p>
+            }
           </div>
         )}
         <List
