@@ -470,6 +470,11 @@ hr{
   font-weight: bold;
   font-size: 24px;
 }
+.contentIconsUsers {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
 
 
 /* page dashboard */
