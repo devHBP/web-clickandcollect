@@ -90,6 +90,11 @@ export default function Promos() {
 
   const columns = [
     {
+      title: "Id",
+      dataIndex: "promotionId",
+      key: "promotionId",
+    },
+    {
       title: "Code",
       dataIndex: "code",
       key: "code",
