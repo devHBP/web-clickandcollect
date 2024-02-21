@@ -80,7 +80,7 @@ const UsersPage = () => {
   };
 
   const handleReset = async (record) => {
-    console.log(record.userId)
+    //console.log(record.userId)
     Modal.confirm({
       title: `Etes vous sur de supprimer cet utilisateur : ${record.firstname} ${record.lastname} ?`,
       onOk: () => {
