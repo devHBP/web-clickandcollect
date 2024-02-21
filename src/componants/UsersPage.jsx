@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table, Tag, Select } from "antd";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import { Table, Select, Modal } from "antd";
 const { Option } = Select;
-import { AiOutlineReload } from "react-icons/ai";
+import { AiOutlineReload, AiOutlineRest } from "react-icons/ai";
 import ModaleEditProfile from "./ModaleEditProfile";
 
 const UsersPage = () => {
@@ -78,6 +77,46 @@ const UsersPage = () => {
   };
   const handleClose = async (record) => {
     setOpen(false);
+  };
+
+  const handleReset = async (record) => {
+    console.log(record.userId)
+    Modal.confirm({
+      title: `Etes vous sur de supprimer cet utilisateur : ${record.firstname} ${record.lastname} ?`,
+      onOk: () => {
+        handleDelete(record.userId);
+      },
+    });
+  }
+
+  const handleDelete = async (userId) => {
+    try {
+      const token = localStorage.getItem("userToken");
+      const tokenString = JSON.parse(token);
+
+      const config = {
+        headers: {
+          'x-access-token': tokenString 
+        }
+      };
+      const response = await axios.post(
+        `${baseUrl}/deleteUserOrAnonymize/${userId}`,
+        {}, // Corps vide, car nous n'avons rien à envoyer avec cette requête
+        config // Configuration Axios, incluant les headers
+      );
+
+      // Vérifiez le statut de la réponse
+      if (response.status !== 200) {
+        throw new Error("Network response was not ok");
+      }
+      // Actualisez votre état ici pour refléter la suppression du user
+      const updatedUsers = clients.filter(
+        (user) => user.userId !== userId
+      );
+      setClients(updatedUsers);
+    } catch (error) {
+      console.error("There has been a problem with your Axios request:", error);
+    }
   };
 
   const handleUpdateUser = async (userId, updateData) => {
@@ -159,7 +198,11 @@ const UsersPage = () => {
       title: "Actions",
       render: (record) => (
         <>
+        <div className="contentIconsUsers">
           <AiOutlineReload onClick={() => handleProfile(record)} />
+          <AiOutlineRest onClick={() => handleReset(record)} />
+        </div>
+          
         </>
       ),
     },
