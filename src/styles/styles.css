@@ -611,6 +611,14 @@ h2{
   padding: 1px 6px;
   border: 1px solid #273545;
 }
+/* .groupByDate {
+  margin: 20px 0;
+  text-align: center;
+} */
+.dateGroup {
+  margin: 20px 0;
+  text-align: center;
+}
 
 
 /* page resumé */
