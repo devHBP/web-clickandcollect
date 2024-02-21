@@ -74,7 +74,7 @@ function Resume() {
   };
 
   const transformOrderData = (orders) => {
-    //console.log(orders)
+    console.log(orders)
     return orders.map((order) => ({
       key: order.orderId,
       numero_commande: order.orderId,
@@ -104,6 +104,15 @@ function Resume() {
 
     return `${day}/${month}/${year}`;
   }
+
+  //filtre par client
+  const generateUsersFilters = (orders) => {
+    const clients = new Set(orders.map((order) => order.client));
+    return Array.from(clients).map((client) => ({
+      text: client,
+      value: client,
+    }));
+  };
 
   // filtre par magasin
   const generateStoreFilters = (orders) => {
@@ -148,6 +157,9 @@ function Resume() {
       title: "Client",
       dataIndex: "client",
       key: "client",
+      filters: generateUsersFilters(tableData),
+      onFilter: (value, record) => record.client === value,
+      filterSearch: true,
     },
     {
       title: "Magasin",
