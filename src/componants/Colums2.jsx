@@ -34,6 +34,24 @@ function Colums({
     return { value: key, label: value };
   });
 
+   // Grouper les commandes par date
+   const commandesGroupedByDate = filteredCommandes
+   .sort((a, b) => new Date(a.date.split('/').reverse().join('-')) - new Date(b.date.split('/').reverse().join('-')))
+   .reduce((acc, commande) => {
+     // Formater la date comme vous le souhaitez, ici en format DD/MM/YYYY
+     const dateParts = commande.date.split('/');
+     const formattedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`; 
+ 
+     // Initialiser un nouveau groupe pour cette date
+     if (!acc[formattedDate]) {
+       acc[formattedDate] = []; 
+     }
+     acc[formattedDate].push(commande);
+     return acc;
+   }, {});
+
+  console.log(commandes)
+
   return (
     <div className="flex-container">
       <div id={id} className="column">
@@ -49,9 +67,8 @@ function Colums({
         />
         </div>
         </div>
-       
         
-
+        {/* 1er test */}
         {/* <Droppable droppableId={id} >
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef} className='tasks_list' style={{ minHeight: "100vh" }}>
@@ -63,7 +80,9 @@ function Colums({
           </div>
         )}
       </Droppable> */}
-        <Droppable droppableId={id}>
+
+       {/* sans date */}
+        {/* <Droppable droppableId={id}>
           {(provided) => (
             <div
               {...provided.droppableProps}
@@ -82,6 +101,34 @@ function Colums({
                   />
                 ) : null
               )}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable> */}
+
+        {/* test avec date  */}
+        <Droppable droppableId={id}>
+          {(provided) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className="tasks_list"
+              style={{ minHeight: "100vh" }}
+            >
+              {Object.entries(commandesGroupedByDate).map(([date, commandesForDate], dateIndex) => (
+              <div key={dateIndex} className="groupByDate">
+              <h4 className="dateGroup">{date}</h4> 
+                  {commandesForDate.map((commande, index) => (
+                    <Task
+                      key={commande.key}
+                      commande={commande}
+                      index={index}
+                      updateOrderStatus={updateOrderStatus}
+                      updateNewOrdersCount={updateNewOrdersCount}
+                    />
+                  ))}
+                </div>
+              ))}
               {provided.placeholder}
             </div>
           )}
