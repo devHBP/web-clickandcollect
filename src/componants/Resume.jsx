@@ -4,6 +4,8 @@ import { Table, Tag, Modal, List } from "antd";
 import { AiOutlineEye } from "react-icons/ai";
 import "../styles/styles.css";
 import { ProduitAntigaspi } from "../../SVG/ProduitAntigaspi";
+import * as XLSX from "xlsx";
+
 
 function Resume() {
   const [tableData, setTableData] = useState([]);
@@ -12,6 +14,7 @@ function Resume() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [orderProducts, setOrderProducts] = useState([]);
   const [filteredOrderCount, setFilteredOrderCount] = useState(0);
+  const [ordersFetch, setOrdersFetch] = useState([]);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -28,7 +31,7 @@ function Resume() {
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [startDate, endDate]);
 
   // Mets à jour le compte des commandes filtrées
   const handleTableChange = (pagination, filters, sorter, extra) => {
@@ -46,12 +49,34 @@ function Resume() {
       return null;
     }
   };
+
+  const getLibelle = async (productIds) => {
+    try {
+      const ids = productIds.split(','); // Diviser la chaîne en un tableau d'IDs
+      const libelles = await Promise.all(ids.map(async (id) => {
+        const response = await axios.get(`${baseUrl}/getOneProduct/${id}`);
+        return response.data.libelle; // Retourne le libellé pour chaque produit
+      }));
+      return libelles.join('\n'); // Concatène tous les libellés avec un saut de ligne
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+      return "Détail(s) produit(s) inconnu(s)";
+    }
+  }
+  
+  
   const fetchOrders = async () => {
     const query = `?startDate=${startDate}&endDate=${endDate}`;
+   
     try {
       // const response = await axios.get(`${baseUrl}/allOrders`);
       const response = await axios.get(`${baseUrl}/ordersByDate${query}`);
       // console.log(response.data);
+      if (new Date(startDate) > new Date(endDate)) {
+        setTableData([]);
+        return; 
+      }
+      setOrdersFetch(response.data)
       if (response.data.orders && response.data.orders.length === 0) {
         setHasOrders(false);
         setTableData([]);
@@ -72,6 +97,54 @@ function Resume() {
       setHasOrders(false);
     }
   };
+
+ 
+
+  const handleExport = async () => {
+    console.log(ordersFetch)
+    // Vérifiez si ordersFetch contient des commandes à exporter
+    if (!ordersFetch.orders || ordersFetch.orders.length === 0) {
+      console.log("Aucune commande à exporter");
+      return;
+    }
+  
+    // Récupérez les noms des magasins pour chaque commande
+    const ordersWithStoreNames = await Promise.all(ordersFetch.orders.map(async (order) => {
+      const nom_magasin = await fetchStoreDetails(order.storeId);
+      const libelle = await getLibelle(order.productIds);
+
+      return { ...order, nom_magasin, libelle };
+    }));
+
+  
+    // Préparez les données à exporter
+    const ordersToExport = ordersWithStoreNames.map(order => {
+      const date = new Date(order.date);
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const year = date.getFullYear();
+      const formattedDate = `${day}/${month}/${year}`;
+  
+      return {
+        "N° Commande": order.orderId,
+        "Client": `${order.firstname_client} ${order.lastname_client}`,
+        "Magasin": order.nom_magasin, // Utilisez le nom du magasin enrichi
+        "Total commande": order.prix_total,
+        "Pour le": formattedDate,
+        "Status": order.status,
+        "Produits": order.libelle
+      };
+    });
+  
+    // Exportez les données vers Excel
+    const ws = XLSX.utils.json_to_sheet(ordersToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Commandes");
+    XLSX.writeFile(wb, `Export_Commandes_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+  
+  
+
 
   const transformOrderData = (orders) => {
     //console.log(orders)
@@ -356,7 +429,10 @@ function Resume() {
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
-          <button onClick={fetchOrders} className="button">Rechercher</button>
+          {/* <button onClick={fetchOrders} className="button">Rechercher</button> */}
+          <button onClick={handleExport} className="button">
+          Exporter
+        </button>
         </div>
 
         <Table
