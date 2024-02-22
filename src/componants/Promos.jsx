@@ -17,7 +17,7 @@ export default function Promos() {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${baseUrl}/promocodes`);
-        console.log(response.data);
+        //console.log(response.data);
         setElements(response.data);
       } catch (error) {
         console.error("Une erreur s'est produite, promocodes :", error);
