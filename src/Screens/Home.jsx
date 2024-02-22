@@ -31,13 +31,13 @@ const Home = () => {
   const fetchNewOrdersCount = async () => {
     const baseUrl = import.meta.env.VITE_REACT_API_URL;
     try {
-      const response = await axios.get(`${baseUrl}/ordersInWebApp`);
+      const response = await axios.get(`${baseUrl}/ordersInWaiting`);
       const orders = response.data.orders;
     
       const newOrdersCount = orders.filter(
         (order) => !order.view 
       ).length;
-      // console.log('orders', orders)
+      //console.log('orders', orders)
       setNewOrdersCount(newOrdersCount);
     } catch (error) {
       console.error("Erreur lors du chargement des nouvelles commandes", error);
