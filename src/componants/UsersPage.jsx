@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table, Select, Modal } from "antd";
+import { Table, Select, Modal, Input } from "antd";
 const { Option } = Select;
 import { AiOutlineReload, AiOutlineRest } from "react-icons/ai";
 import ModaleEditProfile from "./ModaleEditProfile";
+const { Search } = Input;
 
 const UsersPage = () => {
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [clients, setClients] = useState([]);
   const [isOpen, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -147,6 +149,12 @@ const UsersPage = () => {
     }
   };
 
+  const handleSearch = (e) => {
+    console.log('search')
+    setSearchTerm(e.target.value);
+  }
+
+
   //tableau
   const columns = [
     {
@@ -209,12 +217,23 @@ const UsersPage = () => {
   ];
   return (
     <>
+    <div className="pageUsersContent">
+
+    
+     <Search
+            placeholder="Rechercher un utilisateur"
+            size="large"
+            style={{ width: 250 }}
+            onChange={handleSearch}
+          />
       <div className="content_client">
+     
+
         <Table
-          dataSource={clients}
+          dataSource={clients.filter((user) => user.firstname.toLowerCase().includes(searchTerm.toLowerCase()) || user.lastname.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase()))}
           columns={columns}
           rowKey="userId"
-          pagination={{ position: ["bottomCenter"], pageSize: 6 }}
+          pagination={{ position: ["bottomCenter"], pageSize: 5 }}
         />
       </div>
       {isOpen && (
@@ -225,6 +244,7 @@ const UsersPage = () => {
           onUpdateUser={handleUpdateUser}
         />
       )}
+      </div>
     </>
   );
 };
