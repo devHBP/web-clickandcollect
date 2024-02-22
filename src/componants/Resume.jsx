@@ -74,7 +74,7 @@ function Resume() {
   };
 
   const transformOrderData = (orders) => {
-    console.log(orders)
+    //console.log(orders)
     return orders.map((order) => ({
       key: order.orderId,
       numero_commande: order.orderId,
