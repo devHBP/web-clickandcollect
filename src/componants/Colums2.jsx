@@ -12,11 +12,7 @@ function Colums({
   updateNewOrdersCount,
   stores,
 }) {
-
-
-  useEffect(() => {
-
-  }, [stores]);
+  useEffect(() => {}, [stores]);
 
   const [selectedStore, setSelectedStore] = useState(null);
 
@@ -34,40 +30,44 @@ function Colums({
     return { value: key, label: value };
   });
 
-   // Grouper les commandes par date
-   const commandesGroupedByDate = filteredCommandes
-   .sort((a, b) => new Date(a.date.split('/').reverse().join('-')) - new Date(b.date.split('/').reverse().join('-')))
-   .reduce((acc, commande) => {
-     // Formater la date comme vous le souhaitez, ici en format DD/MM/YYYY
-     const dateParts = commande.date.split('/');
-     const formattedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`; 
- 
-     // Initialiser un nouveau groupe pour cette date
-     if (!acc[formattedDate]) {
-       acc[formattedDate] = []; 
-     }
-     acc[formattedDate].push(commande);
-     return acc;
-   }, {});
+  const sortedCommandes = filteredCommandes.sort((a, b) =>
+    new Date(a.date.split('/').reverse().join('-')).getTime() - 
+    new Date(b.date.split('/').reverse().join('-')).getTime()
+  );
 
-  console.log(commandes)
+  const formatDate = (dateString) => {
+    if (dateString) {
+      const dateParts = dateString.split('/');
+      return `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
+    } else {
+      return 'Date inconnue';
+    }
+  }
+
+  //console.log(commandes);
 
   return (
     <div className="flex-container">
       <div id={id} className="column">
         <h3>{title}</h3>
-        <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>
-        <div style={{width:"200px"}}>
-        <Select
-          options={storeOptions}
-          onChange={handleStoreChange}
-          value={selectedStore}
-          placeholder="Filtrer par magasin"
-          isClearable
-        />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
+          <div style={{ width: "200px" }}>
+            <Select
+              options={storeOptions}
+              onChange={handleStoreChange}
+              value={selectedStore}
+              placeholder="Filtrer par magasin"
+              isClearable
+            />
+          </div>
         </div>
-        </div>
-        
+
         {/* 1er test */}
         {/* <Droppable droppableId={id} >
         {(provided) => (
@@ -81,8 +81,8 @@ function Colums({
         )}
       </Droppable> */}
 
-       {/* sans date */}
-        {/* <Droppable droppableId={id}>
+        {/* sans date */}
+        <Droppable droppableId={id}>
           {(provided) => (
             <div
               {...provided.droppableProps}
@@ -90,7 +90,7 @@ function Colums({
               className="tasks_list"
               style={{ minHeight: "100vh" }}
             >
-              {filteredCommandes.map((commande, index) =>
+              {/* {filteredCommandes.map((commande, index) =>
                 commande ? (
                   <Task
                     key={commande.key}
@@ -100,35 +100,28 @@ function Colums({
                     updateNewOrdersCount={updateNewOrdersCount}
                   />
                 ) : null
-              )}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable> */}
+              )} */}
+              {sortedCommandes.reduce((acc, commande, index) => {
+                  if (!commande) return acc;
 
-        {/* test avec date  */}
-        <Droppable droppableId={id}>
-          {(provided) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="tasks_list"
-              style={{ minHeight: "100vh" }}
-            >
-              {Object.entries(commandesGroupedByDate).map(([date, commandesForDate], dateIndex) => (
-              <div key={dateIndex} className="groupByDate">
-              <h4 className="dateGroup">{date}</h4> 
-                  {commandesForDate.map((commande, index) => (
-                    <Task
-                      key={commande.key}
-                      commande={commande}
-                      index={index}
-                      updateOrderStatus={updateOrderStatus}
-                      updateNewOrdersCount={updateNewOrdersCount}
-                    />
-                  ))}
-                </div>
-              ))}
+            // Vérifiez si la commande actuelle a une date différente de la commande précédente
+            const commandeDate = formatDate(commande.date);
+            if (index === 0 || formatDate(sortedCommandes[index - 1]?.date) !== commandeDate) {
+              // Si oui, ajoutez un nouvel en-tête de date
+              acc.push(<h4 key={commandeDate} className="dateGroup">{commandeDate}</h4>);
+            }
+            // Ajoutez la commande actuelle
+            acc.push(
+              <Task
+                key={commande.key}
+                commande={commande}
+                index={index}
+                updateOrderStatus={updateOrderStatus}
+                updateNewOrdersCount={updateNewOrdersCount}
+              />
+            );
+            return acc;
+          }, [])}
               {provided.placeholder}
             </div>
           )}
