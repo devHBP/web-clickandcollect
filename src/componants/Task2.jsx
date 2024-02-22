@@ -19,6 +19,7 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
 
   useEffect(() => {
     setIsTaskReady(commande.status === "prete");
+    console.log(commande)
   }, [commande.status]);
 
   useEffect(() => {
@@ -163,7 +164,10 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
           </div>
 
           <div className="row_order">
-            <p className="task_date">{commande.date}</p>
+            <p className="task_date">Passé le : {commande.createdDate}</p>
+          </div>
+          <div className="row_order">
+            <p className="task_date">Pour le : {commande.date}</p>
             <div>
               Magasin: <span className="task_magasin">{commande.magasin}</span>
             </div>
