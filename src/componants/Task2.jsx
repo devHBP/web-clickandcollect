@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { AiFillCaretDown } from "react-icons/ai";
+import { Tag } from "antd";
 import axios from "axios";
 import "../styles/styles.css";
 import { ProduitAntigaspi } from "../../SVG/ProduitAntigaspi";
@@ -19,7 +20,7 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
 
   useEffect(() => {
     setIsTaskReady(commande.status === "prete");
-    console.log(commande)
+    // console.log(commande)
   }, [commande.status]);
 
   useEffect(() => {
@@ -156,7 +157,8 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
             </div>
             <p>
               {commande.paid ? (
-                <span className="order_paid"> Payée</span>
+                // <span className="order_paid"> Payée</span>
+                <Tag className="order_paid" color="green">Payée</Tag>
               ) : (
                 <span className="order_unpaid"> Non payée</span>
               )}
