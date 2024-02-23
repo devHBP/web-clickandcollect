@@ -116,9 +116,12 @@ function Resume() {
       return { ...order, nom_magasin, libelle };
     }));
 
+    // Filtrer uniquement les commandes payées
+  const paidOrders = ordersWithStoreNames.filter(order => order.paid);
+
   
     // Préparez les données à exporter
-    const ordersToExport = ordersWithStoreNames.map(order => {
+    const ordersToExport = paidOrders.map(order => {
       const date = new Date(order.date);
       const day = date.getDate().toString().padStart(2, "0");
       const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -283,6 +286,22 @@ function Resume() {
         return <Tag color={color}>{status}</Tag>;
       },
     },
+    {
+      title: "Payé ?",
+      dataIndex: "paid",
+      key: "paid",    
+      render: (text, record) => (
+        record.paid 
+          ? <Tag color="green">Oui</Tag> 
+          : <Tag color="volcano">Non</Tag>
+      ),
+      filters: [
+        { text: 'Oui', value: true },
+        { text: 'Non', value: false },
+      ],      
+      onFilter: (value, record) => record.paid === value,
+
+  },
     {
       key: "action",
       title: "Actions",
