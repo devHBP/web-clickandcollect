@@ -5,6 +5,7 @@ import "../styles/styles.css";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { AiOutlineCalendar } from "react-icons/ai";
+import { Tag } from "antd";
 
 const DashboardPage = () => {
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
@@ -287,11 +288,11 @@ const DashboardPage = () => {
       {/* 4e partie */}
       <div className="fourth">
           <div className="highlight-box2">
-            <p>Top 3 ventes </p>
+            <p>Top 5 ventes </p>
             <ul>
             {topProducts.map((product, index) => (
               <li key={index}>
-                <span>{product.libelle}</span> /  Vendu: {product.count}
+                <span>{product.libelle}</span> /  Vendu:   <Tag className="" color="orange">{product.count}</Tag>
               </li>
             ))}
           </ul>          </div>
