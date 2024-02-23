@@ -287,7 +287,7 @@ function Resume() {
       },
     },
     {
-      title: "Payé ?",
+      title: "Payée ?",
       dataIndex: "paid",
       key: "paid",    
       render: (text, record) => (
