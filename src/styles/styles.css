@@ -516,7 +516,22 @@ hr{
   text-align: center;
   font-family: 'Montserrat';
 }
-.highlight-box span {
+.highlight-box2 {
+  padding: 10px;
+  background-color: #f9f9f9; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 540px;
+  margin: 10px;
+  /* text-align: center; */
+  font-family: 'Montserrat';
+}
+.highlight-box span, .highlight-box2 span {
   font-family: 'Montserrat';
   font-weight: 700;
 
@@ -531,14 +546,13 @@ h2{
   align-items: center;
   gap: 10px
 }
-/* .calendar-container{
-  position: relative;
-} */
+
 .react-calendar{
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 99;
 }
 
 
