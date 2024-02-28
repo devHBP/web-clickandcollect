@@ -135,9 +135,6 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount, color 
           {...provided.dragHandleProps}
           ref={provided.innerRef}
           className="task_item"
-          style={{
-            backgroundColor: color, 
-          }}
         >
           {!isViewed && (
             <div className="warning-badge" onClick={handleView}>
