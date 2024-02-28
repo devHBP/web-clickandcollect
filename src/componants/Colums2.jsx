@@ -44,6 +44,21 @@ function Colums({
     }
   }
 
+  const colors = ['#a6a2a2', '#e5e6e4']; 
+let lastDate = '';
+let colorIndex = 0;
+
+const getColorForDate = (dateString) => {
+  // Si la date change, alternez la couleur
+  if (dateString !== lastDate) {
+    colorIndex = 1 - colorIndex; // Change l'indice de couleur
+    lastDate = dateString; // Mettre à jour la dernière date traitée
+  }
+  return colors[colorIndex]; // Retourne la couleur actuelle
+};
+ ;
+  
+
   //console.log(commandes);
 
   return (
@@ -106,6 +121,7 @@ function Colums({
 
             // Vérifiez si la commande actuelle a une date différente de la commande précédente
             const commandeDate = formatDate(commande.date);
+            const taskColor = getColorForDate(commandeDate); 
             if (index === 0 || formatDate(sortedCommandes[index - 1]?.date) !== commandeDate) {
               // Si oui, ajoutez un nouvel en-tête de date
               acc.push(<h4 key={commandeDate} className="dateGroup">{commandeDate}</h4>);
@@ -118,6 +134,7 @@ function Colums({
                 index={index}
                 updateOrderStatus={updateOrderStatus}
                 updateNewOrdersCount={updateNewOrdersCount}
+                color={taskColor}
               />
             );
             return acc;

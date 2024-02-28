@@ -383,10 +383,20 @@ padding: 5px 10px;
   justify-content: space-between;
   align-items: center;
 }
+.div_date{
+  display: flex;
+  flex-direction: column;
+}
 .row_total{
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+}
+.content_date_store{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
 }
 .order_paid{
   color:#34AA55;

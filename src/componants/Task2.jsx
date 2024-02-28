@@ -7,7 +7,7 @@ import "../styles/styles.css";
 import { ProduitAntigaspi } from "../../SVG/ProduitAntigaspi";
 import ModaleInfo from "./ModaleInfo";
 
-function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
+function Task({ commande, index, updateOrderStatus, updateNewOrdersCount, color }) {
   // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [showDetails, setShowDetails] = useState(false);
@@ -16,7 +16,6 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
   const [openModaleInfo, setOpenModaleInfo] = useState(false);
   const [prefAlim, setPrefAlim] = useState([]);
   const [allergies, setAllergies] = useState([]);
-
 
   useEffect(() => {
     setIsTaskReady(commande.status === "prete");
@@ -114,13 +113,14 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
   };
   const handleMoreInfo = async () => {
     setOpenModaleInfo(true);
-    try{
-      const getInfo = await axios.get(`${baseUrl}/getInfoAlimentaire/${commande.userId}`)
-      const reponse = getInfo.data
-      setPrefAlim(reponse.preferencesAlimentaires)
-      setAllergies(reponse.allergies)
-    }
-    catch (error) {
+    try {
+      const getInfo = await axios.get(
+        `${baseUrl}/getInfoAlimentaire/${commande.userId}`
+      );
+      const reponse = getInfo.data;
+      setPrefAlim(reponse.preferencesAlimentaires);
+      setAllergies(reponse.allergies);
+    } catch (error) {
       console.error(
         "Une erreur s'est produite lors de la recupération des infos du user :",
         error
@@ -128,13 +128,16 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
     }
   };
   return (
-    <Draggable draggableId={commande.numero_commande} index={index}>
+    <Draggable draggableId={commande.numero_commande} index={index} >
       {(provided) => (
         <div
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
           className="task_item"
+          style={{
+            backgroundColor: color, 
+          }}
         >
           {!isViewed && (
             <div className="warning-badge" onClick={handleView}>
@@ -142,8 +145,6 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
             </div>
           )}
           <AiFillCaretDown className="details_order" onClick={toggleDetails} />
-          {/* <div className="task-number">{commande.numero_commande}</div> */}
-          {/* <div className="task-client">Email: {commande.email}</div> */}
 
           <div className="row_order">
             <div className="divMoreInfo">
@@ -152,26 +153,37 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
                 ℹ
               </p>
               {openModaleInfo && (
-                <ModaleInfo setOpenModaleInfo={setOpenModaleInfo} userName={commande.client} prefAlim={prefAlim} allergies={allergies} userId={commande.userId}/>
+                <ModaleInfo
+                  setOpenModaleInfo={setOpenModaleInfo}
+                  userName={commande.client}
+                  prefAlim={prefAlim}
+                  allergies={allergies}
+                  userId={commande.userId}
+                />
               )}
             </div>
             <p>
               {commande.paid ? (
-                // <span className="order_paid"> Payée</span>
-                <Tag className="order_paid" color="green">Payée</Tag>
+                <Tag className="order_paid" color="green">
+                  Payée
+                </Tag>
               ) : (
-                <span className="order_unpaid"> Non payée</span>
+                <Tag className="order_unpaid" color="red">
+                  Non payée
+                </Tag>
               )}
             </p>
           </div>
 
-          <div className="row_order">
-            <p className="task_date">Passé le : {commande.createdDate}</p>
-          </div>
-          <div className="row_order">
-            <p className="task_date">Pour le : {commande.date}</p>
+          <div className="content_date_store">
+            <div className="div_date">
+              <p className="task_date">Passé le : {commande.createdDate}</p>
+              <p className="task_date">Pour le : {commande.date}</p>
+            </div>
             <div>
-              Magasin: <span className="task_magasin">{commande.magasin}</span>
+              <Tag className="task_magasin" color="grey">
+                {commande.magasin}
+              </Tag>
             </div>
           </div>
 
