@@ -464,7 +464,7 @@ const productText = totalProductCount === 1 ? "Produit" : "Produits";
 
         {/* email deja envoyé */}
         {commande.productIds && commande.productIds.length > 0 ? (
-          <p>Une demande a déjà été envoyée par email</p>
+          <Tag  color="orange">Une demande a déjà été envoyée par email</Tag>
         ) : (
           ``
         )}
