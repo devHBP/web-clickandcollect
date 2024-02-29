@@ -358,6 +358,8 @@ padding: 5px 10px;
   justify-content: center;
 }
 .button_delivery{
+  width:140px;
+  height:40px;
   padding: 5px 20px;
   border-radius: 10px;
   margin: 20px 5px;
@@ -366,10 +368,22 @@ padding: 5px 10px;
   color:white
 }
 .button_cancel{
+  width:140px;
+  height:40px;
   padding: 5px 20px;
   border-radius: 10px;
   margin: 20px 5px;
   background-color: #BF2D2D;
+  border:none;
+  color:white
+}
+.button_refund{
+  width:140px;
+  height:40px;
+  padding: 5px 20px;
+  border-radius: 10px;
+  margin: 20px 5px;
+  background-color: #e7ad41;
   border:none;
   color:white
 }
@@ -640,13 +654,16 @@ h2{
   padding: 1px 6px;
   border: 1px solid #273545;
 }
-/* .groupByDate {
-  margin: 20px 0;
-  text-align: center;
-} */
 .dateGroup {
   margin: 20px 0;
   text-align: center;
+}
+.contentSelectRefund{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  margin: 15px 0;
 }
 
 

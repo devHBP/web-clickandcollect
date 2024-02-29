@@ -248,7 +248,8 @@ function CommandePageSimple({ updateNewOrdersCount }) {
           cartString: cartArray,
           view: order.view,
           userId: order.userId,
-          createdDate: formattedDateAt
+          createdDate: formattedDateAt,
+          productIds: order.refundedProductIds,
         };
         return acc;
       }, {}),
