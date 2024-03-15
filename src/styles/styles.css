@@ -162,6 +162,22 @@ margin-right: 50px;
   cursor: pointer;
   z-index: 99;
 }
+.button_cancel{
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 200px;
+  height:40px;
+  background-color: #E9520E;
+  border: none;
+  border-radius: 5px;
+  color:#E5E5E5;
+  /* padding:10px 5px; */
+  /* margin:10px; */
+  cursor: pointer;
+  z-index: 99;
+}
 /* Close Button Style */
 .button_close {
   /* float: right; */
@@ -353,6 +369,9 @@ padding: 5px 10px;
 .second_part_order{
   margin: 10px 0;
 }
+.viewContentButtons{
+  margin: 10px 0;;
+}
 .buttons{
   display:flex;
   justify-content: center;
@@ -362,7 +381,7 @@ padding: 5px 10px;
   height:40px;
   padding: 5px 20px;
   border-radius: 10px;
-  margin: 20px 5px;
+  margin: 10px 5px;
   background-color: #34AA55;
   border:1px solid #34AA55;
   color:white
@@ -372,7 +391,7 @@ padding: 5px 10px;
   height:40px;
   padding: 5px 20px;
   border-radius: 10px;
-  margin: 20px 5px;
+  margin: 10px 5px;
   background-color: #BF2D2D;
   border:none;
   color:white
@@ -382,7 +401,7 @@ padding: 5px 10px;
   height:40px;
   padding: 5px 20px;
   border-radius: 10px;
-  margin: 20px 5px;
+  margin: 10px 5px;
   background-color: #e7ad41;
   border:none;
   color:white
@@ -466,6 +485,7 @@ hr{
   height:100%;
   align-items: center;
 }
+
 
 
 
@@ -643,9 +663,9 @@ h2{
 .divMoreInfo{
   display:flex;
   flex-direction: row;
-  width:60px;
-  gap: 10;
-  justify-content: space-around;
+  width:100px;
+  gap: 10px;
+  justify-content: space-between;
   align-items: center;
 }
 .iconInfo{
@@ -664,6 +684,20 @@ h2{
   align-items: center;
   gap: 20px;
   margin: 15px 0;
+}
+/* Modale Update Order */
+.contentLiOrder{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.viewContent{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  margin-top: 30px;
 }
 
 
@@ -717,6 +751,9 @@ h2{
 input
 {
     border: 1px solid lightgrey;
+}
+.liFormuleResume{
+  margin-left: 30px;
 }
 
 
