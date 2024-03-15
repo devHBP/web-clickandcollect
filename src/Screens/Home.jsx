@@ -35,7 +35,7 @@ const Home = () => {
       const orders = response.data.orders;
     
       const newOrdersCount = orders.filter(
-        (order) => !order.view 
+        (order) => !order.view && order.paid === true
       ).length;
       //console.log('orders', orders)
       setNewOrdersCount(newOrdersCount);
