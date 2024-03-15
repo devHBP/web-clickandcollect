@@ -11,6 +11,7 @@ function Colums({
   updateOrderStatus,
   updateNewOrdersCount,
   stores,
+  updateCommandeData
 }) {
   useEffect(() => {}, [stores]);
 
@@ -119,6 +120,7 @@ function Colums({
                 index={index}
                 updateOrderStatus={updateOrderStatus}
                 updateNewOrdersCount={updateNewOrdersCount}
+                updateCommandeData={updateCommandeData}
               />
             );
             return acc;

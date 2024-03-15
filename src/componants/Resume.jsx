@@ -6,7 +6,6 @@ import "../styles/styles.css";
 import { ProduitAntigaspi } from "../../SVG/ProduitAntigaspi";
 import * as XLSX from "xlsx";
 
-
 function Resume() {
   const [tableData, setTableData] = useState([]);
   const [hasOrders, setHasOrders] = useState(true);
@@ -52,31 +51,32 @@ function Resume() {
 
   const getLibelle = async (productIds) => {
     try {
-      const ids = productIds.split(','); // Diviser la chaîne en un tableau d'IDs
-      const libelles = await Promise.all(ids.map(async (id) => {
-        const response = await axios.get(`${baseUrl}/getOneProduct/${id}`);
-        return response.data.libelle; // Retourne le libellé pour chaque produit
-      }));
-      return libelles.join('\n'); // Concatène tous les libellés avec un saut de ligne
+      const ids = productIds.split(","); // Diviser la chaîne en un tableau d'IDs
+      const libelles = await Promise.all(
+        ids.map(async (id) => {
+          const response = await axios.get(`${baseUrl}/getOneProduct/${id}`);
+          return response.data.libelle; // Retourne le libellé pour chaque produit
+        })
+      );
+      return libelles.join("\n"); // Concatène tous les libellés avec un saut de ligne
     } catch (error) {
       console.error("Error fetching product details:", error);
       return "Détail(s) produit(s) inconnu(s)";
     }
-  }
-  
-  
+  };
+
   const fetchOrders = async () => {
     const query = `?startDate=${startDate}&endDate=${endDate}`;
-   
+
     try {
       // const response = await axios.get(`${baseUrl}/allOrders`);
       const response = await axios.get(`${baseUrl}/ordersByDate${query}`);
       // console.log(response.data);
       if (new Date(startDate) > new Date(endDate)) {
         setTableData([]);
-        return; 
+        return;
       }
-      setOrdersFetch(response.data)
+      setOrdersFetch(response.data);
       if (response.data.orders && response.data.orders.length === 0) {
         setHasOrders(false);
         setTableData([]);
@@ -98,56 +98,55 @@ function Resume() {
     }
   };
 
- 
-
   const handleExport = async () => {
-    console.log(ordersFetch)
+    console.log(ordersFetch);
     // Vérifiez si ordersFetch contient des commandes à exporter
     if (!ordersFetch.orders || ordersFetch.orders.length === 0) {
       console.log("Aucune commande à exporter");
       return;
     }
-  
-    // Récupérez les noms des magasins pour chaque commande
-    const ordersWithStoreNames = await Promise.all(ordersFetch.orders.map(async (order) => {
-      const nom_magasin = await fetchStoreDetails(order.storeId);
-      const libelle = await getLibelle(order.productIds);
 
-      return { ...order, nom_magasin, libelle };
-    }));
+    // Récupérez les noms des magasins pour chaque commande
+    const ordersWithStoreNames = await Promise.all(
+      ordersFetch.orders.map(async (order) => {
+        const nom_magasin = await fetchStoreDetails(order.storeId);
+        const libelle = await getLibelle(order.productIds);
+
+        return { ...order, nom_magasin, libelle };
+      })
+    );
 
     // Filtrer uniquement les commandes payées
-  const paidOrders = ordersWithStoreNames.filter(order => order.paid);
+    const paidOrders = ordersWithStoreNames.filter((order) => order.paid);
 
-  
     // Préparez les données à exporter
-    const ordersToExport = paidOrders.map(order => {
+    const ordersToExport = paidOrders.map((order) => {
       const date = new Date(order.date);
       const day = date.getDate().toString().padStart(2, "0");
       const month = (date.getMonth() + 1).toString().padStart(2, "0");
       const year = date.getFullYear();
       const formattedDate = `${day}/${month}/${year}`;
-  
+
       return {
         "N° Commande": order.orderId,
-        "Client": `${order.firstname_client} ${order.lastname_client}`,
-        "Magasin": order.nom_magasin, // Utilisez le nom du magasin enrichi
+        Client: `${order.firstname_client} ${order.lastname_client}`,
+        Magasin: order.nom_magasin, // Utilisez le nom du magasin enrichi
         "Total commande": order.prix_total,
         "Pour le": formattedDate,
-        "Status": order.status,
-        "Produits": order.libelle
+        Status: order.status,
+        Produits: order.libelle,
       };
     });
-  
+
     // Exportez les données vers Excel
     const ws = XLSX.utils.json_to_sheet(ordersToExport);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Commandes");
-    XLSX.writeFile(wb, `Export_Commandes_${new Date().toISOString().split('T')[0]}.xlsx`);
+    XLSX.writeFile(
+      wb,
+      `Export_Commandes_${new Date().toISOString().split("T")[0]}.xlsx`
+    );
   };
-  
-  
-
 
   const transformOrderData = (orders) => {
     //console.log(orders)
@@ -169,7 +168,8 @@ function Resume() {
       cartString: order.cartString,
       date: order.date,
       nom_magasin: order.nom_magasin,
-      promotionId:order.promotionId
+      promotionId: order.promotionId,
+      newCartString: order.newCartString,
     }));
   };
   function formatDate(dateString) {
@@ -289,19 +289,19 @@ function Resume() {
     {
       title: "Payée ?",
       dataIndex: "paid",
-      key: "paid",    
-      render: (text, record) => (
-        record.paid 
-          ? <Tag color="green">Oui</Tag> 
-          : <Tag color="volcano">Non</Tag>
-      ),
+      key: "paid",
+      render: (text, record) =>
+        record.paid ? (
+          <Tag color="green">Oui</Tag>
+        ) : (
+          <Tag color="volcano">Non</Tag>
+        ),
       filters: [
-        { text: 'Oui', value: true },
-        { text: 'Non', value: false },
-      ],      
+        { text: "Oui", value: true },
+        { text: "Non", value: false },
+      ],
       onFilter: (value, record) => record.paid === value,
-
-  },
+    },
     {
       key: "action",
       title: "Actions",
@@ -314,14 +314,20 @@ function Resume() {
   ];
 
   const viewOrder = async (record) => {
-    // console.log('UserId:', record.userId);
+    // console.log("order:", record);
     try {
-      const productsResponse = await axios.get(
-        `${baseUrl}/getOrderProducts/${record.key}`
-      );
+      // const productsResponse = await axios.get(
+      //   `${baseUrl}/getOrderProducts/${record.key}`
+      // );
+
+      const cart = JSON.parse(record.cartString)
+      // console.log(cart)
       // console.log("Order products:", productsResponse.data);
-      setOrderProducts(productsResponse.data);
-      setSelectedOrder({ ...record, products: productsResponse.data });
+      // setOrderProducts(productsResponse.data);
+      // setSelectedOrder({ ...record, products: productsResponse.data });
+
+      setOrderProducts(cart)
+      setSelectedOrder({ ...record, cart });
       setIsModalVisible(true);
     } catch (error) {
       console.error("Error fetching order details:", error);
@@ -409,27 +415,65 @@ function Resume() {
                 : "En ligne"}
             </p>
             <p>Commande payée: {selectedOrder.paid ? "Oui" : "Non"}</p>
-            {
-              selectedOrder.promotionId && 
+            {selectedOrder.promotionId && (
               <p>Promotion utilisée: {selectedOrder.promotionId}</p>
-            }
+            )}
           </div>
         )}
-        <List
-          itemLayout="horizontal"
-          dataSource={orderProducts}
-          renderItem={(item) => (
-            <List.Item>
-              <List.Item.Meta
-                title={
-                  <>
-                    {item.quantity} x {item.libelle}
-                  </>
-                }
-              />
-            </List.Item>
-          )}
-        />
+    <List
+  itemLayout="horizontal"
+  dataSource={orderProducts}
+  renderItem={(item) => (
+    <List.Item>
+      <List.Item.Meta
+        title={
+          <>
+            {item.type === 'formule' ? (
+              <>
+              {item.libelle} 
+              {/* <ul>
+              {['option1', 'option2', 'option3'].map((optionKey) => (
+                item[optionKey] ? <li key={optionKey} className="liFormuleResume">1 x {item[optionKey].libelle}</li> : null
+              ))}
+            </ul> */}
+            <ul>
+              {['option1', 'option2', 'option3'].map((optionKey) => (
+                item[optionKey] ? (
+                  <li key={optionKey} className="liFormuleResume">
+                    1 x {item[optionKey].newLibelle ? (
+                      <span>
+                        <span style={{ textDecoration: 'line-through' }}>{item[optionKey].libelle}</span>
+                        {" remplacé par : "}
+                        <span>{item[optionKey].newLibelle}</span>
+                      </span>
+                    ) : (
+                      item[optionKey].libelle
+                    )}
+                  </li>
+                ) : null
+              ))}
+            </ul>
+              </>
+            ) : (
+              <>
+                {item.qty} x {item.newLibelle ? (
+                  <span>
+                    <span style={{ textDecoration: 'line-through' }}>{item.libelle}</span> 
+                    {" remplacé par : "} 
+                    <span> {item.newLibelle}</span>
+                  </span>
+                ) : (
+                  item.libelle
+                )}
+              </>
+            )}
+          </>
+        }
+      />
+    </List.Item>
+  )}
+/>
+
       </Modal>
     );
   };
@@ -450,8 +494,8 @@ function Resume() {
           />
           {/* <button onClick={fetchOrders} className="button">Rechercher</button> */}
           <button onClick={handleExport} className="button">
-          Exporter
-        </button>
+            Exporter
+          </button>
         </div>
 
         <Table

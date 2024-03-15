@@ -1,19 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { AiFillCaretDown } from "react-icons/ai";
+import { GiReceiveMoney, GiCardExchange } from "react-icons/gi";
+
 import { Tag, Modal, Select } from "antd";
 import axios from "axios";
 import "../styles/styles.css";
 import { ProduitAntigaspi } from "../../SVG/ProduitAntigaspi";
 import ModaleInfo from "./ModaleInfo";
+import ModaleUpdateOrder from "./ModaleUpdateOrder";
 import toast, { Toaster } from "react-hot-toast";
 
-function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
+function Task({
+  commande,
+  index,
+  updateOrderStatus,
+  updateNewOrdersCount,
+  updateCommandeData,
+}) {
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [showDetails, setShowDetails] = useState(false);
   const [isTaskReady, setIsTaskReady] = useState(commande.status === "attente");
   const [isViewed, setIsViewed] = useState(commande.view);
   const [openModaleInfo, setOpenModaleInfo] = useState(false);
+  const [openModaleUpdateOrder, setOpenModaleUpdateOrder] = useState(false);
   const [prefAlim, setPrefAlim] = useState([]);
   const [allergies, setAllergies] = useState([]);
   const [refunds, setRefunds] = useState(commande.cartString.map(() => "non"));
@@ -22,6 +32,11 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
   const [selectedQuantities, setSelectedQuantities] = useState(
     commande.cartString.map((item) => item.qty)
   );
+
+  // useEffect(() => {
+  //   // Mettez ici la logique pour traiter commande.newCartString
+  //   // Par exemple, mettre à jour l'état local avec les nouvelles données
+  // }, [commande.newCartString]);
 
   useEffect(() => {
     setIsTaskReady(commande.status === "prete");
@@ -37,6 +52,8 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
   }, [refunds, commande.cartString, commande.productIds]);
 
   const toggleDetails = async () => {
+    // console.log('commande',commande)
+
     setShowDetails(!showDetails);
     if (!showDetails) {
       try {
@@ -57,6 +74,7 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
       }
     }
   };
+
   const handleDelivery = async () => {
     const status = "livree";
 
@@ -236,14 +254,17 @@ function Task({ commande, index, updateOrderStatus, updateNewOrdersCount }) {
 
   //calcul nb de produits
   // Calcule le nombre total de produits dans la commande
-const getTotalProductCount = (cartString) => {
-  return cartString.reduce((total, item) => total + item.qty, 0);
-};
+  // const getTotalProductCount = (cartString) => {
+  //   return cartString.reduce((total, item) => total + item.qty, 0);
+  // };
 
-// Utilisation pour déterminer le texte à afficher
-const totalProductCount = getTotalProductCount(commande.cartString);
-const productText = totalProductCount === 1 ? "Produit" : "Produits";
+  // Utilisation pour déterminer le texte à afficher
+  // const totalProductCount = getTotalProductCount(commande.cartString);
+  // const productText = totalProductCount === 1 ? "Produit" : "Produits";
 
+  const handleUpdateOrder = () => {
+    setOpenModaleUpdateOrder(true);
+  };
   return (
     <>
       <Draggable draggableId={commande.numero_commande} index={index}>
@@ -279,6 +300,11 @@ const productText = totalProductCount === 1 ? "Produit" : "Produits";
                     userId={commande.userId}
                   />
                 )}
+                {commande.info === "remboursement" || commande.info === null ? (
+                  <GiReceiveMoney />
+                ) : (
+                  <GiCardExchange />
+                )}
               </div>
               <p>
                 {commande.paid ? (
@@ -311,7 +337,10 @@ const productText = totalProductCount === 1 ? "Produit" : "Produits";
               </div>
               <div className="task_products">
                 {" "}
-                {totalProductCount} {productText}
+                <p>
+                  {commande.nombre_produits}{" "}
+                  {commande.nombre_produits > 1 ? "Produits" : "Produit"}
+                </p>
               </div>
             </div>
 
@@ -328,12 +357,13 @@ const productText = totalProductCount === 1 ? "Produit" : "Produits";
                 <div className="details_second_part">
                   <div className="row_order">
                     <h4>Détails de la commande</h4>
-                    
                   </div>
                   {/* s'affiche seulement si heure rempli (null pour collaborateur) */}
                   {commande.heure && <p>Heure de retrait: {commande.heure}</p>}
 
-                  <ul>
+                  <ul key={index}>
+                    {/* Si newCartString est présent, affichez ces produits comme les actuels */}
+
                     {/* si cartString rempli */}
                     {commande.cartString ? (
                       commande.cartString.map((product, index) => (
@@ -349,19 +379,76 @@ const productText = totalProductCount === 1 ? "Produit" : "Produits";
                               <div className="details_formule">
                                 {product.option1 && (
                                   <div className="row_order">
-                                    <p> 1 x {product.option1.libelle}</p>
+                                    <p>
+                                      {" "}
+                                      1 x{" "}
+                                      {product.option1.newLibelle ? (
+                                        <span>
+                                          <span
+                                            style={{
+                                              textDecoration: "line-through",
+                                            }}
+                                          >
+                                            {product.option1.libelle}
+                                          </span>{" "}
+                                          <span>
+                                            {product.option1.newLibelle}
+                                          </span>
+                                        </span>
+                                      ) : (
+                                        product.option1.libelle
+                                      )}
+                                    </p>
                                     <p>{product.option1.prix_unitaire} €</p>
                                   </div>
                                 )}
                                 {product.option2 && (
                                   <div className="row_formule">
-                                    <p> 1 x {product.option2.libelle}</p>
+                                    <p>
+                                      {" "}
+                                      1 x{" "}
+                                      {product.option2.newLibelle ? (
+                                        <span>
+                                          <span
+                                            style={{
+                                              textDecoration: "line-through",
+                                            }}
+                                          >
+                                            {product.option2.libelle}
+                                          </span>{" "}
+                                          <span>
+                                            {product.option2.newLibelle}
+                                          </span>
+                                        </span>
+                                      ) : (
+                                        product.option2.libelle
+                                      )}
+                                    </p>
                                     <p>{product.option2.prix_formule} €</p>
                                   </div>
                                 )}
                                 {product.option3 && (
                                   <div className="row_formule">
-                                    <p> 1 x {product.option3.libelle}</p>
+                                    <p>
+                                      {" "}
+                                      1 x{" "}
+                                      {product.option3.newLibelle ? (
+                                        <span>
+                                          <span
+                                            style={{
+                                              textDecoration: "line-through",
+                                            }}
+                                          >
+                                            {product.option3.libelle}
+                                          </span>{" "}
+                                          <span>
+                                            {product.option3.newLibelle}
+                                          </span>
+                                        </span>
+                                      ) : (
+                                        product.option3.libelle
+                                      )}
+                                    </p>
                                     <p>{product.option3.prix_formule} €</p>
                                   </div>
                                 )}
@@ -377,7 +464,21 @@ const productText = totalProductCount === 1 ? "Produit" : "Produits";
                                       <ProduitAntigaspi /> Antigaspi - {""}
                                     </span>
                                   )}
-                                  {product.qty} x {product.libelle}
+                                  {product.qty} x{" "}
+                                  {product.newLibelle ? (
+                                    <span>
+                                      <span
+                                        style={{
+                                          textDecoration: "line-through",
+                                        }}
+                                      >
+                                        {product.libelle}
+                                      </span>{" "}
+                                      <span>{product.newLibelle}</span>
+                                    </span>
+                                  ) : (
+                                    product.libelle
+                                  )}
                                 </p>
 
                                 <p>{product.prix_unitaire}€</p>
@@ -406,23 +507,45 @@ const productText = totalProductCount === 1 ? "Produit" : "Produits";
                     <p className="task_total"> {commande.prix_total} €</p>
                   </div>
                 </div>
-                <div className="row_order">
-                  <button
-                    className="button_cancel"
-                    onClick={() => handleCancelPopup(commande)}
-                  >
-                    Annuler
-                  </button>
-                  <button className="button_refund" onClick={handleRefund}>
-                    Rembourser un article
-                  </button>
-                  <button
-                    className="button_delivery"
-                    disabled={!isTaskReady}
-                    onClick={handleDelivery}
-                  >
-                    Livrée
-                  </button>
+                <div className="viewContentButtons">
+                  <div className="buttons">
+                    <button
+                      className="button_cancel"
+                      onClick={() => handleCancelPopup(commande)}
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      className="button_delivery"
+                      disabled={!isTaskReady}
+                      onClick={handleDelivery}
+                    >
+                      Livrée
+                    </button>
+                  </div>
+                  {/* bouton suivant le choix du user  */}
+                  <div className="buttons">
+                    {commande.info === "remboursement" ||
+                    commande.info === null ? (
+                      <button className="button_refund" onClick={handleRefund}>
+                        Rembourser un article
+                      </button>
+                    ) : (
+                      <button
+                        className="button_refund"
+                        onClick={handleUpdateOrder}
+                      >
+                        Remplacer un article
+                      </button>
+                    )}
+                    {openModaleUpdateOrder && (
+                      <ModaleUpdateOrder
+                        setOpenModaleUpdateOrder={setOpenModaleUpdateOrder}
+                        order={commande}
+                        updateCommandeData={updateCommandeData}
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -434,6 +557,7 @@ const productText = totalProductCount === 1 ? "Produit" : "Produits";
         open={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancelModale}
+        style={{ zIndex: 99 }}
       >
         <ul>
           {commande.cartString.map((item, index) => (
@@ -464,7 +588,7 @@ const productText = totalProductCount === 1 ? "Produit" : "Produits";
 
         {/* email deja envoyé */}
         {commande.productIds && commande.productIds.length > 0 ? (
-          <Tag  color="orange">Une demande a déjà été envoyée par email</Tag>
+          <Tag color="orange">Une demande a déjà été envoyée par email</Tag>
         ) : (
           ``
         )}

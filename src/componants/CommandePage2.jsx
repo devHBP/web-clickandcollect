@@ -18,13 +18,16 @@ function CommandePageSimple({ updateNewOrdersCount }) {
   const [newOrdersLength, setNewOrdersLength] = useState(0);
   const [stores, setStores] = useState([]);
 
-
-  // const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
 
   useEffect(() => {
     allOrders();
   }, []);
+
+  const updateCommandeData = async () => {
+    // Récupérez les données mises à jour de toutes les commandes
+    await allOrders();
+  };
 
   const updateOrderStatus = (orderId, status) => {
     // Update commandes
@@ -102,16 +105,16 @@ function CommandePageSimple({ updateNewOrdersCount }) {
 
       const ordersWaiting = await axios.get(`${baseUrl}/ordersInWaiting`);
       // requete pour commande en attente
-      const storeIds = [...new Set(ordersWaiting.data.orders.map(order => order.storeId))];
+      const storeIds = [
+        ...new Set(ordersWaiting.data.orders.map((order) => order.storeId)),
+      ];
 
       const storesResponse = await axios.get(`${baseUrl}/getStores`, {
-        params: { ids: storeIds.join(',') }
+        params: { ids: storeIds.join(",") },
       });
-      const storeNames = storesResponse.data; 
+      const storeNames = storesResponse.data;
       // console.log('storeName',storeNames )
       setStores(storeNames);
-
-   
 
       if (!response.data.orders || response.data.orders.length === 0) {
         setHasOrders(false);
@@ -168,10 +171,16 @@ function CommandePageSimple({ updateNewOrdersCount }) {
             }
           }
 
+          const response = await axios.get(
+            `${baseUrl}/getInfoPrefCommande/${order.userId}`
+          );
+          const infoUser = response.data.preference_commande;
+
           return {
             ...order,
             storeName: storeName,
             email: emailUser,
+            infoUser: infoUser,
           };
         })
       );
@@ -223,11 +232,14 @@ function CommandePageSimple({ updateNewOrdersCount }) {
 
         const createdDate = new Date(order.createdAt);
         const dayAt = createdDate.getDate().toString().padStart(2, "0");
-        const monthAt = (createdDate.getMonth() + 1).toString().padStart(2, "0"); // Les mois sont indexés à partir de 0
+        const monthAt = (createdDate.getMonth() + 1)
+          .toString()
+          .padStart(2, "0"); // Les mois sont indexés à partir de 0
         const yearAt = createdDate.getFullYear();
         const formattedDateAt = `${dayAt}/${monthAt}/${yearAt}`;
 
         const cartArray = JSON.parse(order.cartString);
+        //const cartArray2 = JSON.parse(order.newCartString);
         // console.log('cartArray', cartArray)
 
         acc[order.numero_commande] = {
@@ -250,6 +262,7 @@ function CommandePageSimple({ updateNewOrdersCount }) {
           userId: order.userId,
           createdDate: formattedDateAt,
           productIds: order.refundedProductIds,
+          info: order.infoUser,
         };
         return acc;
       }, {}),
@@ -558,7 +571,7 @@ function CommandePageSimple({ updateNewOrdersCount }) {
         <button onClick={handleExport} className="button">
           Exporter
         </button>
-        
+
         {/* <Search
               placeholder="Rechercher un produit"
               size="medium"
@@ -592,12 +605,12 @@ function CommandePageSimple({ updateNewOrdersCount }) {
             }}
           >
             <div style={{ width: "100%" }}>
-             
               <Tasks
                 commandes={commandes}
                 onDragEnd={onDragEnd}
                 updateOrderStatus={updateOrderStatus}
                 stores={stores}
+                updateCommandeData={updateCommandeData}
               />
             </div>
           </div>
