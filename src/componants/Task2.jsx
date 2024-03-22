@@ -159,7 +159,8 @@ function Task({
       articles: articlesToRefund,
     };
 
-    // console.log(dataToSend);
+    //console.log(dataToSend);
+    // SOUCI ICI: la qty des produits articles [1,1] : pourquoi un tableau
 
     const productIdsToRefund = articlesToRefund.map((item) => item.productId);
     const updateData = {
@@ -173,7 +174,7 @@ function Task({
           `${baseUrl}/updateOrderContent`,
           updateData
         );
-        // console.log(response.data);
+        //console.log(response.data);
       } catch (error) {
         console.error(
           "Une erreur s'est produite lors de la mise à jour de la commande:",
@@ -190,7 +191,7 @@ function Task({
           `${baseUrl}/refundArticle`,
           dataToSend
         );
-        // console.log(response.data);
+        //console.log(response.data);
         toast.success("Email envoyé!");
       } catch (error) {
         toast.error("Email non envoyé");
