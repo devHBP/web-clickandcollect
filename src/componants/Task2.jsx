@@ -52,7 +52,7 @@ function Task({
   }, [refunds, commande.cartString, commande.productIds]);
 
   const toggleDetails = async () => {
-    // console.log('commande',commande)
+    console.log('commande',commande)
 
     setShowDetails(!showDetails);
     if (!showDetails) {
@@ -382,7 +382,7 @@ function Task({
                                   <div className="row_order">
                                     <p>
                                       {" "}
-                                      1 x{" "}
+                                      {product.qty}x{" "}
                                       {product.option1.newLibelle ? (
                                         <span>
                                           <span
@@ -407,7 +407,7 @@ function Task({
                                   <div className="row_formule">
                                     <p>
                                       {" "}
-                                      1 x{" "}
+                                      {product.qty} x{" "}
                                       {product.option2.newLibelle ? (
                                         <span>
                                           <span
@@ -432,7 +432,7 @@ function Task({
                                   <div className="row_formule">
                                     <p>
                                       {" "}
-                                      1 x{" "}
+                                      {product.qty} x{" "}
                                       {product.option3.newLibelle ? (
                                         <span>
                                           <span
