@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table, Select, Modal, Input } from "antd";
+import { Table, Select, Modal, Input, Spin } from "antd";
 const { Option } = Select;
 import { AiOutlineReload, AiOutlineRest } from "react-icons/ai";
 import ModaleEditProfile from "./ModaleEditProfile";
@@ -12,34 +12,47 @@ const UsersPage = () => {
   const [isOpen, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
 
   useEffect(() => {
     const fetchUsers = async () => {
+
+      setIsLoading(true);
       try {
         const usersResponse = await axios.get(`${baseUrl}/getAll`);
         // Filtrez d'abord les utilisateurs pour ne conserver que les rôles "client" et "SUNcollaborateur"
         const filteredUsers = usersResponse.data.filter(
-          user => user.role === "client" || user.role === "SUNcollaborateur"
+          (user) => user.role === "client" || user.role === "SUNcollaborateur"
         );
-  
+
         // Pour chaque utilisateur filtré, récupérez la dernière commande
         const clientsWithLastOrderPromises = filteredUsers.map(
           async (client) => {
-            const lastOrderResponse = await axios.get(`${baseUrl}/userOrders/${client.userId}`);
-            console.log(lastOrderResponse)
-            return { ...client, lastOrder: lastOrderResponse.data ? lastOrderResponse.data.date : "X" }; // 'X' pour aucune commande
+            const lastOrderResponse = await axios.get(
+              `${baseUrl}/userOrders/${client.userId}`
+            );
+            // console.log(lastOrderResponse)
+            return {
+              ...client,
+              lastOrder: lastOrderResponse.data
+                ? lastOrderResponse.data.date
+                : "X",
+            }; // 'X' pour aucune commande
           }
         );
-  
-        const clientsWithLastOrder = await Promise.all(clientsWithLastOrderPromises);
+
+        const clientsWithLastOrder = await Promise.all(
+          clientsWithLastOrderPromises
+        );
         setClients(clientsWithLastOrder);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
     fetchUsers();
   }, []);
-  
 
   //modifier le rôle de l'utilisateur
   const handleRoleChange = async (userId, newRole) => {
@@ -83,7 +96,7 @@ const UsersPage = () => {
         handleDelete(record.userId);
       },
     });
-  }
+  };
 
   const handleDelete = async (userId) => {
     try {
@@ -92,8 +105,8 @@ const UsersPage = () => {
 
       const config = {
         headers: {
-          'x-access-token': tokenString 
-        }
+          "x-access-token": tokenString,
+        },
       };
       const response = await axios.post(
         `${baseUrl}/deleteUserOrAnonymize/${userId}`,
@@ -106,9 +119,7 @@ const UsersPage = () => {
         throw new Error("Network response was not ok");
       }
       // Actualisez votre état ici pour refléter la suppression du user
-      const updatedUsers = clients.filter(
-        (user) => user.userId !== userId
-      );
+      const updatedUsers = clients.filter((user) => user.userId !== userId);
       setClients(updatedUsers);
     } catch (error) {
       console.error("There has been a problem with your Axios request:", error);
@@ -116,25 +127,23 @@ const UsersPage = () => {
   };
 
   const handleUpdateUser = async (userId, updateData) => {
-
     try {
       const token = localStorage.getItem("userToken");
       const tokenString = JSON.parse(token);
 
       const config = {
         headers: {
-          'x-access-token': tokenString 
-        }
+          "x-access-token": tokenString,
+        },
       };
       const response = await axios.patch(
         `${baseUrl}/modifyUser/${userId}`,
         updateData,
-       config
+        config
       );
 
-
       setClients(
-        clients.map((client) => 
+        clients.map((client) =>
           client.userId === userId ? { ...client, ...updateData } : client
         )
       );
@@ -144,10 +153,9 @@ const UsersPage = () => {
   };
 
   const handleSearch = (e) => {
-    console.log('search')
+    console.log("search");
     setSearchTerm(e.target.value);
-  }
-
+  };
 
   //tableau
   const columns = [
@@ -200,45 +208,66 @@ const UsersPage = () => {
       title: "Actions",
       render: (record) => (
         <>
-        <div className="contentIconsUsers">
-          <AiOutlineReload onClick={() => handleProfile(record)} />
-          <AiOutlineRest onClick={() => handleReset(record)} />
-        </div>
-          
+          <div className="contentIconsUsers">
+            <AiOutlineReload onClick={() => handleProfile(record)} />
+            <AiOutlineRest onClick={() => handleReset(record)} />
+          </div>
         </>
       ),
     },
   ];
   return (
     <>
-    <div className="pageUsersContent">
-
-    
-     <Search
+      {isLoading ? (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Spin size="large" />
+        </div>
+      ) : (
+        <div className="pageUsersContent">
+          <Search
             placeholder="Rechercher un utilisateur"
             size="large"
             style={{ width: 250 }}
             onChange={handleSearch}
           />
-      <div className="content_client">
-     
 
-        <Table
-          dataSource={clients.filter((user) => user.firstname.toLowerCase().includes(searchTerm.toLowerCase()) || user.lastname.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase()))}
-          columns={columns}
-          rowKey="userId"
-          pagination={{ position: ["bottomCenter"], pageSize: 5 }}
-        />
-      </div>
-      {isOpen && (
-        <ModaleEditProfile
-          isOpen={isOpen}
-          handleClose={handleClose}
-          user={selectedUser}
-          onUpdateUser={handleUpdateUser}
-        />
+          <div className="content_client">
+            <Table
+              dataSource={clients.filter(
+                (user) =>
+                  user.firstname
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase()) ||
+                  user.lastname
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase()) ||
+                  user.email.toLowerCase().includes(searchTerm.toLowerCase())
+              )}
+              columns={columns}
+              rowKey="userId"
+              pagination={{ position: ["bottomCenter"], pageSize: 5 }}
+            />
+          </div>
+          {isOpen && (
+            <ModaleEditProfile
+              isOpen={isOpen}
+              handleClose={handleClose}
+              user={selectedUser}
+              onUpdateUser={handleUpdateUser}
+            />
+          )}
+        </div>
       )}
-      </div>
     </>
   );
 };
