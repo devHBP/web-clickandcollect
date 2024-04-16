@@ -26,7 +26,7 @@ const UsersPage = () => {
         const clientsWithLastOrderPromises = filteredUsers.map(
           async (client) => {
             const ordersResponse = await axios.get(
-              `${baseUrl}/ordersOfUser/${client.userId}`
+              `${baseUrl}/userOrders/${client.userId}`
             );
             const lastOrder = ordersResponse.data.sort(
               (a, b) => new Date(b.date) - new Date(a.date)
