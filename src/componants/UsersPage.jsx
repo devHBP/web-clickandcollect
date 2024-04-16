@@ -19,33 +19,27 @@ const UsersPage = () => {
         const usersResponse = await axios.get(`${baseUrl}/getAll`);
         // Filtrez d'abord les utilisateurs pour ne conserver que les rôles "client" et "SUNcollaborateur"
         const filteredUsers = usersResponse.data.filter(
-          (user) => user.role === "client" || user.role === "SUNcollaborateur"
+          user => user.role === "client" || user.role === "SUNcollaborateur"
         );
-
+  
         // Pour chaque utilisateur filtré, récupérez la dernière commande
         const clientsWithLastOrderPromises = filteredUsers.map(
           async (client) => {
-            const ordersResponse = await axios.get(
-              `${baseUrl}/userOrders/${client.userId}`
-            );
-            const lastOrder = ordersResponse.data.sort(
-              (a, b) => new Date(b.date) - new Date(a.date)
-            )[0];
-            return { ...client, lastOrder: lastOrder ? lastOrder.date : "X" }; // 'X' pour aucune commande
+            const lastOrderResponse = await axios.get(`${baseUrl}/userOrders/${client.userId}`);
+            console.log(lastOrderResponse)
+            return { ...client, lastOrder: lastOrderResponse.data ? lastOrderResponse.data.date : "X" }; // 'X' pour aucune commande
           }
         );
-
-        const clientsWithLastOrder = await Promise.all(
-          clientsWithLastOrderPromises
-        );
+  
+        const clientsWithLastOrder = await Promise.all(clientsWithLastOrderPromises);
         setClients(clientsWithLastOrder);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
-
     fetchUsers();
-  }, [baseUrl]);
+  }, []);
+  
 
   //modifier le rôle de l'utilisateur
   const handleRoleChange = async (userId, newRole) => {
