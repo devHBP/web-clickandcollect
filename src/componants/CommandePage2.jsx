@@ -492,9 +492,9 @@ function CommandePageSimple({ updateNewOrdersCount }) {
         } else {
           // Traitement pour les produits non-formule
           updateProductInfo(
-            item.product,
+            item.product || item.libelle,
             order.orderID,
-            quantity,
+            quantity || qty,
             item.type === 'antigaspi',
             order.date,
             order.magasin
@@ -502,7 +502,7 @@ function CommandePageSimple({ updateNewOrdersCount }) {
         }
       });
     });
-    // console.log(productInfo);
+    //console.log(productInfo);
     await Promise.all(productDetailsPromises);
 
     // Transformer l'objet de suivi en tableau pour l'exportation
