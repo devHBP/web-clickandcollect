@@ -32,11 +32,11 @@ function Task({
   const [selectedQuantities, setSelectedQuantities] = useState(
     commande.cartString.map((item) => item.qty)
   );
-
-  // useEffect(() => {
-  //   // Mettez ici la logique pour traiter commande.newCartString
-  //   // Par exemple, mettre à jour l'état local avec les nouvelles données
-  // }, [commande.newCartString]);
+  const [productDetails, setProductDetails] = useState({
+    option1: null,
+    option2: null,
+    option3: null,
+  });
 
   useEffect(() => {
     setIsTaskReady(commande.status === "prete");
@@ -253,6 +253,33 @@ function Task({
     }
   };
 
+  const fetchProductDetails = async (optionId, optionKey) => {
+    if (optionId) {
+      try {
+        const response = await axios.get(
+          `${baseUrl}/getOneProduct/${optionId}`
+        );
+        setProductDetails((prevDetails) => ({
+          ...prevDetails,
+          [optionKey]: response.data,
+        }));
+      } catch (error) {
+        console.error(`Error fetching ${optionKey} product details:`, error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const formuleItem = commande.cartString.find(
+      (item) =>
+        item.option1ProductId || item.option2ProductId || item.option3ProductId
+    );
+    if (formuleItem) {
+      fetchProductDetails(formuleItem.option1ProductId, "option1");
+      fetchProductDetails(formuleItem.option2ProductId, "option2");
+      fetchProductDetails(formuleItem.option3ProductId, "option3");
+    }
+  }, [commande.cartString]);
   //calcul nb de produits
   // Calcule le nombre total de produits dans la commande
   // const getTotalProductCount = (cartString) => {
@@ -374,83 +401,41 @@ function Task({
                             <>
                               <p>
                                 <strong>
-                                  {product.qty} x {product.libelle}
+                                  {product.quantity} x {product.libelle}
                                 </strong>
                               </p>
                               <div className="details_formule">
-                                {product.option1 && (
+                                {productDetails.option1 && (
                                   <div className="row_order">
                                     <p>
-                                      {" "}
-                                      {product.qty}x{" "}
-                                      {product.option1.newLibelle ? (
-                                        <span>
-                                          <span
-                                            style={{
-                                              textDecoration: "line-through",
-                                            }}
-                                          >
-                                            {product.option1.libelle}
-                                          </span>{" "}
-                                          <span>
-                                            {product.option1.newLibelle}
-                                          </span>
-                                        </span>
-                                      ) : (
-                                        product.option1.libelle
-                                      )}
+                                      {product.quantity}x{" "}
+                                      {productDetails.option1.libelle}
                                     </p>
-                                    <p>{product.option1.prix_unitaire} €</p>
+                                    <p>
+                                      {productDetails.option1.prix_unitaire} €
+                                    </p>
                                   </div>
                                 )}
-                                {product.option2 && (
-                                  <div className="row_formule">
+                                {productDetails.option2 && (
+                                  <div className="row_order">
                                     <p>
-                                      {" "}
-                                      {product.qty} x{" "}
-                                      {product.option2.newLibelle ? (
-                                        <span>
-                                          <span
-                                            style={{
-                                              textDecoration: "line-through",
-                                            }}
-                                          >
-                                            {product.option2.libelle}
-                                          </span>{" "}
-                                          <span>
-                                            {product.option2.newLibelle}
-                                          </span>
-                                        </span>
-                                      ) : (
-                                        product.option2.libelle
-                                      )}
+                                      {product.quantity}x{" "}
+                                      {productDetails.option2.libelle}
                                     </p>
-                                    <p>{product.option2.prix_formule} €</p>
+                                    <p>
+                                      {productDetails.option2.prix_formule} €
+                                    </p>
                                   </div>
                                 )}
-                                {product.option3 && (
-                                  <div className="row_formule">
+                                {productDetails.option3 && (
+                                  <div className="row_order">
                                     <p>
-                                      {" "}
-                                      {product.qty} x{" "}
-                                      {product.option3.newLibelle ? (
-                                        <span>
-                                          <span
-                                            style={{
-                                              textDecoration: "line-through",
-                                            }}
-                                          >
-                                            {product.option3.libelle}
-                                          </span>{" "}
-                                          <span>
-                                            {product.option3.newLibelle}
-                                          </span>
-                                        </span>
-                                      ) : (
-                                        product.option3.libelle
-                                      )}
+                                      {product.quantity}x{" "}
+                                      {productDetails.option3.libelle}
                                     </p>
-                                    <p>{product.option3.prix_formule} €</p>
+                                    <p>
+                                      {productDetails.option3.prix_formule} €
+                                    </p>
                                   </div>
                                 )}
                               </div>
@@ -460,29 +445,33 @@ function Task({
                               <div className="row_order">
                                 <p>
                                   {/* si c'est un produit antigaspi */}
-                                  {product.antigaspi && (
+                                  {product.type === "antigaspi" && (
                                     <span className="antigaspi-label">
                                       <ProduitAntigaspi /> Antigaspi - {""}
                                     </span>
                                   )}
-                                  {product.qty} x{" "}
+                                  {product.quantity || product.qty} x{" "}
                                   {product.newLibelle ? (
+                                    // si il y a eu un remplacement
                                     <span>
                                       <span
                                         style={{
                                           textDecoration: "line-through",
                                         }}
                                       >
-                                        {product.libelle}
+                                        {product.product|| product.libelle}
                                       </span>{" "}
                                       <span>{product.newLibelle}</span>
                                     </span>
                                   ) : (
-                                    product.libelle
+                                    <span>
+                                        {product.product || product.libelle}
+
+                                    </span>
                                   )}
                                 </p>
 
-                                <p>{product.prix_unitaire}€</p>
+                                <p>{product.totalPrice || product.prix_unitaire}€</p>
                               </div>
                             </>
                           )}

@@ -420,11 +420,17 @@ function CommandePageSimple({ updateNewOrdersCount }) {
 
   // console.log("tasks", commandes.tasks);
 
-  const handleExport = () => {
+  const fetchProductNameById = async (productId) => {
+    const response = await axios.get(`${baseUrl}/getOneProduct/${productId}`);
+    // console.log('response', response.data.libelle)
+    return response.data.libelle; 
+  };
+
+  const handleExport =  async () => {
     function updateProductInfo(
       libelle,
       orderId,
-      qty,
+      quantity,
       isAntiGaspi,
       date,
       storeName
@@ -439,9 +445,9 @@ function CommandePageSimple({ updateNewOrdersCount }) {
         };
       }
       productInfo[libelle].orderIds.add(orderId);
-      productInfo[libelle].totalQty += qty;
+      productInfo[libelle].totalQty += quantity;
       if (isAntiGaspi) {
-        productInfo[libelle].antiGaspiQty += qty;
+        productInfo[libelle].antiGaspiQty += quantity;
       }
       productInfo[libelle].dates.push(date);
 
@@ -460,33 +466,36 @@ function CommandePageSimple({ updateNewOrdersCount }) {
         (order) => order.status === "en attente"
       );
     }
+    const productDetailsPromises = [];
 
     ordersToExport.forEach((order) => {
       order.cartString.forEach((item) => {
-        let qty = item.qty;
-        let libelle = item.libelle;
+        let quantity = item.quantity;
+        let libelle = item.product;
         if (item.type === "formule") {
-          // Traiter chaque option de la formule
-          ["option1", "option2", "option3"].forEach((optionKey) => {
-            const option = item[optionKey];
-            if (option && option.libelle) {
-              updateProductInfo(
-                option.libelle,
-                order.orderID,
-                item.qty,
-                item.antigaspi,
-                order.date,
-                order.magasin
-              );
+          ["option1ProductId", "option2ProductId", "option3ProductId"].forEach((optionKey) => {
+            const productId = item[optionKey];
+            if (productId) {
+              const promise = fetchProductNameById(productId).then((productName) => {
+                updateProductInfo(
+                  productName,
+                  order.orderID,
+                  item.quantity,
+                  item.type === 'antigaspi',
+                  order.date,
+                  order.magasin
+                );
+              });
+              productDetailsPromises.push(promise);
             }
           });
         } else {
           // Traitement pour les produits non-formule
           updateProductInfo(
-            item.libelle,
+            item.product,
             order.orderID,
-            qty,
-            item.antigaspi,
+            quantity,
+            item.type === 'antigaspi',
             order.date,
             order.magasin
           );
@@ -494,6 +503,7 @@ function CommandePageSimple({ updateNewOrdersCount }) {
       });
     });
     // console.log(productInfo);
+    await Promise.all(productDetailsPromises);
 
     // Transformer l'objet de suivi en tableau pour l'exportation
     const dataForExport = Object.entries(productInfo).map(([libelle, info]) => {

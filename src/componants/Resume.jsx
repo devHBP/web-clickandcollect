@@ -320,13 +320,13 @@ function Resume() {
       //   `${baseUrl}/getOrderProducts/${record.key}`
       // );
 
-      const cart = JSON.parse(record.cartString)
+      const cart = JSON.parse(record.cartString);
       // console.log(cart)
       // console.log("Order products:", productsResponse.data);
       // setOrderProducts(productsResponse.data);
       // setSelectedOrder({ ...record, products: productsResponse.data });
 
-      setOrderProducts(cart)
+      setOrderProducts(cart);
       setSelectedOrder({ ...record, cart });
       setIsModalVisible(true);
     } catch (error) {
@@ -420,60 +420,62 @@ function Resume() {
             )}
           </div>
         )}
-    <List
-  itemLayout="horizontal"
-  dataSource={orderProducts}
-  renderItem={(item) => (
-    <List.Item>
-      <List.Item.Meta
-        title={
-          <>
-            {item.type === 'formule' ? (
-              <>
-              {item.libelle} 
-              {/* <ul>
-              {['option1', 'option2', 'option3'].map((optionKey) => (
-                item[optionKey] ? <li key={optionKey} className="liFormuleResume">1 x {item[optionKey].libelle}</li> : null
-              ))}
-            </ul> */}
-            <ul>
-              {['option1', 'option2', 'option3'].map((optionKey) => (
-                item[optionKey] ? (
-                  <li key={optionKey} className="liFormuleResume">
-                    1 x {item[optionKey].newLibelle ? (
-                      <span>
-                        <span style={{ textDecoration: 'line-through' }}>{item[optionKey].libelle}</span>
-                        {" remplacé par : "}
-                        <span>{item[optionKey].newLibelle}</span>
-                      </span>
+        <List
+          itemLayout="horizontal"
+          dataSource={orderProducts}
+          renderItem={(item) => (
+            <List.Item>
+              <List.Item.Meta
+                title={
+                  <>
+                    {item.type === "formule" ? (
+                      <>
+                        {item.quantity || item.qty} x {item.product || item.libelle}
+                        <ul>
+                          {["option1", "option2", "option3"].map((optionKey) =>
+                            item[optionKey] ? (
+                              <li key={optionKey} className="liFormuleResume">
+                                1 x{" "}
+                                {item[optionKey].newLibelle ? (
+                                  <span>
+                                    <span
+                                      style={{ textDecoration: "line-through" }}
+                                    >
+                                      {item[optionKey].libelle}
+                                    </span>
+                                    {" remplacé par : "}
+                                    <span>{item[optionKey].newLibelle}</span>
+                                  </span>
+                                ) : (
+                                  item[optionKey].libelle
+                                )}
+                              </li>
+                            ) : null
+                          )}
+                        </ul>
+                      </>
                     ) : (
-                      item[optionKey].libelle
+                      <>
+                        {item.quantity || item.qty} x{" "}
+                        {item.newLibelle ? (
+                          <span>
+                            <span style={{ textDecoration: "line-through" }}>
+                              {item.libelle}
+                            </span>
+                            {" remplacé par : "}
+                            <span> {item.newLibelle}</span>
+                          </span>
+                        ) : (
+                          <span>{item.product || item.libelle}</span>
+                        )}
+                      </>
                     )}
-                  </li>
-                ) : null
-              ))}
-            </ul>
-              </>
-            ) : (
-              <>
-                {item.qty} x {item.newLibelle ? (
-                  <span>
-                    <span style={{ textDecoration: 'line-through' }}>{item.libelle}</span> 
-                    {" remplacé par : "} 
-                    <span> {item.newLibelle}</span>
-                  </span>
-                ) : (
-                  item.libelle
-                )}
-              </>
-            )}
-          </>
-        }
-      />
-    </List.Item>
-  )}
-/>
-
+                  </>
+                }
+              />
+            </List.Item>
+          )}
+        />
       </Modal>
     );
   };
