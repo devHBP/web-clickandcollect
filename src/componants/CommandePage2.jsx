@@ -470,7 +470,7 @@ function CommandePageSimple({ updateNewOrdersCount }) {
 
     ordersToExport.forEach((order) => {
       order.cartString.forEach((item) => {
-        let quantity = item.quantity;
+        let quantity = item.quantity || item.qty;
         let libelle = item.product;
         if (item.type === "formule") {
           ["option1ProductId", "option2ProductId", "option3ProductId"].forEach((optionKey) => {
@@ -494,7 +494,7 @@ function CommandePageSimple({ updateNewOrdersCount }) {
           updateProductInfo(
             item.product || item.libelle,
             order.orderID,
-            quantity || qty,
+            quantity,
             item.type === 'antigaspi',
             order.date,
             order.magasin
