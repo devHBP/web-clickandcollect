@@ -32,6 +32,7 @@ export const Signup = () => {
   try{
     //appel axios pour se loger
     const res = await axios.post('http://localhost:8080/signup', clientData)
+    console.log(res);
     // console.log("user créé : ", res.config.data)
     // console.log('client data créé', clientData)
     const user = { firstname, lastname, email, password}

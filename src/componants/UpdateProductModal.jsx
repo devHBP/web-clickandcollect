@@ -26,7 +26,7 @@ const UpdateProductModal = ({
   const [offre, setOffre] = useState("");
   const [referenceFournisseur, setReferenceFournisseur] = useState(false)
   const [image, setImage] = useState(null);
-
+  
   useEffect(() => {
 
     if (product) {
@@ -63,11 +63,21 @@ const UpdateProductModal = ({
   const handlePrixUnitaire = (e) => {
     const value = e.target.value;
     setPrix(value.replace(",", "."));
+
+    // on garde ça la même logique, on applique à la volée la réduction collab, directement au changement du prix_unitaire
+    if(value && !isNaN(value)){
+      const prixSun = (parseFloat(value)*0.8).toFixed(2);
+      setPrixCollab(prixSun);
+    }
+    else{
+      setPrixCollab('');
+    }
   };
+  /*
   const handlePrixCollaborateur = (e) => {
     const value = e.target.value;
     setPrixCollab(value.replace(",", "."));
-  };
+  };*/
   const handleSpecificiteChange = (option, value) => {
     setSpecificites((prevSpecificites) => ({
       ...prevSpecificites,
@@ -201,12 +211,13 @@ const UpdateProductModal = ({
           />
         </div>
         <div className="inputOptions">
-          <label htmlFor="prix">Prix Collaborateur:</label>
+          <label htmlFor="prix_remise_collaborateur">Prix Collaborateur:</label>
           <Input
             type="text"
-            id="prix_unitaire"
+            disabled={true}
+            id="prix_remise_collaborateur"
             value={prixCollab}
-            onChange={handlePrixCollaborateur}
+            //onChange={handlePrixCollaborateur}
           />
         </div>
         <div className="inputDisponible">

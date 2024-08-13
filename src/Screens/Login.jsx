@@ -9,6 +9,7 @@ import axios from "axios";
 
 export const Login = () => {
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
+  //const baseUrl = "http://localhost:8080"
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

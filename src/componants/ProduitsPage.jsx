@@ -20,7 +20,7 @@ import UpdateProductModal from "./UpdateProductModal";
 const ProduitsPage = () => {
   const [elements, setElements] = useState([]);
   const [openModaleAdd, setOpenModaleAdd] = useState(false);
-  // const baseUrl = 'http://127.0.0.1:8080';
+  //const baseUrl = 'http://127.0.0.1:8080';
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
   const [categories, setCategorie] = useState([]);
   const [visibleIncreaseStock, setVisibleIncreaseStock] = useState(false);
