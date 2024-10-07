@@ -15,11 +15,14 @@ function CommandePageSimple({ updateNewOrdersCount }) {
   const [selectedDate, setSelectedDate] = useState("");
   const [uniqueDates, setUniqueDates] = useState([]);
   const [filteredCommandes, setFilteredCommandes] = useState([]);
-  const [newOrdersLength, setNewOrdersLength] = useState(0);
+  const [ordersLength, setOrdersLength] = useState(0);
+  const [newOrderAlert, setNewOrderAlert] = useState(false);
+  const [refreshCountdown, setRefreshCountdown] = useState(null);
   const [stores, setStores] = useState([]);
 
   const baseUrl = import.meta.env.VITE_REACT_API_URL;
 
+  // Le composant est monté et donc on appel allOrder()..
   useEffect(() => {
     allOrders();
   }, []);
@@ -102,6 +105,13 @@ function CommandePageSimple({ updateNewOrdersCount }) {
       const response = await axios.get(`${baseUrl}/ordersInWebApp`);
       // console.log("response", response.data.orders);
       let orders = response.data.orders;
+      
+      // Gestion des mises en jour en fonction du nombre de commandes 
+      const orderLength = orders.length;
+      setNewOrderAlert(false);
+      setRefreshCountdown(null);
+      // Je stock dans le local storage la valeur de la longueur de l'objet response.data.orders
+      localStorage.setItem('ordersLength', orderLength)
 
       const ordersWaiting = await axios.get(`${baseUrl}/ordersInWaiting`);
       // requete pour commande en attente
@@ -112,6 +122,7 @@ function CommandePageSimple({ updateNewOrdersCount }) {
       const storesResponse = await axios.get(`${baseUrl}/getStores`, {
         params: { ids: storeIds.join(",") },
       });
+
       const storeNames = storesResponse.data;
       // console.log('storeName',storeNames )
       setStores(storeNames);
@@ -195,7 +206,6 @@ function CommandePageSimple({ updateNewOrdersCount }) {
         (task) => !task.view
       ).length;
       updateNewOrdersCount(newOrdersCount);
-
       return Object.values(orderData.tasks);
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -208,11 +218,47 @@ function CommandePageSimple({ updateNewOrdersCount }) {
     }
   };
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      allOrders();
-    }, 600000);
+  const checkIfNewOrder = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/ordersInWebApp`);
+      const newOrdersLength = response.data.orders.length;
 
+      // On récupère la valeur sauvegardée dans le localStorage
+      const storedOrdersLength = parseInt(localStorage.getItem('ordersLength')) || 0;
+
+      if (newOrdersLength > storedOrdersLength || newOrdersLength < storedOrdersLength) {
+        setNewOrderAlert(true);
+        startRefreshCountdown();
+        localStorage.setItem('orders', newOrdersLength);
+        console.log("Nouvelle commande");
+      }
+      else{
+        console.log("Appel, mais pas de commande")
+      }
+    }
+    catch (error){
+      console.error("Erreur lors de la vérification des nouvelles commandes: ", error);
+    }
+  }
+
+  const startRefreshCountdown = () => {
+    let countdown = 10;
+    setRefreshCountdown(countdown);
+    const intervalId = setInterval(()=>{
+      countdown -= 1;
+      setRefreshCountdown(countdown);
+
+      if (countdown === 0){
+        clearInterval(intervalId);
+        allOrders();
+      }
+    }, 1000);
+  };
+
+  useEffect(()=>{
+    const intervalId = setInterval(()=>{
+      checkIfNewOrder();
+    }, 60000);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -606,6 +652,13 @@ function CommandePageSimple({ updateNewOrdersCount }) {
         </div>
       ) : hasOrders ? (
         <>
+          <div>
+            {newOrderAlert && (
+              <div style={{backgroundColor: 'green', color: 'white', padding: '10px', marginTop:'8px', borderRadius:'5px'}} >
+                  🛎️ Nouvelle commande détectée ! Rafraîchissement dans {refreshCountdown} secondes...
+              </div>
+            )}
+          </div>
           <div
             style={{
               display: "flex",
